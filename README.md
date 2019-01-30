@@ -44,7 +44,7 @@ Import a reference to the `search` Apex method in the lookup parent component's 
 import apexSearch from '@salesforce/apex/SampleLookupController.search';
 ```
 
-### 3) Handle the `search` event and pass the results to the lookup
+### 3) Handle the search event and pass search results to the lookup
 
 The lookup component exposes a `search` event that is fired when a search needs to be performed on the server-side.
 The parent component that contains the lookup must handle the `search` event:

@@ -1,0 +1,10 @@
+{
+    "orgName": "pozil",
+    "edition": "Developer",
+    "language": "en_US",
+    "hasSampleData": "true",
+    "orgPreferences" : {
+        "enabled": ["S1DesktopEnabled"],
+        "disabled": ["S1EncryptedStoragePref2"]
+    }
+}

@@ -1,0 +1,6 @@
+<aura:component isTemplate="true" extends="aura:template">
+    <aura:set attribute="auraResetStyle" value=""/>
+    <aura:set attribute="auraPreInitBlock">
+        <auraStorage:init name="actions" persistent="false" secure="false" maxSize="1024" />
+    </aura:set>
+</aura:component>

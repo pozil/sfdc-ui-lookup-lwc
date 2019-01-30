@@ -1,0 +1,16 @@
+<template>
+    <lightning-card title="Sample Lookup (Lightning Web Component)">
+        <div class="slds-form slds-form_stacked slds-m-around_xx-large">
+
+            <lightning-input type="checkbox" label="Is mutli entry lookup"
+                checked={isMultiEntry} onchange={handleLookupTypeChange}></lightning-input>
+
+            <c-lookup selection={initialSelection} errors={errors}
+                onsearch={handleSearch} onselectionchange={handleSelectionChange}
+                label="Search" placeholder="Search Salesforce" is-multi-entry={isMultiEntry}>
+            </c-lookup>
+
+            <lightning-button variant="brand" label="Submit" onclick={handleSubmit}></lightning-button>
+        </div>
+    </lightning-card>
+</template>

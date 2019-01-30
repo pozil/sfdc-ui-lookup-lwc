@@ -108,11 +108,6 @@ That list contains a maximum of one elements if the lookup is a single entry loo
 | `search` | Event fired when a search needs to be performed on the server-side. | `{ searchTerm: String, selectedIds: Array }` |
 | `selectionchange` | Event fired when the selection of the lookup changes. This event holds no data, use the `getSelection` function to retrieve the current selection. | none |
 
-## Salesforce DX setup instructions
-Deploy the sample application with Salesforce DX by clicking on this button:
-
-[![Deploy](https://deploy-to-sfdx.com/dist/assets/images/DeployToSFDX.svg)](https://deploy-to-sfdx.com)
-
 
 ## Sample application
 The default installation installs the lookup component and a sample application available under this URL (replace the domain):<br/>

@@ -4,3 +4,4 @@
 **/jsconfig.json
 .sfdx
 .vscode
+node_modules

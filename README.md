@@ -18,6 +18,7 @@ The lookup component provides the following features:
 - single or multiple selection mode
 - client-side caching & request throttling
 - built-in server request rate limit mechanism
+- project is unit tested
 
 <p align="center">
     <img src="screenshots/selection-types.png" alt="Multiple or single entry lookup"/>

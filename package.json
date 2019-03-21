@@ -1,0 +1,21 @@
+{
+    "name": "sfdc-ui-lookup-lwc",
+    "private": true,
+    "version": "1.0.1",
+    "description": "Salesforce Lookup Component (Lightning Web Components version)",
+    "scripts": {
+        "lint": "./node_modules/.bin/eslint **/lwc/**",
+        "test": "npm run lint && npm run test:unit",
+        "test:unit": "lwc-jest"
+    },
+    "author": "Philippe Ozil",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pozil/sfdc-ui-lookup-lwc"
+    },
+    "devDependencies": {
+        "@salesforce/eslint-config-lwc": "^0.3.0",
+        "@salesforce/lwc-jest": "^0.4.12",
+        "eslint": "^5.15.3"
+    }
+}

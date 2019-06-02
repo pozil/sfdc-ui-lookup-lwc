@@ -35,7 +35,7 @@
 
                         <!-- Clear selection button icon for single entry lookups -->
                         <template if:false={isMultiEntry}>
-                            <button title="Remove selected option"
+                            <button title="Remove selected option" type="button"
                                 onclick={handleClearSelection} class={getClearSelectionButtonClass}>
                                 <lightning-icon icon-name="utility:close" size="x-small" alternative-text="Remove selected option"
                                     class="slds-button__icon"></lightning-icon>

@@ -11,6 +11,7 @@ export default class Lookup extends LightningElement {
     @api isMultiEntry = false;
     @api errors = [];
     @api scrollAfterNItems;
+    @api customKey;
 
     @track searchTerm = '';
     @track searchResults = [];
@@ -35,6 +36,11 @@ export default class Lookup extends LightningElement {
     @api
     getSelection() {
         return this.selection;
+    }
+
+    @api
+    getkey(){
+        return this.customKey;
     }
 
 

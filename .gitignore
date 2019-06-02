@@ -5,3 +5,4 @@
 .sfdx
 .vscode
 node_modules
+coverage

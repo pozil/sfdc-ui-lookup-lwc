@@ -80,8 +80,8 @@ The parent component that contains the lookup can handle the `selectionchange` e
 
 The `selectionchange` event handler can then get the current selection by calling the `getSelection` function:
 ```js
-handleSelectionChange() {
-    const selection = this.template.querySelector('c-lookup').getSelection();
+handleSelectionChange(event) {
+    const selection = event.target.getSelection();
     // TODO: do something with the lookup selection
 }
 ```

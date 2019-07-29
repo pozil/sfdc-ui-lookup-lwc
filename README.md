@@ -59,7 +59,7 @@ The `search` event handler calls the Apex `search` method and passes the results
 handleSearch(event) {
     apexSearch(event.detail)
         .then(results => {
-            this.template.querySelector('c-lookup').setSearchResults(results);
+            event.target.setSearchResults(results);
         })
         .catch(error => {
             // TODO: handle error

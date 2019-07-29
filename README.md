@@ -57,9 +57,10 @@ The parent component that contains the lookup must handle the `search` event:
 The `search` event handler calls the Apex `search` method and passes the results back to the lookup using the `setSearchResults` function:
 ```js
 handleSearch(event) {
+    const target = event.target;
     apexSearch(event.detail)
         .then(results => {
-            this.template.querySelector('c-lookup').setSearchResults(results);
+            target.setSearchResults(results);
         })
         .catch(error => {
             // TODO: handle error
@@ -80,8 +81,8 @@ The parent component that contains the lookup can handle the `selectionchange` e
 
 The `selectionchange` event handler can then get the current selection by calling the `getSelection` function:
 ```js
-handleSelectionChange() {
-    const selection = this.template.querySelector('c-lookup').getSelection();
+handleSelectionChange(event) {
+    const selection = event.target.getSelection();
     // TODO: do something with the lookup selection
 }
 ```

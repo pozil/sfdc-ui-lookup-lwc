@@ -57,9 +57,10 @@ The parent component that contains the lookup must handle the `search` event:
 The `search` event handler calls the Apex `search` method and passes the results back to the lookup using the `setSearchResults` function:
 ```js
 handleSearch(event) {
+    const target = event.target;
     apexSearch(event.detail)
         .then(results => {
-            event.target.setSearchResults(results);
+            target.setSearchResults(results);
         })
         .catch(error => {
             // TODO: handle error

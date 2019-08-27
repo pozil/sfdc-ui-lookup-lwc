@@ -15,7 +15,7 @@
     },
     "devDependencies": {
         "@salesforce/eslint-config-lwc": "^0.3.0",
-        "@salesforce/lwc-jest": "^0.4.12",
-        "eslint": "^5.15.3"
+        "@salesforce/sfdx-lwc-jest": "^0.5.4",
+        "eslint": "^5.16.0"
     }
 }

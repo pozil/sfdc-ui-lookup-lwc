@@ -43,6 +43,11 @@ export default class Lookup extends LightningElement {
         return this.customKey;
     }
 
+    @api
+    getSearchTerm() {
+        return this.searchTerm;
+    }
+
 
 // INTERNAL FUNCTIONS
 

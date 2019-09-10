@@ -106,6 +106,7 @@ That list contains a maximum of one elements if the lookup is a single entry loo
 | `setSearchResults(results)` | Passes a search results array back to the lookup so that they are displayed in the dropdown. |
 | `getSelection()` | Gets the current lookup selection. |
 | `getkey()` | Retrieves the value of the `customKey` attribute. |
+| `getSearchTerm()` | Gets the value of `searchTerm` attribute. |
 
 | Event  | Description | Data |
 | --- | --- | --- |

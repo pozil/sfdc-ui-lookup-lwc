@@ -28,7 +28,7 @@ describe('c-lookup event fires', () => {
 
     it('search event fires', () => {
         jest.useFakeTimers();
-        
+
         // Create element with mock search handler
         const mockSearchFn = jest.fn();
         const element = createElement('c-lookup', {
@@ -36,7 +36,7 @@ describe('c-lookup event fires', () => {
         });
         element.addEventListener('search', mockSearchFn);
         element.isMultiEntry = true;
-        element.selection = SAMPLE_SEARCH_ITEMS;   
+        element.selection = SAMPLE_SEARCH_ITEMS;
         document.body.appendChild(element);
 
         // Set search term and force input change

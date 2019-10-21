@@ -5,13 +5,18 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import apexSearch from '@salesforce/apex/SampleLookupController.search';
 
 export default class SampleLookupContainer extends LightningElement {
-    
     // Use alerts instead of toast to notify user
     @api notifyViaAlerts = false;
-    
+
     @track isMultiEntry = false;
     @track initialSelection = [
-        {id: 'na', sObjectType: 'na', icon: 'standard:lightning_component', title: 'Inital selection', subtitle:'Not a valid record'}
+        {
+            id: 'na',
+            sObjectType: 'na',
+            icon: 'standard:lightning_component',
+            title: 'Inital selection',
+            subtitle: 'Not a valid record'
+        }
     ];
     @track errors = [];
 
@@ -24,10 +29,16 @@ export default class SampleLookupContainer extends LightningElement {
     handleSearch(event) {
         apexSearch(event.detail)
             .then(results => {
-                this.template.querySelector('c-lookup').setSearchResults(results);
+                this.template
+                    .querySelector('c-lookup')
+                    .setSearchResults(results);
             })
             .catch(error => {
-                this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
+                this.notifyUser(
+                    'Lookup Error',
+                    'An error occured while searching with the lookup field.',
+                    'error'
+                );
                 // eslint-disable-next-line no-console
                 console.error('Lookup error', JSON.stringify(error));
                 this.errors = [error];
@@ -46,7 +57,9 @@ export default class SampleLookupContainer extends LightningElement {
     }
 
     checkForErrors() {
-        const selection = this.template.querySelector('c-lookup').getSelection();
+        const selection = this.template
+            .querySelector('c-lookup')
+            .getSelection();
         if (selection.length === 0) {
             this.errors = [
                 { message: 'You must make a selection before submitting!' },
@@ -58,7 +71,7 @@ export default class SampleLookupContainer extends LightningElement {
     }
 
     notifyUser(title, message, variant) {
-        if (this.notifyViaAlerts){
+        if (this.notifyViaAlerts) {
             // Notify via alert
             // eslint-disable-next-line no-alert
             alert(`${title}\n${message}`);

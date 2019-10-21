@@ -16,7 +16,6 @@ const SAMPLE_SEARCH_ITEMS = [
     }
 ];
 
-
 describe('c-lookup event handling', () => {
     afterEach(() => {
         // The jsdom instance is shared across test cases in a single file so reset the DOM
@@ -31,7 +30,7 @@ describe('c-lookup event handling', () => {
             is: Lookup
         });
         element.isMultiEntry = false;
-        element.selection = [ SAMPLE_SEARCH_ITEMS[0] ];
+        element.selection = [SAMPLE_SEARCH_ITEMS[0]];
         document.body.appendChild(element);
 
         // Clear selection

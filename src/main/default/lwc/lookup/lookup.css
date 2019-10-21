@@ -1,6 +1,6 @@
 .slds-combobox__input,
 .slds-combobox_container {
-    transition: border .1s linear, box-shadow .1 linear;
+    transition: border 0.1s linear, box-shadow 0.1 linear;
 }
 
 .slds-combobox__input {

@@ -1,7 +1,6 @@
 import { createElement } from 'lwc';
 import Lookup from 'c/lookup';
 
-
 describe('c-lookup rendering', () => {
     afterEach(() => {
         // The jsdom instance is shared across test cases in a single file so reset the DOM
@@ -50,7 +49,9 @@ describe('c-lookup rendering', () => {
         const clearSelButton = element.shadowRoot.querySelector('button');
         expect(clearSelButton.title).toBe('Remove selected option');
         // Verify result list is NOT rendered
-        const selList = element.shadowRoot.querySelectorAll('ul.slds-listbox_inline');
+        const selList = element.shadowRoot.querySelectorAll(
+            'ul.slds-listbox_inline'
+        );
         expect(selList.length).toBe(0);
     });
 
@@ -69,7 +70,9 @@ describe('c-lookup rendering', () => {
         const clearSelButton = element.shadowRoot.querySelectorAll('button');
         expect(clearSelButton.length).toBe(0);
         // Verify result list is rendered
-        const selList = element.shadowRoot.querySelectorAll('ul.slds-listbox_inline');
+        const selList = element.shadowRoot.querySelectorAll(
+            'ul.slds-listbox_inline'
+        );
         expect(selList.length).toBe(1);
     });
 
@@ -79,8 +82,8 @@ describe('c-lookup rendering', () => {
             is: Lookup
         });
         element.errors = [
-            {id: 'e1', message: 'Sample error 1'},
-            {id: 'e2', message: 'Sample error 2'}
+            { id: 'e1', message: 'Sample error 1' },
+            { id: 'e2', message: 'Sample error 2' }
         ];
         document.body.appendChild(element);
 

@@ -16,7 +16,6 @@ const SAMPLE_SEARCH_ITEMS = [
     }
 ];
 
-
 describe('c-lookup exposed functions', () => {
     afterEach(() => {
         // The jsdom instance is shared across test cases in a single file so reset the DOM

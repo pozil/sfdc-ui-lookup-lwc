@@ -1,21 +1,51 @@
 {
     "name": "sfdc-ui-lookup-lwc",
     "private": true,
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Salesforce Lookup Component (Lightning Web Components version)",
+    "engines": {
+        "node": ">= 10.13.0",
+        "npm": ">= 6.5.0"
+    },
     "scripts": {
         "lint": "./node_modules/.bin/eslint **/lwc/**",
         "test": "npm run lint && npm run test:unit",
-        "test:unit": "lwc-jest"
+        "test:unit": "lwc-jest",
+        "test:unit:watch": "lwc-jest --watch",
+        "test:unit:debug": "lwc-jest --debug",
+        "prettier": "prettier --write '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
+        "prettier:verify": "prettier --list-different '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}",
+        "postinstall": "node install-scripts/check-version.js"
     },
     "author": "Philippe Ozil",
+    "devDependencies": {
+        "@salesforce/eslint-config-lwc": "^0.4.0",
+        "@salesforce/sfdx-lwc-jest": "^0.6.1",
+        "eslint": "^5.16.0",
+        "husky": "^3.0.9",
+        "lint-staged": "^9.4.2",
+        "prettier": "^1.18.2",
+        "prettier-plugin-apex": "^1.0.0",
+        "semver": "^6.3.0"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}": [
+            "prettier --write"
+        ],
+        "**/lwc/**": [
+            "eslint"
+        ],
+        "*": [
+            "git add"
+        ]
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/pozil/sfdc-ui-lookup-lwc"
-    },
-    "devDependencies": {
-        "@salesforce/eslint-config-lwc": "^0.4.0",
-        "@salesforce/sfdx-lwc-jest": "^0.5.4",
-        "eslint": "^5.16.0"
     }
 }

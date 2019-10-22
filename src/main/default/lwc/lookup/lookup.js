@@ -25,8 +25,16 @@ export default class Lookup extends LightningElement {
     @api
     setSearchResults(results) {
         this.searchResults = results.map(result => {
+            // Clone and complete search result if icon is missing
             if (typeof result.icon === 'undefined') {
-                result.icon = 'standard:default';
+                const { id, sObjectType, title, subtitle } = result;
+                return {
+                    id,
+                    sObjectType,
+                    icon: 'standard:default',
+                    title,
+                    subtitle
+                };
             }
             return result;
         });

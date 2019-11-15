@@ -15,6 +15,7 @@ export default class Lookup extends LightningElement {
     @track searchTerm = '';
     @track searchResults = [];
     @track hasFocus = false;
+    @track loading = false;
 
     cleanSearchTerm;
     blurTimeout;
@@ -24,6 +25,9 @@ export default class Lookup extends LightningElement {
 
     @api
     setSearchResults(results) {
+        // Reset the spinner
+        this.loading = false;
+
         this.searchResults = results.map(result => {
             // Clone and complete search result if icon is missing
             if (typeof result.icon === 'undefined') {
@@ -81,6 +85,9 @@ export default class Lookup extends LightningElement {
         this.searchThrottlingTimeout = setTimeout(() => {
             // Send search event if search term is long enougth
             if (this.cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH) {
+                // Display spinner until results are returned
+                this.loading = true;
+
                 const searchEvent = new CustomEvent('search', {
                     detail: {
                         searchTerm: this.cleanSearchTerm,

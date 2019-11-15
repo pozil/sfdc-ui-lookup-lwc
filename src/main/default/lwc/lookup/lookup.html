@@ -38,21 +38,6 @@
                             oninput={handleInput}
                         />
 
-                        <!-- Spinner -->
-                        <div
-                            role="presentation"
-                            class="slds-hide slds-input__icon slds-input__icon_right slds-is-relative"
-                        >
-                            <div
-                                role="status"
-                                class="slds-spinner slds-spinner_xx-small slds-spinner_delayed"
-                            >
-                                <span class="slds-assistive-text">Loading</span>
-                                <div class="slds-spinner__dot-a"></div>
-                                <div class="slds-spinner__dot-b"></div>
-                            </div>
-                        </div>
-
                         <!-- Search icon -->
                         <lightning-icon
                             icon-name="utility:search"
@@ -87,6 +72,14 @@
                         onclick={handleComboboxClick}
                     >
                         <ul class={getListboxClass} role="presentation">
+                            <!-- Spinner to display when waiting for results of search -->
+                            <div if:true={loading}>
+                                <lightning-spinner
+                                    alternative-text="Loading"
+                                    size="small"
+                                ></lightning-spinner>
+                            </div>
+
                             <template
                                 for:each={searchResults}
                                 for:item="result"

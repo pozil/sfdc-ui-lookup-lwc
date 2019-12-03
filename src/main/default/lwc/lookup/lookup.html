@@ -32,6 +32,7 @@
                             id="combobox"
                             placeholder={placeholder}
                             value={getInputValue}
+                            title={getInputTitle}
                             readonly={isInputReadonly}
                             onfocus={handleFocus}
                             onblur={handleBlur}
@@ -141,6 +142,7 @@
                             >
                                 <lightning-pill
                                     label={item.title}
+                                    title={item.title}
                                     onremove={handleRemoveSelectedItem}
                                     name={item.id}
                                 >

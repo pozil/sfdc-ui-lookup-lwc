@@ -9,7 +9,7 @@ describe('c-lookup rendering', () => {
         }
     });
 
-    it('renders without any list items as default', () => {
+    it('shows no results by default', () => {
         // Create element
         const element = createElement('c-lookup', {
             is: Lookup
@@ -18,7 +18,8 @@ describe('c-lookup rendering', () => {
 
         // Query for rendered list items
         const listItemEls = element.shadowRoot.querySelectorAll('li');
-        expect(listItemEls.length).toBe(0);
+        expect(listItemEls.length).toBe(1);
+        expect(listItemEls[0].textContent).toBe('No results.');
     });
 
     it('renders label', () => {

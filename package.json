@@ -8,7 +8,7 @@
         "npm": ">= 6.5.0"
     },
     "scripts": {
-        "lint": "./node_modules/.bin/eslint **/lwc/**",
+        "lint": "eslint **/lwc/**",
         "test": "npm run lint && npm run test:unit",
         "test:unit": "sfdx-lwc-jest",
         "test:unit:watch": "sfdx-lwc-jest --watch",

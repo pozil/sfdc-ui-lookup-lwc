@@ -37,7 +37,7 @@ jobs:
 
             # ESlint
             - name: 'Linting'
-              run: npm run lint:lwc
+              run: npm run lint
 
             # Unit tests
             - name: 'Unit tests'

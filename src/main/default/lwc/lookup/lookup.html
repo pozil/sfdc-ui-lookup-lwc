@@ -81,9 +81,11 @@
                                 ></lightning-spinner>
                             </div>
 
+                            <!-- Display if results are present -->
                             <template
                                 for:each={searchResults}
                                 for:item="result"
+                                if:true={isExpanded}
                             >
                                 <li
                                     key={result.id}
@@ -112,6 +114,22 @@
                                                 class="slds-listbox__option-meta slds-listbox__option-meta_entity"
                                                 >{result.subtitle}</span
                                             >
+                                        </span>
+                                    </span>
+                                </li>
+                            </template>
+                            <!-- Display that there are no results -->
+                            <template if:false={isExpanded}>
+                                <li
+                                    role="presentation"
+                                    class="slds-listbox__item"
+                                >
+                                    <span
+                                        class="slds-media slds-listbox__option_entity"
+                                        role="option"
+                                    >
+                                        <span class="slds-media__body">
+                                            No results.
                                         </span>
                                     </span>
                                 </li>

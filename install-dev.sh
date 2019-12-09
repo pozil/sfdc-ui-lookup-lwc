@@ -22,7 +22,7 @@ sfdx force:source:push -u $ORG_ALIAS && \
 echo "" && \
 
 echo "Opening sample app..." && \
-sfdx force:org:open -u $ORG_ALIAS -p /c/SampleLookupApp.app
+sfdx force:org:open -p /c/SampleLookupApp.app -u $ORG_ALIAS
 EXIT_CODE="$?"
 
 # Check exit code

@@ -80,24 +80,6 @@ jobs:
               with:
                   args: 'force:source:push'
 
-            # Assign permissionset
-            - name: 'Assign permissionset to default user'
-              uses: forcedotcom/salesforcedx-actions@master
-              with:
-                  args: 'force:user:permset:assign -n ebikes'
-
-            # Import sample data
-            - name: 'Import sample data'
-              uses: forcedotcom/salesforcedx-actions@master
-              with:
-                  args: 'force:data:tree:import -p ./data/sample-data-plan.json'
-
-            # Deploy Community metadata
-            - name: 'Deploy Community metadata'
-              uses: forcedotcom/salesforcedx-actions@master
-              with:
-                  args: 'force:mdapi:deploy--deploydir mdapiDeploy/unpackaged -w 5'
-
             # Run Apex tests in scratch org
             - name: 'Run Apex tests'
               uses: forcedotcom/salesforcedx-actions@master

@@ -91,6 +91,7 @@ jobs:
 
             # Housekeeping
             - name: 'Delete scratch org'
+              if: always()
               uses: forcedotcom/salesforcedx-actions@master
               with:
                   args: 'force:org:delete -p -u scratch-org'

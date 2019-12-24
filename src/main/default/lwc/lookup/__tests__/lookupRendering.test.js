@@ -35,6 +35,19 @@ describe('c-lookup rendering', () => {
         expect(detailEl.textContent).toBe('Sample Lookup');
     });
 
+    it('does not render label if omitted', () => {
+        // Create element
+        const element = createElement('c-lookup', {
+            is: Lookup
+        });
+        element.label = '';
+        document.body.appendChild(element);
+
+        // Verify label doesn't exist
+        const detailEl = element.shadowRoot.querySelector('label');
+        expect(detailEl).toBe(null);
+    });
+
     it('renders single entry (no selection)', () => {
         // Create element
         const element = createElement('c-lookup', {

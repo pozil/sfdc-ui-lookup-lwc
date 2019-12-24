@@ -75,7 +75,7 @@ jobs:
             - name: 'Create scratch org'
               uses: forcedotcom/salesforcedx-actions@master
               with:
-                  args: 'force:org:create -f config/project-scratch-def.json -a scratch-org -s -d 1'
+                  args: 'force:org:create -f config/project-scratch-def.json -a lookup-ci -s -d 1'
 
             # Deploy source to scratch org
             - name: 'Push source to scratch org'
@@ -91,6 +91,7 @@ jobs:
 
             # Housekeeping
             - name: 'Delete scratch org'
+              if: always()
               uses: forcedotcom/salesforcedx-actions@master
               with:
-                  args: 'force:org:delete -p -u scratch-org'
+                  args: 'force:org:delete -p -u lookup-ci'

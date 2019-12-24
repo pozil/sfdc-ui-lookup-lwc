@@ -1,6 +1,21 @@
 import { createElement } from 'lwc';
 import Lookup from 'c/lookup';
 
+const SAMPLE_SELECTION_ITEMS = [
+    {
+        id: 'id1',
+        icon: 'standard:default',
+        title: 'Sample item 1',
+        subtitle: 'sub1'
+    },
+    {
+        id: 'id2',
+        icon: 'standard:default',
+        title: 'Sample item 2',
+        subtitle: 'sub2'
+    }
+];
+
 describe('c-lookup rendering', () => {
     afterEach(() => {
         // The jsdom instance is shared across test cases in a single file so reset the DOM
@@ -88,6 +103,37 @@ describe('c-lookup rendering', () => {
             'ul.slds-listbox_inline'
         );
         expect(selList.length).toBe(1);
+    });
+
+    it('renders title on selection in single-select', () => {
+        // Create element
+        const element = createElement('c-lookup', {
+            is: Lookup
+        });
+        element.isMultiEntry = false;
+        element.selection = [SAMPLE_SELECTION_ITEMS[0]];
+        document.body.appendChild(element);
+
+        const inputBox = element.shadowRoot.querySelector('input');
+        expect(inputBox.title).toBe(SAMPLE_SELECTION_ITEMS[0].title);
+    });
+
+    it('renders title on selection in multi-select', () => {
+        // Create element
+        const element = createElement('c-lookup', {
+            is: Lookup
+        });
+        element.isMultiEntry = true;
+        element.selection = SAMPLE_SELECTION_ITEMS;
+        document.body.appendChild(element);
+
+        const inputBox = element.shadowRoot.querySelector('input');
+        expect(inputBox.title).toBe('');
+
+        const selPills = element.shadowRoot.querySelectorAll('lightning-pill');
+        expect(selPills.length).toBe(2);
+        expect(selPills[0].title).toBe(SAMPLE_SELECTION_ITEMS[0].title);
+        expect(selPills[1].title).toBe(SAMPLE_SELECTION_ITEMS[1].title);
     });
 
     it('renders errors', () => {

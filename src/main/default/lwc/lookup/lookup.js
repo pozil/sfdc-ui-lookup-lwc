@@ -275,6 +275,14 @@ export default class Lookup extends LightningElement {
         return this.hasSelection() ? this.selection[0].title : this.searchTerm;
     }
 
+    get getInputTitle() {
+        if (this.isMultiEntry) {
+            return '';
+        }
+
+        return this.hasSelection() ? this.selection[0].title : '';
+    }
+
     get getListboxClass() {
         return (
             'slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid ' +

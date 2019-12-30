@@ -1,6 +1,6 @@
 # Salesforce Lookup Component (Lightning Web Component version)
 
-[![Github Workflow](<https://github.com/pozil/sfdc-ui-lookup-lwc/workflows/Salesforce%20DX%20CI%20(scratch%20org%20only)/badge.svg?branch=master>)](https://github.com/pozil/sfdc-ui-lookup-lwc/actions)
+[![Github Workflow](https://github.com/pozil/sfdc-ui-lookup-lwc/workflows/CI/badge.svg?branch=master)](https://github.com/pozil/sfdc-ui-lookup-lwc/actions)
 
 Aura version is available [here](https://github.com/pozil/sfdc-ui-lookup).
 

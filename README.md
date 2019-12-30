@@ -2,7 +2,7 @@
 
 [![Github Workflow](https://github.com/pozil/sfdc-ui-lookup-lwc/workflows/CI/badge.svg?branch=master)](https://github.com/pozil/sfdc-ui-lookup-lwc/actions)
 
-Aura version is available [here](https://github.com/pozil/sfdc-ui-lookup).
+Aura version is available [here](https://github.com/pozil/sfdc-ui-lookup) (deprecated).
 
 <p align="center">
     <img src="screenshots/lookup-animation.gif" alt="Lookup animation"/>

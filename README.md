@@ -103,7 +103,7 @@ That list contains a maximum of one elements if the lookup is a single entry loo
 
 | Attribute           | Type    | Description                                                                                                                                                                      |
 | ------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `label`             | String  | Lookup label                                                                                                                                                                     |
+| `label`             | String  | Optional lookup label. Label is hidden if attribute is omitted.                                                                                                                  |
 | `selection`         | Array   | Lookup initial selection if any                                                                                                                                                  |
 | `placeholder`       | String  | Lookup placeholder                                                                                                                                                               |
 | `isMultiEntry`      | Boolean | Whether the lookup is single (default) or multi entry.                                                                                                                           |

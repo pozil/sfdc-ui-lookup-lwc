@@ -29,6 +29,27 @@ The lookup component provides the following features:
     <img src="screenshots/selection-types.png" alt="Multiple or single entry lookup"/>
 </p>
 
+## Installation
+
+The default installation installs the lookup component and a sample application available under this URL (replace the domain):<br/>
+`https://YOUR_DOMAIN.lightning.force.com/c/SampleLookupApp.app`
+
+If you wish to install the project without the sample application, edit `sfdx-project.json` and remove the `src-sample` path.
+
+Install the sample app by running this script:
+
+**MacOS or Linux**
+
+```
+./install-dev.sh
+```
+
+**Windows**
+
+```
+install-dev.bat
+```
+
 ## Documentation
 
 Follow these steps in order to use the lookup component:
@@ -121,10 +142,3 @@ That list contains a maximum of one elements if the lookup is a single entry loo
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
 | `search`          | Event fired when a search needs to be performed on the server-side.                                                                                | `{ searchTerm: String, selectedIds: Array }` |
 | `selectionchange` | Event fired when the selection of the lookup changes. This event holds no data, use the `getSelection` function to retrieve the current selection. | none                                         |
-
-## Sample application
-
-The default installation installs the lookup component and a sample application available under this URL (replace the domain):<br/>
-https://<b>&lt;YOUR_DOMAIN&gt;</b>.lightning.force.com/c/SampleLookupApp.app
-
-If you wish to install the project without the sample application, edit `sfdx-project.json` and remove the `src-sample` path.

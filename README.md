@@ -122,23 +122,23 @@ That list contains a maximum of one elements if the lookup is a single entry loo
 
 ### Reference
 
-| Attribute           | Type    | Description                                                                                                                                                                      |
-| ------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `label`             | String  | Optional lookup label. Label is hidden if attribute is omitted.                                                                                                                  |
-| `selection`         | Array   | Lookup initial selection if any                                                                                                                                                  |
-| `placeholder`       | String  | Lookup placeholder                                                                                                                                                               |
-| `isMultiEntry`      | Boolean | Whether the lookup is single (default) or multi entry.                                                                                                                           |
-| `errors`            | Array   | List of errors that are displayed under the lookup.                                                                                                                              |
-| `scrollAfterNItems` | Number  | A null or integer value used to force overflow scroll on the result listbox after N number of items. Valid values are null, 5, 7, or 10. Use null to disable overflow scrolling. |
-| `customKey`         | String  | Custom key that can be used to identify this lookup when placed in a collection of similar components.                                                                           |
+| Attribute           | Type                                    | Description                                                                                                                                                                      |
+| ------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`             | `String`                                | Optional lookup label. Label is hidden if attribute is omitted.                                                                                                                  |
+| `selection`         | `[ LookupSearchResult ]`                | Lookup initial selection if any..                                                                                                                                                |
+| `placeholder`       | `String`                                | Lookup placeholder text                                                                                                                                                          |
+| `isMultiEntry`      | `Boolean`                               | Whether the lookup is single (default) or multi entry.                                                                                                                           |
+| `errors`            | `[{ "id": String, "message": String }]` | List of errors that are displayed under the lookup.                                                                                                                              |
+| `scrollAfterNItems` | `Number`                                | A null or integer value used to force overflow scroll on the result listbox after N number of items. Valid values are null, 5, 7, or 10. Use null to disable overflow scrolling. |
+| `customKey`         | `String`                                | Custom key that can be used to identify this lookup when placed in a collection of similar components.                                                                           |
 
-| Function                    | Description                                                                                  |
-| --------------------------- | -------------------------------------------------------------------------------------------- |
-| `setSearchResults(results)` | Passes a search results array back to the lookup so that they are displayed in the dropdown. |
-| `getSelection()`            | Gets the current lookup selection.                                                           |
-| `getkey()`                  | Retrieves the value of the `customKey` attribute.                                            |
+| Function                    | Description                                                                                                                                     |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `setSearchResults(results)` | Passes a search results array back to the lookup so that they are displayed in the dropdown where`results` is an array of `LookupSearchResult`. |
+| `getSelection()`            | Gets the current lookup selection as an array of `LookupSearchResult`.                                                                          |
+| `getkey()`                  | Retrieves the value of the `customKey` attribute.                                                                                               |
 
-| Event             | Description                                                                                                                                        | Data                                         |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `search`          | Event fired when a search needs to be performed on the server-side.                                                                                | `{ searchTerm: String, selectedIds: Array }` |
-| `selectionchange` | Event fired when the selection of the lookup changes. This event holds no data, use the `getSelection` function to retrieve the current selection. | none                                         |
+| Event             | Description                                                                                                                                        | Data                                              |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `search`          | Event fired when a search needs to be performed on the server-side.                                                                                | `{ searchTerm: String, selectedIds: [ String ] }` |
+| `selectionchange` | Event fired when the selection of the lookup changes. This event holds no data, use the `getSelection` function to retrieve the current selection. | none                                              |

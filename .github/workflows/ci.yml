@@ -60,7 +60,7 @@ jobs:
 
             # Checkout the code in the pull request
             - name: 'Checkout source code'
-              uses: actions/checkout@v1
+              uses: actions/checkout@v2
 
             # Store secret for dev hub
             - name: 'Populate auth file with DEVHUB_SFDX_URL secret'

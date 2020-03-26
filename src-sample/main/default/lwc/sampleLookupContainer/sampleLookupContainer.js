@@ -28,17 +28,11 @@ export default class SampleLookupContainer extends LightningElement {
 
     handleSearch(event) {
         apexSearch(event.detail)
-            .then(results => {
-                this.template
-                    .querySelector('c-lookup')
-                    .setSearchResults(results);
+            .then((results) => {
+                this.template.querySelector('c-lookup').setSearchResults(results);
             })
-            .catch(error => {
-                this.notifyUser(
-                    'Lookup Error',
-                    'An error occured while searching with the lookup field.',
-                    'error'
-                );
+            .catch((error) => {
+                this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
                 // eslint-disable-next-line no-console
                 console.error('Lookup error', JSON.stringify(error));
                 this.errors = [error];
@@ -57,9 +51,7 @@ export default class SampleLookupContainer extends LightningElement {
     }
 
     checkForErrors() {
-        const selection = this.template
-            .querySelector('c-lookup')
-            .getSelection();
+        const selection = this.template.querySelector('c-lookup').getSelection();
         if (selection.length === 0) {
             this.errors = [
                 { message: 'You must make a selection before submitting!' },

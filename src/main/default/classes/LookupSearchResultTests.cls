@@ -43,13 +43,7 @@ public class LookupSearchResultTests {
     @isTest
     static void getters_should_work() {
         // For the sake of code coverage
-        LookupSearchResult r = new LookupSearchResult(
-            '0010R00000yvEyRQAU',
-            'type',
-            'icon',
-            'title',
-            'subtitle'
-        );
+        LookupSearchResult r = new LookupSearchResult('0010R00000yvEyRQAU', 'type', 'icon', 'title', 'subtitle');
 
         System.assertEquals('0010R00000yvEyRQAU', r.getId());
         System.assertEquals('type', r.getSObjectType());

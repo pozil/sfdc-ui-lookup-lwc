@@ -9,13 +9,7 @@ public class LookupSearchResult implements Comparable {
     private String title;
     private String subtitle;
 
-    public LookupSearchResult(
-        Id id,
-        String sObjectType,
-        String icon,
-        String title,
-        String subtitle
-    ) {
+    public LookupSearchResult(Id id, String sObjectType, String icon, String title, String subtitle) {
         this.id = id;
         this.sObjectType = sObjectType;
         this.icon = icon;

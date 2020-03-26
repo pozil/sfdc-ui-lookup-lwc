@@ -78,9 +78,7 @@ describe('c-lookup rendering', () => {
         const clearSelButton = element.shadowRoot.querySelector('button');
         expect(clearSelButton.title).toBe('Remove selected option');
         // Verify result list is NOT rendered
-        const selList = element.shadowRoot.querySelectorAll(
-            'ul.slds-listbox_inline'
-        );
+        const selList = element.shadowRoot.querySelectorAll('ul.slds-listbox_inline');
         expect(selList.length).toBe(0);
     });
 
@@ -99,9 +97,7 @@ describe('c-lookup rendering', () => {
         const clearSelButton = element.shadowRoot.querySelectorAll('button');
         expect(clearSelButton.length).toBe(0);
         // Verify result list is rendered
-        const selList = element.shadowRoot.querySelectorAll(
-            'ul.slds-listbox_inline'
-        );
+        const selList = element.shadowRoot.querySelectorAll('ul.slds-listbox_inline');
         expect(selList.length).toBe(1);
     });
 

@@ -10,10 +10,7 @@ public class SampleLookupControllerTest {
         Test.setFixedSearchResults(fixedResults);
         List<String> selectedIds = new List<String>();
 
-        List<LookupSearchResult> results = SampleLookupController.search(
-            'Acc',
-            selectedIds
-        );
+        List<LookupSearchResult> results = SampleLookupController.search('Acc', selectedIds);
 
         System.assertEquals(2, results.size());
         System.assertEquals(account.Id, results.get(0).getId());
@@ -31,10 +28,7 @@ public class SampleLookupControllerTest {
         List<String> selectedIds = new List<String>();
         selectedIds.add(account2.Id);
 
-        List<LookupSearchResult> results = SampleLookupController.search(
-            'Acc',
-            selectedIds
-        );
+        List<LookupSearchResult> results = SampleLookupController.search('Acc', selectedIds);
 
         System.assertEquals(1, results.size());
         System.assertEquals(account1.Id, results.get(0).getId());
@@ -47,11 +41,7 @@ public class SampleLookupControllerTest {
     }
 
     private static Opportunity createOpportunity(String name) {
-        Opportunity oppty = new Opportunity(
-            Name = name,
-            StageName = 'open',
-            CloseDate = Date.today()
-        );
+        Opportunity oppty = new Opportunity(Name = name, StageName = 'open', CloseDate = Date.today());
         insert oppty;
         return oppty;
     }

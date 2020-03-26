@@ -1,9 +1,12 @@
-@isTest
+@isTest(isParallel=true)
 public class SampleLookupControllerTest {
-    static testMethod void search_should_return_Account() {
-        Id[] fixedResults = new List<Id>(1);
-        Account account = createTestAccount('Account');
+    @isTest
+    static void search_should_return_Account_and_Opportunity() {
+        List<Id> fixedResults = new List<Id>(2);
+        Account account = createAccount('Account');
         fixedResults.add(account.Id);
+        Opportunity oppty = createOpportunity('Oppty');
+        fixedResults.add(oppty.Id);
         Test.setFixedSearchResults(fixedResults);
         List<String> selectedIds = new List<String>();
 
@@ -12,15 +15,17 @@ public class SampleLookupControllerTest {
             selectedIds
         );
 
-        System.assertEquals(1, results.size());
+        System.assertEquals(2, results.size());
         System.assertEquals(account.Id, results.get(0).getId());
+        System.assertEquals(oppty.Id, results.get(1).getId());
     }
 
-    static testMethod void search_should_not_return_selected_item() {
-        Id[] fixedResults = new List<Id>(1);
-        Account account1 = createTestAccount('Account1');
+    @isTest
+    static void search_should_not_return_selected_item() {
+        List<Id> fixedResults = new List<Id>(2);
+        Account account1 = createAccount('Account1');
         fixedResults.add(account1.Id);
-        Account account2 = createTestAccount('Account2');
+        Account account2 = createAccount('Account2');
         fixedResults.add(account2.Id);
         Test.setFixedSearchResults(fixedResults);
         List<String> selectedIds = new List<String>();
@@ -35,9 +40,19 @@ public class SampleLookupControllerTest {
         System.assertEquals(account1.Id, results.get(0).getId());
     }
 
-    private static Account createTestAccount(String name) {
+    private static Account createAccount(String name) {
         Account account = new Account(Name = name);
         insert account;
         return account;
+    }
+
+    private static Opportunity createOpportunity(String name) {
+        Opportunity oppty = new Opportunity(
+            Name = name,
+            StageName = 'open',
+            CloseDate = Date.today()
+        );
+        insert oppty;
+        return oppty;
     }
 }

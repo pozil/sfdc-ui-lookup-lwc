@@ -24,7 +24,7 @@ public with sharing class SampleLookupController {
 
         // Extract Accounts & convert them into LookupSearchResult
         String accountIcon = 'standard:account';
-        Account[] accounts = ((List<Account>) searchResults[0]);
+        Account[] accounts = (List<Account>) searchResults[0];
         for (Account account : accounts) {
             results.add(
                 new LookupSearchResult(
@@ -39,7 +39,7 @@ public with sharing class SampleLookupController {
 
         // Extract Opportunities & convert them into LookupSearchResult
         String opptyIcon = 'standard:opportunity';
-        Opportunity[] opptys = ((List<Opportunity>) searchResults[1]);
+        Opportunity[] opptys = (List<Opportunity>) searchResults[1];
         for (Opportunity oppty : opptys) {
             results.add(
                 new LookupSearchResult(
@@ -51,6 +51,9 @@ public with sharing class SampleLookupController {
                 )
             );
         }
+
+        // Optionnaly sort all results on title
+        results.sort();
 
         return results;
     }

@@ -8,6 +8,7 @@ export default class SampleLookupContainer extends LightningElement {
     // Use alerts instead of toast to notify user
     @api notifyViaAlerts = false;
 
+    @api isRequired = false;
     @track isMultiEntry = false;
     @track initialSelection = [
         {

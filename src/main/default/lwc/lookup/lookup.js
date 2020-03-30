@@ -10,6 +10,7 @@ export default class Lookup extends LightningElement {
     @api errors = [];
     @api scrollAfterNItems;
     @api customKey;
+    @api isRequired = false;
 
     @track searchTerm = '';
     @track searchResults = [];
@@ -216,7 +217,7 @@ export default class Lookup extends LightningElement {
     get getInputClass() {
         let css =
             'slds-input slds-combobox__input has-custom-height ' +
-            (this.errors.length === 0 ? '' : 'has-custom-error ');
+            ((this.errors.length !== 0 || this.isRequired && !this.hasSelection()) ? 'has-custom-error ' : '');
         if (!this.isMultiEntry) {
             css += 'slds-combobox__input-value ' + (this.hasSelection() ? 'has-custom-border' : '');
         }

@@ -1,33 +1,70 @@
-import { LightningElement, track, api } from 'lwc';
+import { LightningElement, track, api, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { getRecord } from 'lightning/uiRecordApi';
 
 /** SampleLookupController.search() Apex method */
 import apexSearch from '@salesforce/apex/SampleLookupController.search';
+import genericSelector from '@salesforce/apex/SampleLookupController.genericSelector';
 
 export default class SampleLookupContainer extends LightningElement {
     // Use alerts instead of toast to notify user
     @api notifyViaAlerts = false;
 
     @track isMultiEntry = false;
-    @track initialSelection = [
-        {
-            id: 'na',
-            sObjectType: 'na',
-            icon: 'standard:lightning_component',
-            title: 'Inital selection',
-            subtitle: 'Not a valid record'
-        }
-    ];
+    initialIsSent = false;
     @track errors = [];
 
+    @api selectorMethod = 'genericSelector';
+    @api assignmentVariableName;
+    @api queryCondition;
+    @api selectedRecordId;
+    @api label;
+    @api iconName;
+    @api objectApiName;
+    @api titleFieldApiName = 'Name';
+    @api additionalField;
+
+    // Each imported selector method should be declared in context
+    context = {
+        'genericSelector': genericSelector,
+        'apexSearch': apexSearch
+        //new selectors which can be used by providing selectorMethod property
+    };
+    initialLookup = [];
+
+    @wire(getRecord, {
+        recordId: '$selectedRecordId',
+        fields: '$calculatedApiNames'
+    }) wiredInitialRecord({ error, data }) {
+        if (data && !this.initialIsSent) {
+            const initialLookup = [
+                {
+                    id: this.selectedRecordId,
+                    sObjectType: this.objectApiName,
+                    icon: this.iconName ? this.iconName : 'standard:' + this.objectApiName.toLowerCase(),
+                    title: data.fields[this.titleFieldApiName].value,
+                }
+            ];
+            this.template.querySelector("c-custom-lwc-lookup").initSelection(initialLookup);
+            this.initialIsSent = true;
+        }
+    };
+
+    get calculatedApiNames() {
+        if (this.objectApiName && this.titleFieldApiName) {
+            return [{ fieldApiName: this.titleFieldApiName, objectApiName: this.objectApiName }];
+        }
+        return undefined;
+    }
+
     handleLookupTypeChange(event) {
-        this.initialSelection = [];
         this.errors = [];
         this.isMultiEntry = event.target.checked;
     }
 
     handleSearch(event) {
-        apexSearch(event.detail)
+        const params = this.populateExtraProperties(event);
+        this.context[this.selectorMethod](params)
             .then((results) => {
                 this.template.querySelector('c-lookup').setSearchResults(results);
             })
@@ -39,8 +76,33 @@ export default class SampleLookupContainer extends LightningElement {
             });
     }
 
+    populateExtraProperties(event) {
+        event.detail.queryCondition = this.queryCondition ? this.queryCondition : null;
+        event.detail.configuration = JSON.stringify({
+            sObjectType: this.objectApiName ? this.objectApiName : null,
+            icon: this.iconName ? this.iconName : null,
+            title: this.titleFieldApiName ? this.titleFieldApiName : null,
+            subtitle: this.additionalField ? this.additionalField : null
+        });
+        return event.detail;
+    }
+
     handleSelectionChange() {
         this.errors = [];
+        this.selectedRecordId = event.target.getSelection() &&
+            event.target.getSelection()[0] &&
+            event.target.getSelection()[0].id ?
+            event.target.getSelection()[0].id : this.selectedRecordId;
+        const selectedLookup = new CustomEvent("lookuprecordselected", {
+            detail: {
+                variableName: this.assignmentVariableName,
+                value: event.target.getSelection() &&
+                    event.target.getSelection()[0] &&
+                    event.target.getSelection()[0].id ?
+                    event.target.getSelection()[0].id : null
+            }
+        });
+        this.dispatchEvent(selectedLookup);
     }
 
     handleSubmit() {

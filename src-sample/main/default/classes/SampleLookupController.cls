@@ -54,4 +54,38 @@ public with sharing class SampleLookupController {
 
         return results;
     }
+
+    @AuraEnabled(Cacheable=true)
+    public static List<LookupSearchResult> genericSelector(
+        String searchTerm,
+        List<String> selectedIds,
+        String queryCondition,
+        String configuration
+    ) { 
+        LookupSearchResult config = (LookupSearchResult) JSON.deserialize(configuration, LookupSearchResult.class);
+        List<LookupSearchResult> results = new List<LookupSearchResult>();
+        String query = 'SELECT Id, ' + config.getTitle() +
+            (String.isNotBlank(config.getSubtitle()) ? ', ' + config.getSubtitle() : '') +
+            ' FROM ' + config.getSObjectType() + ' WHERE ' +
+            (String.isNotBlank(searchTerm) ? '(' + config.getTitle() + ' LIKE \'%' + String.escapeSingleQuotes(searchTerm) + '%\'' +
+                (String.isNotBlank(searchTerm) && String.isNotBlank(config.getSubtitle()) ? ' OR ' +
+                config.getSubtitle() + ' LIKE \'%' + String.escapeSingleQuotes(searchTerm) + '%\'' : '')  +
+                ') AND' : '') +
+            ' Id NOT IN :selectedIds' +
+            (String.isNotBlank(queryCondition) ? ' AND ' + queryCondition : '') +
+            ' LIMIT ' + MAX_RESULTS;
+        for (SObject record : Database.query(query)) {
+            results.add(
+                new LookupSearchResult(
+                    (ID) record.get('Id'),
+                    config.getSObjectType(),
+                    String.isNotBlank(config.getIcon()) ?
+                        config.getIcon() : 'standard:' + config.getSObjectType().toLowerCase(),
+                    (String) record.get(config.getTitle()),
+                    String.isNotBlank(config.getSubtitle()) ? (String) record.get(config.getSubtitle()) : null
+                )
+            );
+        }
+        return results;
+    }
 }

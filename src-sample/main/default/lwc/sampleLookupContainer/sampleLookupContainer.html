@@ -9,14 +9,23 @@
             ></lightning-input>
 
             <c-lookup
-                selection={initialSelection}
+                object-api-name="Account"
                 errors={errors}
                 onsearch={handleSearch}
                 onselectionchange={handleSelectionChange}
-                label="Search"
+                label="Person Account"
                 placeholder="Search Salesforce"
                 is-multi-entry={isMultiEntry}
             >
+            <!-- additional properties: -->
+            <!-- additional-field="PersonEmail" extra field can be provided, to be queried by -->
+            <!-- icon-name="standard:account" -->
+            <!-- selector-method="apexSearch" -->
+            <!-- title-field-api-aame="Subject" by default Name, fieldApi name to filter by -->
+            <!-- selected-record-id="{!v.wrapper.Company__c}" -->
+            <!-- assignmentVariableName="wrapperList.Company__c" -->
+            <!-- queryCondition="{!'Status__c = \'Active\'}" -->
+            <!-- onlookuprecordselected="{!c.handleLokoopIdAssign}" -->
             </c-lookup>
 
             <lightning-button variant="brand" label="Submit" onclick={handleSubmit}></lightning-button>

@@ -45,7 +45,7 @@ export default class SampleLookupContainer extends LightningElement {
                     title: data.fields[this.titleFieldApiName].value,
                 }
             ];
-            this.template.querySelector("c-custom-lwc-lookup").initSelection(initialLookup);
+            this.template.querySelector("c-lookup").initSelection(initialLookup);
             this.initialIsSent = true;
         }
     };

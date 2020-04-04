@@ -5,6 +5,7 @@ const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform se
 
 export default class Lookup extends LightningElement {
     @api label;
+    @api required;
     @api placeholder = '';
     @api isMultiEntry = false;
     @api errors = [];

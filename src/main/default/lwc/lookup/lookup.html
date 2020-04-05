@@ -103,8 +103,11 @@
                             <template if:false={isExpanded}>
                                 <li role="presentation" class="slds-listbox__item">
                                     <span class="slds-media slds-listbox__option_entity" role="option">
-                                        <span class="slds-media__body">
+                                        <span if:false={loading} class="slds-media__body">
                                             No results.
+                                        </span>
+                                        <span if:true={loading} class="slds-media__body">
+                                            Loading...
                                         </span>
                                     </span>
                                 </li>

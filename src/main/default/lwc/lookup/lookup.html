@@ -89,12 +89,14 @@
                                             ></lightning-icon>
                                         </span>
                                         <span class="slds-media__body">
-                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity"
-                                                >{result.title}</span
-                                            >
-                                            <span class="slds-listbox__option-meta slds-listbox__option-meta_entity"
-                                                >{result.subtitle}</span
-                                            >
+                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity">
+                                                <lightning-formatted-rich-text value={result.titleFormatted}>
+                                                </lightning-formatted-rich-text>
+                                            </span>
+                                            <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
+                                                <lightning-formatted-rich-text value={result.subtitleFormatted}>
+                                                </lightning-formatted-rich-text>
+                                            </span>
                                         </span>
                                     </span>
                                 </li>

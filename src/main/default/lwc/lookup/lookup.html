@@ -119,7 +119,7 @@
             <template if:true={isMultiEntry}>
                 <div id="selection" role="listbox" aria-orientation="horizontal">
                     <ul
-                        class="slds-listbox slds-listbox_inline slds-p-top_xxx-small"
+                        class="slds-listbox slds-listbox_inline slds-var-p-top_xxx-small"
                         role="group"
                         aria-label="Selected Options:"
                     >
@@ -142,7 +142,7 @@
 
             <!-- Errors start -->
             <template for:each={errors} for:item="error">
-                <label key={error.id} role="alert" class="slds-form-element__label slds-m-top_xx-small form-error"
+                <label key={error.id} role="alert" class="slds-form-element__label slds-var-m-top_xx-small form-error"
                     >{error.message}</label
                 >
             </template>

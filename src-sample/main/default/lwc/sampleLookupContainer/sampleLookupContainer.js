@@ -1,4 +1,4 @@
-import { LightningElement, track, api, wire } from 'lwc';
+import { LightningElement, api, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { getRecord } from 'lightning/uiRecordApi';
 
@@ -10,9 +10,9 @@ export default class SampleLookupContainer extends LightningElement {
     // Use alerts instead of toast to notify user
     @api notifyViaAlerts = false;
 
-    @track isMultiEntry = false;
+    isMultiEntry = false;
     initialIsSent = false;
-    @track errors = [];
+    errors = [];
 
     @api selectorMethod = 'genericSelector';
     @api assignmentVariableName;

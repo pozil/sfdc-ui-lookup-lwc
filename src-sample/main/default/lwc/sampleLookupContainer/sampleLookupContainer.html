@@ -1,6 +1,6 @@
 <template>
     <lightning-card title="Sample Lookup (Lightning Web Component)">
-        <div class="slds-form slds-form_stacked slds-m-around_xx-large">
+        <div class="slds-form slds-form_stacked slds-var-m-around_xx-large">
             <lightning-input
                 type="checkbox"
                 label="Is mutli entry lookup"
@@ -16,6 +16,7 @@
                 label="Person Account"
                 placeholder="Search Salesforce"
                 is-multi-entry={isMultiEntry}
+                required
             >
             <!-- additional properties: -->
             <!-- additional-field="PersonEmail" extra field can be provided, to be queried by -->

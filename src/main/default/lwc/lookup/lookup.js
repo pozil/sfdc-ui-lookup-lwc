@@ -215,9 +215,10 @@ export default class Lookup extends LightningElement {
     }
 
     get getInputClass() {
-        let css =
-            'slds-input slds-combobox__input has-custom-height ' +
-            (this.errors.length === 0 ? '' : 'has-custom-error ');
+        let css = 'slds-input slds-combobox__input has-custom-height ';
+        if (this.errors.length > 0 || (this.required && !this.hasSelection())) {
+            css += 'has-custom-error ';
+        }
         if (!this.isMultiEntry) {
             css += 'slds-combobox__input-value ' + (this.hasSelection() ? 'has-custom-border' : '');
         }

@@ -16,6 +16,7 @@ export default class Lookup extends LightningElement {
     searchResults = [];
     hasFocus = false;
     loading = false;
+    isDirty = false;
 
     cleanSearchTerm;
     blurTimeout;
@@ -142,6 +143,7 @@ export default class Lookup extends LightningElement {
         const newSelection = [...this.curSelection];
         newSelection.push(selectedItem);
         this.curSelection = newSelection;
+        this.isDirty = true;
 
         // Reset search
         this.searchTerm = '';
@@ -183,12 +185,14 @@ export default class Lookup extends LightningElement {
     handleRemoveSelectedItem(event) {
         const recordId = event.currentTarget.name;
         this.curSelection = this.curSelection.filter((item) => item.id !== recordId);
+        this.isDirty = true;
         // Notify parent components that selection has changed
         this.dispatchEvent(new CustomEvent('selectionchange'));
     }
 
     handleClearSelection() {
         this.curSelection = [];
+        this.isDirty = true;
         // Notify parent components that selection has changed
         this.dispatchEvent(new CustomEvent('selectionchange'));
     }
@@ -216,7 +220,7 @@ export default class Lookup extends LightningElement {
 
     get getInputClass() {
         let css = 'slds-input slds-combobox__input has-custom-height ';
-        if (this.errors.length > 0 || (this.required && !this.hasSelection())) {
+        if (this.errors.length > 0 || (this.isDirty && this.required && !this.hasSelection())) {
             css += 'has-custom-error ';
         }
         if (!this.isMultiEntry) {

@@ -1,4 +1,4 @@
-import { LightningElement, track, api } from 'lwc';
+import { LightningElement, api } from 'lwc';
 
 const MINIMAL_SEARCH_TERM_LENGTH = 2; // Min number of chars required to search
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
@@ -12,10 +12,10 @@ export default class Lookup extends LightningElement {
     @api scrollAfterNItems;
     @api customKey;
 
-    @track searchTerm = '';
-    @track searchResults = [];
-    @track hasFocus = false;
-    @track loading = false;
+    searchTerm = '';
+    searchResults = [];
+    hasFocus = false;
+    loading = false;
 
     cleanSearchTerm;
     blurTimeout;

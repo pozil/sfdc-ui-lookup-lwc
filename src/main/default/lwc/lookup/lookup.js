@@ -1,20 +1,22 @@
-import { LightningElement, track, api } from 'lwc';
+import { LightningElement, api } from 'lwc';
 
 const MINIMAL_SEARCH_TERM_LENGTH = 2; // Min number of chars required to search
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
 
 export default class Lookup extends LightningElement {
     @api label;
+    @api required;
     @api placeholder = '';
     @api isMultiEntry = false;
     @api errors = [];
     @api scrollAfterNItems;
     @api customKey;
 
-    @track searchTerm = '';
-    @track searchResults = [];
-    @track hasFocus = false;
-    @track loading = false;
+    searchTerm = '';
+    searchResults = [];
+    hasFocus = false;
+    loading = false;
+    isDirty = false;
 
     cleanSearchTerm;
     blurTimeout;
@@ -37,6 +39,15 @@ export default class Lookup extends LightningElement {
 
         this.searchResults = results.map((result) => {
             // Clone and complete search result if icon is missing
+            if (this.searchTerm.length > 0) {
+                const regex = new RegExp(this.searchTerm, 'gi');
+                result.titleFormatted = result.title
+                    ? result.title.replace(regex, '<b>' + this.searchTerm + '</b>')
+                    : result.title;
+                result.subtitleFormatted = result.subtitle
+                    ? result.subtitle.replace(regex, '<b>' + this.searchTerm + '</b>')
+                    : result.subtitle;
+            }
             if (typeof result.icon === 'undefined') {
                 const { id, sObjectType, title, subtitle } = result;
                 return {
@@ -141,6 +152,7 @@ export default class Lookup extends LightningElement {
         const newSelection = [...this.curSelection];
         newSelection.push(selectedItem);
         this.curSelection = newSelection;
+        this.isDirty = true;
 
         // Reset search
         this.searchTerm = '';
@@ -182,12 +194,14 @@ export default class Lookup extends LightningElement {
     handleRemoveSelectedItem(event) {
         const recordId = event.currentTarget.name;
         this.curSelection = this.curSelection.filter((item) => item.id !== recordId);
+        this.isDirty = true;
         // Notify parent components that selection has changed
         this.dispatchEvent(new CustomEvent('selectionchange'));
     }
 
     handleClearSelection() {
         this.curSelection = [];
+        this.isDirty = true;
         // Notify parent components that selection has changed
         this.dispatchEvent(new CustomEvent('selectionchange'));
     }
@@ -214,9 +228,10 @@ export default class Lookup extends LightningElement {
     }
 
     get getInputClass() {
-        let css =
-            'slds-input slds-combobox__input has-custom-height ' +
-            (this.errors.length === 0 ? '' : 'has-custom-error ');
+        let css = 'slds-input slds-combobox__input has-custom-height ';
+        if (this.errors.length > 0 || (this.isDirty && this.required && !this.hasSelection())) {
+            css += 'has-custom-error ';
+        }
         if (!this.isMultiEntry) {
             css += 'slds-combobox__input-value ' + (this.hasSelection() ? 'has-custom-border' : '');
         }

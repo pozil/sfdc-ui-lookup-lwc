@@ -1,6 +1,9 @@
 <template>
     <div class="slds-form-element">
-        <label if:true={label} class="slds-form-element__label" for="combobox">{label}</label>
+        <label if:true={label} class="slds-form-element__label" for="combobox">
+            <abbr if:true={required} title="required" class="slds-required">*</abbr>
+            {label}
+        </label>
         <div class="slds-form-element__control">
             <div class={getContainerClass}>
                 <div class={getDropdownClass} aria-expanded={isExpanded} aria-haspopup="listbox" role="combobox">
@@ -86,12 +89,14 @@
                                             ></lightning-icon>
                                         </span>
                                         <span class="slds-media__body">
-                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity"
-                                                >{result.title}</span
-                                            >
-                                            <span class="slds-listbox__option-meta slds-listbox__option-meta_entity"
-                                                >{result.subtitle}</span
-                                            >
+                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity">
+                                                <lightning-formatted-rich-text value={result.titleFormatted}>
+                                                </lightning-formatted-rich-text>
+                                            </span>
+                                            <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
+                                                <lightning-formatted-rich-text value={result.subtitleFormatted}>
+                                                </lightning-formatted-rich-text>
+                                            </span>
                                         </span>
                                     </span>
                                 </li>
@@ -100,8 +105,11 @@
                             <template if:false={isExpanded}>
                                 <li role="presentation" class="slds-listbox__item">
                                     <span class="slds-media slds-listbox__option_entity" role="option">
-                                        <span class="slds-media__body">
+                                        <span if:false={loading} class="slds-media__body">
                                             No results.
+                                        </span>
+                                        <span if:true={loading} class="slds-media__body">
+                                            Loading...
                                         </span>
                                     </span>
                                 </li>
@@ -116,7 +124,7 @@
             <template if:true={isMultiEntry}>
                 <div id="selection" role="listbox" aria-orientation="horizontal">
                     <ul
-                        class="slds-listbox slds-listbox_inline slds-p-top_xxx-small"
+                        class="slds-listbox slds-listbox_inline slds-var-p-top_xxx-small"
                         role="group"
                         aria-label="Selected Options:"
                     >
@@ -139,7 +147,7 @@
 
             <!-- Errors start -->
             <template for:each={errors} for:item="error">
-                <label key={error.id} role="alert" class="slds-form-element__label slds-m-top_xx-small form-error"
+                <label key={error.id} role="alert" class="slds-form-element__label slds-var-m-top_xx-small form-error"
                     >{error.message}</label
                 >
             </template>

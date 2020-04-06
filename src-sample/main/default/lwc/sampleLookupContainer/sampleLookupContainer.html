@@ -1,6 +1,6 @@
 <template>
     <lightning-card title="Sample Lookup (Lightning Web Component)">
-        <div class="slds-form slds-form_stacked slds-m-around_xx-large">
+        <div class="slds-form slds-form_stacked slds-var-m-around_xx-large">
             <lightning-input
                 type="checkbox"
                 label="Is mutli entry lookup"
@@ -16,6 +16,7 @@
                 label="Search"
                 placeholder="Search Salesforce"
                 is-multi-entry={isMultiEntry}
+                required
             >
             </c-lookup>
 

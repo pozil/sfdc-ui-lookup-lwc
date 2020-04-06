@@ -1,4 +1,4 @@
-import { LightningElement, track, api } from 'lwc';
+import { LightningElement, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 /** SampleLookupController.search() Apex method */
@@ -8,8 +8,8 @@ export default class SampleLookupContainer extends LightningElement {
     // Use alerts instead of toast to notify user
     @api notifyViaAlerts = false;
 
-    @track isMultiEntry = false;
-    @track initialSelection = [
+    isMultiEntry = false;
+    initialSelection = [
         {
             id: 'na',
             sObjectType: 'na',
@@ -18,7 +18,7 @@ export default class SampleLookupContainer extends LightningElement {
             subtitle: 'Not a valid record'
         }
     ];
-    @track errors = [];
+    errors = [];
 
     handleLookupTypeChange(event) {
         this.initialSelection = [];

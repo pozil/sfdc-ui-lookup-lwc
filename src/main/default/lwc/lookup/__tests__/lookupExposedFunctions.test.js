@@ -47,6 +47,7 @@ describe('c-lookup exposed functions', () => {
         // Query for rendered list items
         const listItemEls = element.shadowRoot.querySelectorAll('li');
         expect(listItemEls.length).toBe(2);
-        expect(listItemEls[0].textContent).toBe('Sample item 1sub1');
+        const resultItemEls = listItemEls[0].querySelectorAll('lightning-formatted-rich-text');
+        expect(resultItemEls.length).toBe(2);
     });
 });

@@ -297,7 +297,7 @@ export default class Lookup extends LightningElement {
         if (this.isMultiEntry) {
             return false;
         }
-        return this.hasSelection();
+        return this.hasSelection() || this.loading;
     }
 
     get isExpanded() {

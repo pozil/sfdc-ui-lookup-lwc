@@ -38,18 +38,20 @@ export default class Lookup extends LightningElement {
         this.loading = false;
 
         this.searchResults = results.map((result) => {
+            //since results are cached, clone result to modify
+            const resultClone = { ...result };
             // Clone and complete search result if icon is missing
             if (this.searchTerm.length > 0) {
                 const regex = new RegExp(this.searchTerm, 'gi');
-                result.titleFormatted = result.title
-                    ? result.title.replace(regex, '<b>' + this.searchTerm + '</b>')
-                    : result.title;
-                result.subtitleFormatted = result.subtitle
-                    ? result.subtitle.replace(regex, '<b>' + this.searchTerm + '</b>')
-                    : result.subtitle;
+                resultClone.titleFormatted = resultClone.title
+                    ? resultClone.title.replace(regex, '<b>' + this.searchTerm + '</b>')
+                    : resultClone.title;
+                resultClone.subtitleFormatted = resultClone.subtitle
+                    ? resultClone.subtitle.replace(regex, '<b>' + this.searchTerm + '</b>')
+                    : resultClone.subtitle;
             }
-            if (typeof result.icon === 'undefined') {
-                const { id, sObjectType, title, subtitle } = result;
+            if (typeof resultClone.icon === 'undefined') {
+                const { id, sObjectType, title, subtitle } = resultClone;
                 return {
                     id,
                     sObjectType,
@@ -58,7 +60,7 @@ export default class Lookup extends LightningElement {
                     subtitle
                 };
             }
-            return result;
+            return resultClone;
         });
     }
 

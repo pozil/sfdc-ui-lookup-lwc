@@ -2,19 +2,17 @@
 public class SampleLookupControllerTest {
     @isTest
     static void search_should_return_Account_and_Opportunity() {
-        List<Id> fixedResults = new List<Id>(2);
+        List<Id> fixedResults = new List<Id>(1);
         Account account = createAccount('Account');
         fixedResults.add(account.Id);
-        Opportunity oppty = createOpportunity('Oppty');
-        fixedResults.add(oppty.Id);
         Test.setFixedSearchResults(fixedResults);
         List<String> selectedIds = new List<String>();
+        LookupSearchResult lsr = new LookupSearchResult(null, 'Account', null, 'Name', null);
 
-        List<LookupSearchResult> results = SampleLookupController.search('Acc', selectedIds);
+        List<LookupSearchResult> results = SampleLookupController.search('Acc', selectedIds, '', JSON.serialize(lsr));
 
-        System.assertEquals(2, results.size());
+        System.assertEquals(1, results.size());
         System.assertEquals(account.Id, results.get(0).getId());
-        System.assertEquals(oppty.Id, results.get(1).getId());
     }
 
     @isTest
@@ -27,8 +25,9 @@ public class SampleLookupControllerTest {
         Test.setFixedSearchResults(fixedResults);
         List<String> selectedIds = new List<String>();
         selectedIds.add(account2.Id);
+        LookupSearchResult lsr = new LookupSearchResult(null, 'Account', null, 'Name', null);
 
-        List<LookupSearchResult> results = SampleLookupController.search('Acc', selectedIds);
+        List<LookupSearchResult> results = SampleLookupController.search('Acc', selectedIds, '', JSON.serialize(lsr));
 
         System.assertEquals(1, results.size());
         System.assertEquals(account1.Id, results.get(0).getId());

@@ -8,6 +8,24 @@ export default class SampleLookupContainer extends LightningElement {
     // Use alerts instead of toast to notify user
     @api notifyViaAlerts = false;
 
+    objectApiName;
+    iconName;
+    titleFieldApiName = 'Name';
+    subtitleFieldApiName;
+    queryCondition;
+
+    handleObjectApiNameChange(event) {
+        this.objectApiName = event.target.value;
+    }
+
+    handleSubtitleFieldApiNameChange(event) {
+        this.subtitleFieldApiName = event.target.value;
+    }
+
+    handleQueryConditionChange(event) {
+        this.queryCondition = event.target.value;
+    }
+
     isMultiEntry = false;
     initialSelection = [
         {
@@ -27,7 +45,8 @@ export default class SampleLookupContainer extends LightningElement {
     }
 
     handleSearch(event) {
-        apexSearch(event.detail)
+        const params = this.populateExtraProperties(event);
+        apexSearch(params)
             .then((results) => {
                 this.template.querySelector('c-lookup').setSearchResults(results);
             })
@@ -41,6 +60,17 @@ export default class SampleLookupContainer extends LightningElement {
 
     handleSelectionChange() {
         this.errors = [];
+    }
+
+    populateExtraProperties(event) {
+        event.detail.queryCondition = this.queryCondition ? this.queryCondition : null;
+        event.detail.configuration = JSON.stringify({
+            sObjectType: this.objectApiName ? this.objectApiName : null,
+            icon: this.iconName ? this.iconName : null,
+            title: this.titleFieldApiName ? this.titleFieldApiName : null,
+            subtitle: this.subtitleFieldApiName ? this.subtitleFieldApiName : null
+        });
+        return event.detail;
     }
 
     handleSubmit() {

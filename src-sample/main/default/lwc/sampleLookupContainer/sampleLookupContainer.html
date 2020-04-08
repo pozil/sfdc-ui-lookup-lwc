@@ -7,6 +7,21 @@
                 checked={isMultiEntry}
                 onchange={handleLookupTypeChange}
             ></lightning-input>
+            <lightning-input
+                label="Object Api Name"
+                value={objectApiName}
+                onchange={handleObjectApiNameChange}
+            ></lightning-input>
+            <lightning-input
+                label="Subtitle field Api Name"
+                value={subtitleFieldApiName}
+                onchange={handleSubtitleFieldApiNameChange}
+            ></lightning-input>
+            <lightning-input
+                label="Query condition"
+                value={queryCondition}
+                onchange={handleQueryConditionChange}
+            ></lightning-input>
 
             <c-lookup
                 selection={initialSelection}

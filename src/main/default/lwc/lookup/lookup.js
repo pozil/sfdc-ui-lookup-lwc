@@ -40,12 +40,12 @@ export default class Lookup extends LightningElement {
         this.searchResults = results.map((result) => {
             // Clone and complete search result if icon is missing
             if (this.searchTerm.length > 0) {
-                const regex = new RegExp(this.searchTerm, 'gi');
+                const regex = new RegExp(`(${this.searchTerm})`, 'gi');
                 result.titleFormatted = result.title
-                    ? result.title.replace(regex, '<b>' + this.searchTerm + '</b>')
+                    ? result.title.replace(regex, '<strong>$1</strong>')
                     : result.title;
                 result.subtitleFormatted = result.subtitle
-                    ? result.subtitle.replace(regex, '<b>' + this.searchTerm + '</b>')
+                    ? result.subtitle.replace(regex, '<strong>$1</strong>')
                     : result.subtitle;
             }
             if (typeof result.icon === 'undefined') {

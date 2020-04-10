@@ -36,8 +36,10 @@ export default class Lookup extends LightningElement {
     setSearchResults(results) {
         // Reset the spinner
         this.loading = false;
-
-        this.searchResults = results.map((result) => {
+        // Clone results before modifying them to avoid Locker restriction
+        const resultsLocal = JSON.parse(JSON.stringify(results));
+        // Format results
+        this.searchResults = resultsLocal.map((result) => {
             // Clone and complete search result if icon is missing
             if (this.searchTerm.length > 0) {
                 const regex = new RegExp(this.searchTerm, 'gi');

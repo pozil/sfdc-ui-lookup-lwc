@@ -24,7 +24,7 @@ describe('c-lookup exposed functions', () => {
         }
     });
 
-    it('getSelection returns correct selection', () => {
+    it('getSelection returns correct selection when initial selection is an array', () => {
         // Create element
         const element = createElement('c-lookup', {
             is: Lookup
@@ -34,6 +34,18 @@ describe('c-lookup exposed functions', () => {
         // Verify selection
         const selection = element.getSelection();
         expect(selection.length).toBe(2);
+    });
+
+    it('getSelection returns correct selection when initial selection is a single item', () => {
+        // Create element
+        const element = createElement('c-lookup', {
+            is: Lookup
+        });
+        element.selection = SAMPLE_SEARCH_ITEMS[0];
+
+        // Verify selection
+        const selection = element.getSelection();
+        expect(selection.length).toBe(1);
     });
 
     it('setSearchResults renders correct results', () => {

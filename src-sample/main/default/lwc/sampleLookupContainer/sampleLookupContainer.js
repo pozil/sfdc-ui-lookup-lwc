@@ -9,6 +9,7 @@ export default class SampleLookupContainer extends LightningElement {
     @api notifyViaAlerts = false;
 
     isMultiEntry = false;
+    maxSelectionSize = 2;
     initialSelection = [
         {
             id: 'na',
@@ -40,7 +41,11 @@ export default class SampleLookupContainer extends LightningElement {
     }
 
     handleSelectionChange() {
-        this.errors = [];
+        this.checkForErrors();
+    }
+
+    handleMaxSelectionSizeChange(event) {
+        this.maxSelectionSize = event.target.value;
     }
 
     handleSubmit() {
@@ -50,15 +55,21 @@ export default class SampleLookupContainer extends LightningElement {
         }
     }
 
+    handleClear() {
+        this.initialSelection = [];
+        this.errors = [];
+    }
+
     checkForErrors() {
+        this.errors = [];
         const selection = this.template.querySelector('c-lookup').getSelection();
+        // Custom validation rule
+        if (this.isMultiEntry && selection.length > this.maxSelectionSize) {
+            this.errors.push({ message: `You may only select up to ${this.maxSelectionSize} items.` });
+        }
+        // Enforcing required field
         if (selection.length === 0) {
-            this.errors = [
-                { message: 'You must make a selection before submitting!' },
-                { message: 'Please make a selection and try again.' }
-            ];
-        } else {
-            this.errors = [];
+            this.errors.push({ message: 'Please make a selection.' });
         }
     }
 

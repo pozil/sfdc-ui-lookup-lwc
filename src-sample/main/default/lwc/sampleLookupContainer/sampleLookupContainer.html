@@ -7,6 +7,15 @@
                 checked={isMultiEntry}
                 onchange={handleLookupTypeChange}
             ></lightning-input>
+            <lightning-input
+                if:true={isMultiEntry}
+                type="number"
+                label="Max selected items"
+                min="1"
+                value={maxSelectionSize}
+                onchange={handleMaxSelectionSizeChange}
+                required
+            ></lightning-input>
 
             <c-lookup
                 selection={initialSelection}
@@ -20,6 +29,7 @@
             >
             </c-lookup>
 
+            <lightning-button label="Clear" onclick={handleClear}></lightning-button>&nbsp;
             <lightning-button variant="brand" label="Submit" onclick={handleSubmit}></lightning-button>
         </div>
     </lightning-card>

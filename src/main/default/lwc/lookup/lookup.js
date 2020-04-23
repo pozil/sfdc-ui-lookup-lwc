@@ -27,6 +27,7 @@ export default class Lookup extends LightningElement {
     @api
     set selection(initialSelection) {
         this.curSelection = Array.isArray(initialSelection) ? initialSelection : [initialSelection];
+        this.isDirty = false;
     }
     get selection() {
         return this.curSelection;

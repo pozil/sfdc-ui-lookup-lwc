@@ -44,7 +44,13 @@ jobs:
 
             # LWC unit tests
             - name: 'LWC unit tests'
-              run: npm run test:unit
+              run: npm run test:unit:coverage
+
+            # Upload LWC code coverage data
+            - name: 'Upload code coverage for LWC to Codecov.io'
+              uses: codecov/codecov-action@v1
+              with:
+                  flag: LWC
 
     scratch-org-tests:
         runs-on: ubuntu-latest
@@ -81,7 +87,13 @@ jobs:
 
             # Run Apex tests in scratch org
             - name: 'Run Apex tests'
-              run: 'sfdx force:apex:test:run -r human -d ./tests/apex -w 20'
+              run: 'sfdx force:apex:test:run -c -r human -d ./tests/apex -w 20'
+
+            # Upload Apex code coverage data
+            - name: 'Upload code coverage for Apex to Codecov.io'
+              uses: codecov/codecov-action@v1
+              with:
+                  flag: Apex
 
             # Housekeeping
             - name: 'Delete scratch org'

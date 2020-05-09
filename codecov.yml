@@ -1,1 +1,2 @@
-ignore: src-sample/**
+ignore:
+    - 'src-sample/**'

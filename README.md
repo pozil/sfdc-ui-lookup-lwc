@@ -112,6 +112,7 @@ The `selectionchange` event handler can then get the current selection by callin
 
 ```js
 handleSelectionChange(event) {
+    const selectedIds = event.detail; // Same interface as lightning-input-field
     const selection = event.target.getSelection();
     // TODO: do something with the lookup selection
 }
@@ -139,7 +140,7 @@ That list contains a maximum of one elements if the lookup is a single entry loo
 | `getSelection()`            | Gets the current lookup selection as an array of `LookupSearchResult`.                                                                          |
 | `getkey()`                  | Retrieves the value of the `customKey` attribute.                                                                                               |
 
-| Event             | Description                                                                                                                                        | Data                                              |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `search`          | Event fired when a search needs to be performed on the server-side.                                                                                | `{ searchTerm: String, selectedIds: [ String ] }` |
-| `selectionchange` | Event fired when the selection of the lookup changes. This event holds no data, use the `getSelection` function to retrieve the current selection. | none                                              |
+| Event             | Description                                                                                                                                                           | Data                                              |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `search`          | Event fired when a search needs to be performed on the server-side.                                                                                                   | `{ searchTerm: String, selectedIds: [ String ] }` |
+| `selectionchange` | Event fired when the selection of the lookup changes. Selection ids are in the event details, or use `target.getSelection()` to retrieve the selected lookup objects. | `{ detail: [ String ] }`                          |

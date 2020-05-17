@@ -162,7 +162,11 @@ export default class Lookup extends LightningElement {
         this.searchResults = [];
 
         // Notify parent components that selection has changed
-        this.dispatchEvent(new CustomEvent('selectionchange'));
+        this.dispatchSelectionChange();
+    }
+
+    dispatchSelectionChange() {
+        this.dispatchEvent(new CustomEvent('selectionchange', { detail: this.curSelection.map((sel) => sel.id) }));
     }
 
     handleComboboxClick() {
@@ -199,14 +203,14 @@ export default class Lookup extends LightningElement {
         this.curSelection = this.curSelection.filter((item) => item.id !== recordId);
         this.isDirty = true;
         // Notify parent components that selection has changed
-        this.dispatchEvent(new CustomEvent('selectionchange'));
+        this.dispatchSelectionChange();
     }
 
     handleClearSelection() {
         this.curSelection = [];
         this.isDirty = true;
         // Notify parent components that selection has changed
-        this.dispatchEvent(new CustomEvent('selectionchange'));
+        this.dispatchSelectionChange();
     }
 
     // STYLE EXPRESSIONS

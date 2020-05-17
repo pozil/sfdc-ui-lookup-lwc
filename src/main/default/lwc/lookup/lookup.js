@@ -1,7 +1,10 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 
 const MINIMAL_SEARCH_TERM_LENGTH = 2; // Min number of chars required to search
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
+const ARROW_UP = 38;
+const ARROW_DOWN = 40;
+const ENTER = 13;
 
 export default class Lookup extends LightningElement {
     @api label;
@@ -17,6 +20,11 @@ export default class Lookup extends LightningElement {
     hasFocus = false;
     loading = false;
     isDirty = false;
+
+    // Keep track of each search result and some local state, like if it's focused
+    @track searchResultsLocalState = [];
+    // We can use the keyboard to select options; keep track of what's selected
+    @track focusedResultIndex = null;
 
     cleanSearchTerm;
     blurTimeout;
@@ -63,6 +71,21 @@ export default class Lookup extends LightningElement {
             }
             return result;
         });
+        const self = this;
+        this.searchResultsLocalState = this.searchResults.map((result, i) => {
+            return {
+                result,
+                state: {},
+                get getClass() {
+                    let cls =
+                        'slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta';
+                    if (self.focusedResultIndex === i) {
+                        cls += ' slds-has-focus';
+                    }
+                    return cls;
+                }
+            };
+        });
     }
 
     @api
@@ -91,7 +114,7 @@ export default class Lookup extends LightningElement {
 
         // Ignore search terms that are too small
         if (newCleanSearchTerm.length < MINIMAL_SEARCH_TERM_LENGTH) {
-            this.searchResults = [];
+            this.setSearchResults([]);
             return;
         }
 
@@ -143,15 +166,42 @@ export default class Lookup extends LightningElement {
         this.updateSearchTerm(event.target.value);
     }
 
+    handleKeyDown(event) {
+        if (this.focusedResultIndex === null) {
+            this.focusedResultIndex = -1;
+        }
+        if (event.keyCode === ARROW_DOWN) {
+            // If we hit 'down', select the next item, or cycle over.
+            this.focusedResultIndex++;
+            if (this.focusedResultIndex >= this.searchResults.length) {
+                this.focusedResultIndex = 0;
+            }
+        } else if (event.keyCode === ARROW_UP) {
+            // If we hit 'up', select the previous item, or cycle over.
+            this.focusedResultIndex--;
+            if (this.focusedResultIndex < 0) {
+                this.focusedResultIndex = this.searchResults.length - 1;
+            }
+        } else if (event.keyCode === ENTER && this.hasFocus && this.focusedResultIndex >= 0) {
+            // If the user presses enter, and the box is open, and we have used arrows,
+            // treat this just like a click (add the item to selection and close the list)
+            this.addSelectedItem(this.searchResults[this.focusedResultIndex]);
+            this.hasFocus = false;
+        }
+    }
+
     handleResultClick(event) {
         const recordId = event.currentTarget.dataset.recordid;
 
         // Save selection
-        let selectedItem = this.searchResults.filter((result) => result.id === recordId);
-        if (selectedItem.length === 0) {
+        const selectedItems = this.searchResults.filter((result) => result.id === recordId);
+        if (selectedItems.length === 0) {
             return;
         }
-        selectedItem = selectedItem[0];
+        this.addSelectedItem(selectedItems[0]);
+    }
+
+    addSelectedItem(selectedItem) {
         const newSelection = [...this.curSelection];
         newSelection.push(selectedItem);
         this.curSelection = newSelection;
@@ -159,7 +209,7 @@ export default class Lookup extends LightningElement {
 
         // Reset search
         this.searchTerm = '';
-        this.searchResults = [];
+        this.setSearchResults([]);
 
         // Notify parent components that selection has changed
         this.dispatchSelectionChange();
@@ -183,6 +233,7 @@ export default class Lookup extends LightningElement {
             return;
         }
         this.hasFocus = true;
+        this.focusedResultIndex = null;
     }
 
     handleBlur() {

@@ -1,11 +1,9 @@
 # Unique name for this workflow
-name: CI
+name: CI (PR)
 
 # Definition when the workflow should run
 on:
-    push:
-        branches:
-            - master
+    pull_request:
         types: [opened, synchronize, reopened]
 
 # Jobs to be executed

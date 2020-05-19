@@ -6,7 +6,6 @@ on:
     push:
         branches:
             - master
-        types: [opened, synchronize, reopened]
 
 # Jobs to be executed
 jobs:

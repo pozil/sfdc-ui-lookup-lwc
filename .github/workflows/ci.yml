@@ -3,7 +3,9 @@ name: CI
 
 # Definition when the workflow should run
 on:
-    pull_request:
+    push:
+        branches:
+            - master
         types: [opened, synchronize, reopened]
 
 # Jobs to be executed

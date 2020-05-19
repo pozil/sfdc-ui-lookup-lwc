@@ -1,5 +1,5 @@
 # Unique name for this workflow
-name: CI
+name: CI (PR)
 
 # Definition when the workflow should run
 on:

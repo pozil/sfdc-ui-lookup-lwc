@@ -48,7 +48,7 @@ jobs:
             - name: 'Upload code coverage for LWC to Codecov.io'
               uses: codecov/codecov-action@v1
               with:
-                  flag: LWC
+                  flags: LWC
 
     scratch-org-tests:
         runs-on: ubuntu-latest
@@ -91,7 +91,7 @@ jobs:
             - name: 'Upload code coverage for Apex to Codecov.io'
               uses: codecov/codecov-action@v1
               with:
-                  flag: Apex
+                  flags: Apex
 
             # Housekeeping
             - name: 'Delete scratch org'

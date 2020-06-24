@@ -17,6 +17,7 @@ export default class Lookup extends LightningElement {
 
     searchTerm = '';
     searchResults = [];
+    defaultSearchResults = [];
     hasFocus = false;
     loading = false;
     isDirty = false;
@@ -37,6 +38,7 @@ export default class Lookup extends LightningElement {
         this.curSelection = Array.isArray(initialSelection) ? initialSelection : [initialSelection];
         this.isDirty = false;
     }
+
     get selection() {
         return this.curSelection;
     }
@@ -58,6 +60,9 @@ export default class Lookup extends LightningElement {
                 result.subtitleFormatted = result.subtitle
                     ? result.subtitle.replace(regex, '<strong>$1</strong>')
                     : result.subtitle;
+            } else {
+                result.titleFormatted = result.title;
+                result.subtitleFormatted = result.subtitle;
             }
             if (typeof result.icon === 'undefined') {
                 const { id, sObjectType, title, subtitle } = result;
@@ -98,6 +103,14 @@ export default class Lookup extends LightningElement {
         return this.customKey;
     }
 
+    @api
+    setDefaultResults(results) {
+        this.defaultSearchResults = [...results];
+        if (this.searchResults.length === 0) {
+            this.setSearchResults(this.defaultSearchResults);
+        }
+    }
+
     // INTERNAL FUNCTIONS
 
     updateSearchTerm(newSearchTerm) {
@@ -114,7 +127,7 @@ export default class Lookup extends LightningElement {
 
         // Ignore search terms that are too small
         if (newCleanSearchTerm.length < MINIMAL_SEARCH_TERM_LENGTH) {
-            this.setSearchResults([]);
+            this.setSearchResults(this.defaultSearchResults);
             return;
         }
 
@@ -176,17 +189,20 @@ export default class Lookup extends LightningElement {
             if (this.focusedResultIndex >= this.searchResults.length) {
                 this.focusedResultIndex = 0;
             }
+            event.preventDefault();
         } else if (event.keyCode === ARROW_UP) {
             // If we hit 'up', select the previous item, or cycle over.
             this.focusedResultIndex--;
             if (this.focusedResultIndex < 0) {
                 this.focusedResultIndex = this.searchResults.length - 1;
             }
+            event.preventDefault();
         } else if (event.keyCode === ENTER && this.hasFocus && this.focusedResultIndex >= 0) {
             // If the user presses enter, and the box is open, and we have used arrows,
             // treat this just like a click (add the item to selection and close the list)
             this.addSelectedItem(this.searchResults[this.focusedResultIndex]);
             this.hasFocus = false;
+            event.preventDefault();
         }
     }
 
@@ -208,8 +224,8 @@ export default class Lookup extends LightningElement {
         this.isDirty = true;
 
         // Reset search
-        this.searchTerm = '';
-        this.setSearchResults([]);
+        this.updateSearchTerm('');
+        this.setSearchResults(this.defaultSearchResults);
 
         // Notify parent components that selection has changed
         this.dispatchSelectionChange();
@@ -279,7 +295,8 @@ export default class Lookup extends LightningElement {
 
     get getDropdownClass() {
         let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ';
-        if (this.hasFocus && this.cleanSearchTerm && this.cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH) {
+        const searchTermValid = this.cleanSearchTerm && this.cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH;
+        if (this.hasFocus && (searchTermValid || this.hasResults())) {
             css += 'slds-is-open';
         }
         return css;

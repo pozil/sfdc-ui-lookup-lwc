@@ -1,9 +1,10 @@
 import { LightningElement, api } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 
 const MINIMAL_SEARCH_TERM_LENGTH = 2; // Min number of chars required to search
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
 
-export default class Lookup extends LightningElement {
+export default class Lookup extends NavigationMixin(LightningElement) {
     @api label;
     @api required;
     @api placeholder = '';
@@ -11,6 +12,8 @@ export default class Lookup extends LightningElement {
     @api errors = [];
     @api scrollAfterNItems;
     @api customKey;
+    @api newSobjectName;
+    @api isDisabled;
 
     searchTerm = '';
     searchResults = [];
@@ -63,6 +66,14 @@ export default class Lookup extends LightningElement {
             }
             return result;
         });
+
+        if (this.newSobjectName) {
+            this.searchResults.push({
+                create: true,
+                title: 'Create new...',
+                id: 'createItem'
+            });
+        }
     }
 
     @api
@@ -141,6 +152,16 @@ export default class Lookup extends LightningElement {
             return;
         }
         this.updateSearchTerm(event.target.value);
+    }
+
+    handleCreateClick() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName: this.newSobjectName,
+                actionName: 'new'
+            }
+        });
     }
 
     handleResultClick(event) {

@@ -158,6 +158,7 @@ export default class Lookup extends LightningElement {
         this.isDirty = true;
 
         // Reset search
+        this._cleanSearchTerm = '';
         this.searchTerm = '';
         this.searchResults = [];
 

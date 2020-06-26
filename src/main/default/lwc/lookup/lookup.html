@@ -66,7 +66,12 @@
                     <!-- Search input end -->
 
                     <!-- Result list box start -->
-                    <div id="listbox" role="listbox" onclick={handleComboboxClick}>
+                    <div
+                        id="listbox"
+                        role="listbox"
+                        onmousedown={handleComboboxMouseDown}
+                        onmouseup={handleComboboxMouseUp}
+                    >
                         <ul class={getListboxClass} role="presentation">
                             <!-- Spinner to display when waiting for results of search -->
                             <div if:true={loading}>
@@ -161,7 +166,7 @@
                         role="group"
                         aria-label="Selected Options:"
                     >
-                        <template for:each={curSelection} for:item="item">
+                        <template for:each={selection} for:item="item">
                             <li key={item.id} role="presentation" class="slds-listbox__item">
                                 <lightning-pill
                                     label={item.title}

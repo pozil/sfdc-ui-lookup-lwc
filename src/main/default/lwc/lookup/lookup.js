@@ -18,19 +18,19 @@ export default class Lookup extends LightningElement {
     loading = false;
     isDirty = false;
 
-    cleanSearchTerm;
-    blurTimeout;
-    searchThrottlingTimeout;
-    curSelection = [];
+    _cleanSearchTerm;
+    _cancelBlur = false;
+    _searchThrottlingTimeout;
+    _curSelection = [];
 
     // EXPOSED FUNCTIONS
     @api
     set selection(initialSelection) {
-        this.curSelection = Array.isArray(initialSelection) ? initialSelection : [initialSelection];
+        this._curSelection = Array.isArray(initialSelection) ? initialSelection : [initialSelection];
         this.isDirty = false;
     }
     get selection() {
-        return this.curSelection;
+        return this._curSelection;
     }
 
     @api
@@ -67,7 +67,7 @@ export default class Lookup extends LightningElement {
 
     @api
     getSelection() {
-        return this.curSelection;
+        return this._curSelection;
     }
 
     @api
@@ -82,12 +82,12 @@ export default class Lookup extends LightningElement {
 
         // Compare clean new search term with current one and abort if identical
         const newCleanSearchTerm = newSearchTerm.trim().replace(/\*/g, '').toLowerCase();
-        if (this.cleanSearchTerm === newCleanSearchTerm) {
+        if (this._cleanSearchTerm === newCleanSearchTerm) {
             return;
         }
 
         // Save clean search term
-        this.cleanSearchTerm = newCleanSearchTerm;
+        this._cleanSearchTerm = newCleanSearchTerm;
 
         // Ignore search terms that are too small
         if (newCleanSearchTerm.length < MINIMAL_SEARCH_TERM_LENGTH) {
@@ -96,25 +96,25 @@ export default class Lookup extends LightningElement {
         }
 
         // Apply search throttling (prevents search if user is still typing)
-        if (this.searchThrottlingTimeout) {
-            clearTimeout(this.searchThrottlingTimeout);
+        if (this._searchThrottlingTimeout) {
+            clearTimeout(this._searchThrottlingTimeout);
         }
         // eslint-disable-next-line @lwc/lwc/no-async-operation
-        this.searchThrottlingTimeout = setTimeout(() => {
+        this._searchThrottlingTimeout = setTimeout(() => {
             // Send search event if search term is long enougth
-            if (this.cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH) {
+            if (this._cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH) {
                 // Display spinner until results are returned
                 this.loading = true;
 
                 const searchEvent = new CustomEvent('search', {
                     detail: {
-                        searchTerm: this.cleanSearchTerm,
-                        selectedIds: this.curSelection.map((element) => element.id)
+                        searchTerm: this._cleanSearchTerm,
+                        selectedIds: this._curSelection.map((element) => element.id)
                     }
                 });
                 this.dispatchEvent(searchEvent);
             }
-            this.searchThrottlingTimeout = null;
+            this._searchThrottlingTimeout = null;
         }, SEARCH_DELAY);
     }
 
@@ -130,7 +130,7 @@ export default class Lookup extends LightningElement {
     }
 
     hasSelection() {
-        return this.curSelection.length > 0;
+        return this._curSelection.length > 0;
     }
 
     // EVENT HANDLING
@@ -152,12 +152,13 @@ export default class Lookup extends LightningElement {
             return;
         }
         selectedItem = selectedItem[0];
-        const newSelection = [...this.curSelection];
+        const newSelection = [...this._curSelection];
         newSelection.push(selectedItem);
-        this.curSelection = newSelection;
+        this._curSelection = newSelection;
         this.isDirty = true;
 
         // Reset search
+        this._cleanSearchTerm = '';
         this.searchTerm = '';
         this.searchResults = [];
 
@@ -165,12 +166,17 @@ export default class Lookup extends LightningElement {
         this.dispatchEvent(new CustomEvent('selectionchange'));
     }
 
-    handleComboboxClick() {
-        // Hide combobox immediatly
-        if (this.blurTimeout) {
-            window.clearTimeout(this.blurTimeout);
+    handleComboboxMouseDown(event) {
+        const mainButton = 0;
+        if (event.button === mainButton) {
+            this._cancelBlur = true;
         }
-        this.hasFocus = false;
+    }
+
+    handleComboboxMouseUp() {
+        this._cancelBlur = false;
+        // Re-focus to text input for the next blur event
+        this.template.querySelector('input').focus();
     }
 
     handleFocus() {
@@ -182,28 +188,23 @@ export default class Lookup extends LightningElement {
     }
 
     handleBlur() {
-        // Prevent action if selection is not allowed
-        if (!this.isSelectionAllowed()) {
+        // Prevent action if selection is either not allowed or cancelled
+        if (!this.isSelectionAllowed() || this._cancelBlur) {
             return;
         }
-        // Delay hiding combobox so that we can capture selected result
-        // eslint-disable-next-line @lwc/lwc/no-async-operation
-        this.blurTimeout = window.setTimeout(() => {
-            this.hasFocus = false;
-            this.blurTimeout = null;
-        }, 300);
+        this.hasFocus = false;
     }
 
     handleRemoveSelectedItem(event) {
         const recordId = event.currentTarget.name;
-        this.curSelection = this.curSelection.filter((item) => item.id !== recordId);
+        this._curSelection = this._curSelection.filter((item) => item.id !== recordId);
         this.isDirty = true;
         // Notify parent components that selection has changed
         this.dispatchEvent(new CustomEvent('selectionchange'));
     }
 
     handleClearSelection() {
-        this.curSelection = [];
+        this._curSelection = [];
         this.isDirty = true;
         // Notify parent components that selection has changed
         this.dispatchEvent(new CustomEvent('selectionchange'));
@@ -224,7 +225,7 @@ export default class Lookup extends LightningElement {
 
     get getDropdownClass() {
         let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ';
-        if (this.hasFocus && this.cleanSearchTerm && this.cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH) {
+        if (this.hasFocus && this._cleanSearchTerm && this._cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH) {
             css += 'slds-is-open';
         }
         return css;
@@ -267,7 +268,7 @@ export default class Lookup extends LightningElement {
     }
 
     get getSelectIconName() {
-        return this.hasSelection() ? this.curSelection[0].icon : 'standard:default';
+        return this.hasSelection() ? this._curSelection[0].icon : 'standard:default';
     }
 
     get getSelectIconClass() {
@@ -278,15 +279,14 @@ export default class Lookup extends LightningElement {
         if (this.isMultiEntry) {
             return this.searchTerm;
         }
-        return this.hasSelection() ? this.curSelection[0].title : this.searchTerm;
+        return this.hasSelection() ? this._curSelection[0].title : this.searchTerm;
     }
 
     get getInputTitle() {
         if (this.isMultiEntry) {
             return '';
         }
-
-        return this.hasSelection() ? this.curSelection[0].title : '';
+        return this.hasSelection() ? this._curSelection[0].title : '';
     }
 
     get getListboxClass() {

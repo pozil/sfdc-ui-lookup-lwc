@@ -50,10 +50,10 @@ export default class Lookup extends LightningElement {
         // Clone results before modifying them to avoid Locker restriction
         const resultsLocal = JSON.parse(JSON.stringify(results));
         // Format results
+        const regex = new RegExp(`(${this._searchTerm})`, 'gi');
         this._searchResults = resultsLocal.map((result) => {
-            // Clone and complete search result if icon is missing
+            // Format title and subtitle
             if (this._searchTerm.length > 0) {
-                const regex = new RegExp(`(${this._searchTerm})`, 'gi');
                 result.titleFormatted = result.title
                     ? result.title.replace(regex, '<strong>$1</strong>')
                     : result.title;
@@ -64,26 +64,20 @@ export default class Lookup extends LightningElement {
                 result.titleFormatted = result.title;
                 result.subtitleFormatted = result.subtitle;
             }
+            // Add icon if missing
             if (typeof result.icon === 'undefined') {
-                const { id, sObjectType, title, subtitle } = result;
-                return {
-                    id,
-                    sObjectType,
-                    icon: 'standard:default',
-                    title,
-                    subtitle
-                };
+                result.icon = 'standard:default';
             }
             return result;
         });
-
+        // Add local state and dynamic class to search results
         this._focusedResultIndex = null;
         const self = this;
         this.searchResultsLocalState = this._searchResults.map((result, i) => {
             return {
                 result,
                 state: {},
-                get getClass() {
+                get classes() {
                     let cls =
                         'slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta';
                     if (self._focusedResultIndex === i) {

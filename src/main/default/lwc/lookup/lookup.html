@@ -82,7 +82,7 @@
                             <template for:each={searchResultsLocalState} for:item="item" if:true={isExpanded}>
                                 <li key={item.result.id} role="presentation" class="slds-listbox__item">
                                     <span
-                                        class={item.getClass}
+                                        class={item.classes}
                                         role="option"
                                         onclick={handleResultClick}
                                         data-recordid={item.result.id}

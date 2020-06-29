@@ -37,6 +37,22 @@ describe('c-lookup rendering', () => {
         expect(listItemEls[0].textContent).toBe('No results.');
     });
 
+    it('shows default search results by default', () => {
+        // Create element
+        const element = createElement('c-lookup', {
+            is: Lookup
+        });
+        document.body.appendChild(element);
+        element.setDefaultResults(SAMPLE_SELECTION_ITEMS);
+
+        // Query for rendered list items
+        return Promise.resolve().then(() => {
+            const listItemEls = element.shadowRoot.querySelectorAll('span[role=option]');
+            expect(listItemEls.length).toBe(SAMPLE_SELECTION_ITEMS.length);
+            expect(listItemEls[0].dataset.recordid).toBe(SAMPLE_SELECTION_ITEMS[0].id);
+        });
+    });
+
     it('renders label', () => {
         // Create element
         const element = createElement('c-lookup', {

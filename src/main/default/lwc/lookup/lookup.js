@@ -289,8 +289,8 @@ export default class Lookup extends LightningElement {
 
     get getDropdownClass() {
         let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ';
-        const isSearchTermValud = this._cleanSearchTerm && this._cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH;
-        if (this._hasFocus && (isSearchTermValud || this.hasResults())) {
+        const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH;
+        if (this._hasFocus && (isSearchTermValid || this.hasResults())) {
             css += 'slds-is-open';
         }
         return css;

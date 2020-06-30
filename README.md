@@ -134,14 +134,14 @@ That list contains a maximum of one elements if the lookup is a single entry loo
 | `required`          | `Boolean`                                    | Whether the lookup is a required field. Note: Property can be set with `<c-lookup required>`.                                                                                    |
 | `errors`            | `[{ "id": String, "message": String }]`      | List of errors that are displayed under the lookup.                                                                                                                              |
 | `scrollAfterNItems` | `Number`                                     | A null or integer value used to force overflow scroll on the result listbox after N number of items. Valid values are null, 5, 7, or 10. Use null to disable overflow scrolling. |
-| `customKey`         | `String`                                     | Custom key that can be used to identify this lookup when placed in a collection of similar components.                                                                           |
+| `customKey`         | `String`                                     | _Deprecated_. Custom key that can be used to identify this lookup when placed in a collection of similar components.                                                             |
 
 | Function                     | Description                                                                                                                                      |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `setDefaultResults(results)` | Allows to set optional default items returned when search has no result (ex: recent items). `results` is an array of `LookupSearchResult`.       |
 | `setSearchResults(results)`  | Passes a search results array back to the lookup so that they are displayed in the dropdown where `results` is an array of `LookupSearchResult`. |
 | `getSelection()`             | Gets the current lookup selection as an array of `LookupSearchResult`.                                                                           |
-| `getkey()`                   | Retrieves the value of the `customKey` attribute.                                                                                                |
+| `getkey()`                   | _Deprecated_. Retrieves the value of the `customKey` attribute.                                                                                  |
 
 | Event             | Description                                                                                                                                                                     | Data                                              |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |

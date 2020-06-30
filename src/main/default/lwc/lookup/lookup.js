@@ -96,6 +96,7 @@ export default class Lookup extends LightningElement {
 
     @api
     getkey() {
+        console.warn('Lookup.getkey() is deprecated and will be removed in a future version.');
         return this.customKey;
     }
 

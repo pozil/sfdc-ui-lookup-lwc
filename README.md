@@ -108,10 +108,13 @@ The parent component that contains the lookup can handle the `selectionchange` e
 </c-lookup>
 ```
 
-The `selectionchange` event handler can then get the current selection by calling the `getSelection` function:
+The `selectionchange` event handler can then get the current selection with the event detail or by calling the `getSelection` function:
 
 ```js
 handleSelectionChange(event) {
+    // Get the selected ids from the event (same interface as lightning-input-field)
+    const selectedIds = event.detail;
+    // Or, get the selection objects with ids, labels, icons...
     const selection = event.target.getSelection();
     // TODO: do something with the lookup selection
 }
@@ -131,15 +134,16 @@ That list contains a maximum of one elements if the lookup is a single entry loo
 | `required`          | `Boolean`                                    | Whether the lookup is a required field. Note: Property can be set with `<c-lookup required>`.                                                                                    |
 | `errors`            | `[{ "id": String, "message": String }]`      | List of errors that are displayed under the lookup.                                                                                                                              |
 | `scrollAfterNItems` | `Number`                                     | A null or integer value used to force overflow scroll on the result listbox after N number of items. Valid values are null, 5, 7, or 10. Use null to disable overflow scrolling. |
-| `customKey`         | `String`                                     | Custom key that can be used to identify this lookup when placed in a collection of similar components.                                                                           |
+| `customKey`         | `String`                                     | _Deprecated_. Custom key that can be used to identify this lookup when placed in a collection of similar components.                                                             |
 
-| Function                    | Description                                                                                                                                     |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `setSearchResults(results)` | Passes a search results array back to the lookup so that they are displayed in the dropdown where`results` is an array of `LookupSearchResult`. |
-| `getSelection()`            | Gets the current lookup selection as an array of `LookupSearchResult`.                                                                          |
-| `getkey()`                  | Retrieves the value of the `customKey` attribute.                                                                                               |
+| Function                     | Description                                                                                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `setDefaultResults(results)` | Allows to set optional default items returned when search has no result (ex: recent items). `results` is an array of `LookupSearchResult`.       |
+| `setSearchResults(results)`  | Passes a search results array back to the lookup so that they are displayed in the dropdown where `results` is an array of `LookupSearchResult`. |
+| `getSelection()`             | Gets the current lookup selection as an array of `LookupSearchResult`.                                                                           |
+| `getkey()`                   | _Deprecated_. Retrieves the value of the `customKey` attribute.                                                                                  |
 
-| Event             | Description                                                                                                                                        | Data                                              |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `search`          | Event fired when a search needs to be performed on the server-side.                                                                                | `{ searchTerm: String, selectedIds: [ String ] }` |
-| `selectionchange` | Event fired when the selection of the lookup changes. This event holds no data, use the `getSelection` function to retrieve the current selection. | none                                              |
+| Event             | Description                                                                                                                                                                     | Data                                              |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `search`          | Event fired when a search needs to be performed on the server-side.                                                                                                             | `{ searchTerm: String, selectedIds: [ String ] }` |
+| `selectionchange` | Event fired when the selection of the lookup changes. Selection ids are in the event details. You can also use `target.getSelection()` to retrieve the selected lookup objects. | `{ detail: [ String ] }`                          |

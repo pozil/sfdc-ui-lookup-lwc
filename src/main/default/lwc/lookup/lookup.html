@@ -36,6 +36,7 @@
                             onfocus={handleFocus}
                             onblur={handleBlur}
                             oninput={handleInput}
+                            onkeydown={handleKeyDown}
                         />
 
                         <!-- Search icon -->
@@ -79,22 +80,17 @@
                             </div>
 
                             <!-- Display if results are present -->
-                            <template for:each={searchResults} for:item="result" if:true={isExpanded}>
-                                <li
-                                    if:false={result.create}
-                                    key={result.id}
-                                    role="presentation"
-                                    class="slds-listbox__item"
-                                >
+                            <template for:each={searchResultsLocalState} for:item="item" if:true={isExpanded}>
+                                <li key={item.result.id} role="presentation" class="slds-listbox__item">
                                     <span
-                                        class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                        class={item.classes}
                                         role="option"
                                         onclick={handleResultClick}
-                                        data-recordid={result.id}
+                                        data-recordid={item.result.id}
                                     >
                                         <span class="slds-media__figure">
                                             <lightning-icon
-                                                icon-name={result.icon}
+                                                icon-name={item.result.icon}
                                                 size="small"
                                                 alternative-text="Result item icon"
                                             ></lightning-icon>
@@ -102,14 +98,14 @@
                                         <span class="slds-media__body">
                                             <span class="slds-listbox__option-text slds-listbox__option-text_entity">
                                                 <lightning-formatted-rich-text
-                                                    value={result.titleFormatted}
+                                                    value={item.result.titleFormatted}
                                                     disable-linkify
                                                 >
                                                 </lightning-formatted-rich-text>
                                             </span>
                                             <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
                                                 <lightning-formatted-rich-text
-                                                    value={result.subtitleFormatted}
+                                                    value={item.result.subtitleFormatted}
                                                     disable-linkify
                                                 >
                                                 </lightning-formatted-rich-text>

@@ -31,6 +31,7 @@ export default class Lookup extends LightningElement {
     _defaultSearchResults = [];
     _curSelection = [];
     _focusedResultIndex = null;
+    _isPreview = false;
 
     // PUBLIC FUNCTIONS AND GETTERS/SETTERS
     @api
@@ -273,6 +274,23 @@ export default class Lookup extends LightningElement {
         this._isDirty = true;
         // Notify parent components that selection has changed
         this.dispatchSelectionChange();
+    }
+
+    handleClick() {
+        // Prevent action if selection is not allowed
+        if (!this.isSelectionAllowed()) {
+            return;
+        }
+        this.isPreview = true;
+        this.loading = true;
+
+        const clickpreviewEvent = new CustomEvent('clickpreview', {
+            detail: {
+                searchTerm: '',
+                selectedIds: this._curSelection.map((element) => element.id)
+            }
+        });
+        this.dispatchEvent(clickpreviewEvent);
     }
 
     // STYLE EXPRESSIONS

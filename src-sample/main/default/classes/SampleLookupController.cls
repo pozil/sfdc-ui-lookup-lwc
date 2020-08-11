@@ -54,4 +54,26 @@ public with sharing class SampleLookupController {
 
         return results;
     }
+
+    @AuraEnabled(Cacheable=true)
+    public static List<LookupSearchResult> loadRecentlyViewed() {
+        List<LookupSearchResult> results = new List<LookupSearchResult>();
+        Set<Id> recentAccountIds = new Set<Id>();
+        for (RecentlyViewed acc : [
+            SELECT Id, Name
+            FROM RecentlyViewed
+            WHERE Type = 'Account'
+            ORDER BY LastViewedDate DESC
+            LIMIT 5
+        ]) {
+            recentAccountIds.add(acc.Id);
+        }
+        for (Account acc : [SELECT Id, Name FROM Account WHERE Id IN :recentAccountIds]) {
+            results.add(
+                new LookupSearchResult(acc.Id, 'Account', 'standard:account', acc.Name, 'Account • ' + acc.Name)
+            );
+        }
+
+        return results;
+    }
 }

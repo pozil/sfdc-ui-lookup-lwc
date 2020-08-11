@@ -3,6 +3,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 /** SampleLookupController.search() Apex method */
 import apexSearch from '@salesforce/apex/SampleLookupController.search';
+import loadRecentlyViewed from '@salesforce/apex/SampleLookupController.loadRecentlyViewed';
 
 export default class SampleLookupContainer extends LightningElement {
     // Use alerts instead of toast to notify user
@@ -29,6 +30,19 @@ export default class SampleLookupContainer extends LightningElement {
 
     handleSearch(event) {
         apexSearch(event.detail)
+            .then((results) => {
+                this.template.querySelector('c-lookup').setSearchResults(results);
+            })
+            .catch((error) => {
+                this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
+                // eslint-disable-next-line no-console
+                console.error('Lookup error', JSON.stringify(error));
+                this.errors = [error];
+            });
+    }
+
+    handleClick() {
+        loadRecentlyViewed()
             .then((results) => {
                 this.template.querySelector('c-lookup').setSearchResults(results);
             })

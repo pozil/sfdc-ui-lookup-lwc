@@ -36,7 +36,8 @@ export default class Lookup extends LightningElement {
     @api
     set selection(initialSelection) {
         this._curSelection = Array.isArray(initialSelection) ? initialSelection : [initialSelection];
-        this._isDirty = false;
+        this.processSelectionUpdate(false);
+        this._hasFocus = false;
     }
 
     get selection() {
@@ -166,6 +167,23 @@ export default class Lookup extends LightningElement {
         return this._curSelection.length > 0;
     }
 
+    processSelectionUpdate(isUserInteraction) {
+        // Reset search
+        this._cleanSearchTerm = '';
+        this._searchTerm = '';
+        // Remove selected items from default search results
+        const selectedIds = this._curSelection.map((sel) => sel.id);
+        let defaultResults = [...this._defaultSearchResults];
+        defaultResults = defaultResults.filter((result) => selectedIds.indexOf(result.id) === -1);
+        this.setSearchResults(defaultResults);
+        // Indicate that component was interacted with
+        this._isDirty = isUserInteraction;
+        // If selection was changed by user, notify parent components
+        if (isUserInteraction) {
+            this.dispatchEvent(new CustomEvent('selectionchange', { detail: selectedIds }));
+        }
+    }
+
     // EVENT HANDLING
 
     handleInput(event) {
@@ -207,27 +225,16 @@ export default class Lookup extends LightningElement {
         const recordId = event.currentTarget.dataset.recordid;
 
         // Save selection
-        let selectedItem = this._searchResults.filter((result) => result.id === recordId);
-        if (selectedItem.length === 0) {
+        const selectedItem = this._searchResults.find((result) => result.id === recordId);
+        if (!selectedItem) {
             return;
         }
-        selectedItem = selectedItem[0];
         const newSelection = [...this._curSelection];
         newSelection.push(selectedItem);
         this._curSelection = newSelection;
-        this._isDirty = true;
 
-        // Reset search
-        this._cleanSearchTerm = '';
-        this._searchTerm = '';
-        this._searchResults = this._defaultSearchResults;
-
-        // Notify parent components that selection has changed
-        this.dispatchSelectionChange();
-    }
-
-    dispatchSelectionChange() {
-        this.dispatchEvent(new CustomEvent('selectionchange', { detail: this._curSelection.map((sel) => sel.id) }));
+        // Process selection update
+        this.processSelectionUpdate(true);
     }
 
     handleComboboxMouseDown(event) {
@@ -263,16 +270,15 @@ export default class Lookup extends LightningElement {
     handleRemoveSelectedItem(event) {
         const recordId = event.currentTarget.name;
         this._curSelection = this._curSelection.filter((item) => item.id !== recordId);
-        this._isDirty = true;
-        // Notify parent components that selection has changed
-        this.dispatchSelectionChange();
+        // Process selection update
+        this.processSelectionUpdate(true);
     }
 
     handleClearSelection() {
         this._curSelection = [];
-        this._isDirty = true;
-        // Notify parent components that selection has changed
-        this.dispatchSelectionChange();
+        this._hasFocus = false;
+        // Process selection update
+        this.processSelectionUpdate(true);
     }
 
     // STYLE EXPRESSIONS
@@ -291,7 +297,7 @@ export default class Lookup extends LightningElement {
     get getDropdownClass() {
         let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ';
         const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH;
-        if (this._hasFocus && (isSearchTermValid || this.hasResults())) {
+        if (this._hasFocus && this.isSelectionAllowed() && (isSearchTermValid || this.hasResults())) {
             css += 'slds-is-open';
         }
         return css;

@@ -1,11 +1,12 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-/** SampleLookupController.search() Apex method */
-import apexSearch from '@salesforce/apex/SampleLookupController.search';
+/** Apex methods from SampleLookupController */
+import search from '@salesforce/apex/SampleLookupController.search';
+import getRecentlyViewed from '@salesforce/apex/SampleLookupController.getRecentlyViewed';
 
 export default class SampleLookupContainer extends LightningElement {
-    // Use alerts instead of toast to notify user
+    // Use alerts instead of toasts (LEX only) to notify user
     @api notifyViaAlerts = false;
 
     isMultiEntry = false;
@@ -21,14 +22,17 @@ export default class SampleLookupContainer extends LightningElement {
     ];
     errors = [];
 
-    handleLookupTypeChange(event) {
-        this.initialSelection = [];
-        this.errors = [];
-        this.isMultiEntry = event.target.checked;
+    // Load recently viewed records and set them as default lookpup search results (optional)
+    @wire(getRecentlyViewed)
+    getRecentlyViewed({ data }) {
+        if (data) {
+            this.template.querySelector('c-lookup').setDefaultResults(data);
+        }
     }
 
     handleSearch(event) {
-        apexSearch(event.detail)
+        // Call Apex endpoint to search for records and pass results to the lookup
+        search(event.detail)
             .then((results) => {
                 this.template.querySelector('c-lookup').setSearchResults(results);
             })
@@ -38,6 +42,12 @@ export default class SampleLookupContainer extends LightningElement {
                 console.error('Lookup error', JSON.stringify(error));
                 this.errors = [error];
             });
+    }
+
+    handleLookupTypeChange(event) {
+        this.initialSelection = [];
+        this.errors = [];
+        this.isMultiEntry = event.target.checked;
     }
 
     handleSelectionChange() {
@@ -79,7 +89,7 @@ export default class SampleLookupContainer extends LightningElement {
             // eslint-disable-next-line no-alert
             alert(`${title}\n${message}`);
         } else {
-            // Notify via toast
+            // Notify via toast (only works in LEX)
             const toastEvent = new ShowToastEvent({ title, message, variant });
             this.dispatchEvent(toastEvent);
         }

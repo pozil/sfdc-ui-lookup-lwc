@@ -54,4 +54,42 @@ public with sharing class SampleLookupController {
 
         return results;
     }
+
+    @AuraEnabled(Cacheable=true)
+    public static List<LookupSearchResult> getRecentlyViewed() {
+        List<LookupSearchResult> results = new List<LookupSearchResult>();
+        // Get recently viewed records of type Account or Opportunity
+        List<RecentlyViewed> recentRecords = [
+            SELECT Id, Name, Type
+            FROM RecentlyViewed
+            WHERE Type = 'Account' OR Type = 'Opportunity'
+            ORDER BY LastViewedDate DESC
+            LIMIT 5
+        ];
+        // Convert recent records into LookupSearchResult
+        for (RecentlyViewed recentRecord : recentRecords) {
+            if (recentRecord.Type == 'Account') {
+                results.add(
+                    new LookupSearchResult(
+                        recentRecord.Id,
+                        'Account',
+                        'standard:account',
+                        recentRecord.Name,
+                        'Account • ' + recentRecord.Name
+                    )
+                );
+            } else {
+                results.add(
+                    new LookupSearchResult(
+                        recentRecord.Id,
+                        'Opportunity',
+                        'standard:opportunity',
+                        recentRecord.Name,
+                        'Opportunity • ' + recentRecord.Name
+                    )
+                );
+            }
+        }
+        return results;
+    }
 }

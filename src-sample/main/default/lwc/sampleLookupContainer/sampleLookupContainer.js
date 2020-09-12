@@ -1,9 +1,5 @@
-import { LightningElement, api, wire } from 'lwc';
+import { LightningElement, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-
-/** Apex methods from SampleLookupController */
-import search from '@salesforce/apex/SampleLookupController.search';
-import getRecentlyViewed from '@salesforce/apex/SampleLookupController.getRecentlyViewed';
 
 export default class SampleLookupContainer extends LightningElement {
     // Use alerts instead of toasts (LEX only) to notify user
@@ -21,28 +17,6 @@ export default class SampleLookupContainer extends LightningElement {
         }
     ];
     errors = [];
-
-    // Load recently viewed records and set them as default lookpup search results (optional)
-    @wire(getRecentlyViewed)
-    getRecentlyViewed({ data }) {
-        if (data) {
-            this.template.querySelector('c-lookup').setDefaultResults(data);
-        }
-    }
-
-    handleSearch(event) {
-        // Call Apex endpoint to search for records and pass results to the lookup
-        search(event.detail)
-            .then((results) => {
-                this.template.querySelector('c-lookup').setSearchResults(results);
-            })
-            .catch((error) => {
-                this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
-                // eslint-disable-next-line no-console
-                console.error('Lookup error', JSON.stringify(error));
-                this.errors = [error];
-            });
-    }
 
     handleLookupTypeChange(event) {
         this.initialSelection = [];

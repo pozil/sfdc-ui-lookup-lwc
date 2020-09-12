@@ -1,4 +1,7 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, wire } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import search from '@salesforce/apex/LookupSearchController.search';
+import getDefaultResults from '@salesforce/apex/LookupSearchController.getDefaultResults';
 
 const MINIMAL_SEARCH_TERM_LENGTH = 2; // Min number of chars required to search
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
@@ -12,9 +15,9 @@ export default class Lookup extends LightningElement {
     @api required;
     @api placeholder = '';
     @api isMultiEntry = false;
-    @api errors = [];
     @api scrollAfterNItems;
-    @api customKey;
+    @api providerClass;
+    @api searchParams = '';
 
     // Template properties
     searchResultsLocalState = [];
@@ -31,6 +34,7 @@ export default class Lookup extends LightningElement {
     _defaultSearchResults = [];
     _curSelection = [];
     _focusedResultIndex = null;
+    _errors = [];
 
     // PUBLIC FUNCTIONS AND GETTERS/SETTERS
     @api
@@ -45,6 +49,43 @@ export default class Lookup extends LightningElement {
     }
 
     @api
+    getSelection() {
+        return this._curSelection;
+    }
+
+    // WIRE
+    @wire(getDefaultResults, { providerClass: '$providerClass', searchParams: '$searchParams' })
+    getDefaultResults({ data, error }) {
+        if (data) {
+            console.log(JSON.stringify(data));
+            this.setDefaultResults(data);
+        } else if (error) {
+            this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
+            // eslint-disable-next-line no-console
+            console.error('Lookup error', JSON.stringify(error));
+            this._errors = [error];
+        }
+    }
+
+    doSearch() {
+        search({
+            providerClass: this.providerClass,
+            searchKey: this._searchTerm,
+            selectedIds: this.selectedIds,
+            searchParams: this.searchParams
+        })
+            .then((results) => {
+                this.setSearchResults(results);
+            })
+            .catch((error) => {
+                this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
+                // eslint-disable-next-line no-console
+                console.error('Lookup error', JSON.stringify(error));
+                this._errors = [error];
+            });
+    }
+
+    // INTERNAL FUNCTIONS
     setSearchResults(results) {
         // Reset the spinner
         this.loading = false;
@@ -90,26 +131,12 @@ export default class Lookup extends LightningElement {
         });
     }
 
-    @api
-    getSelection() {
-        return this._curSelection;
-    }
-
-    @api
-    getkey() {
-        console.warn('Lookup.getkey() is deprecated and will be removed in a future version.');
-        return this.customKey;
-    }
-
-    @api
     setDefaultResults(results) {
         this._defaultSearchResults = [...results];
         if (this._searchResults.length === 0) {
             this.setSearchResults(this._defaultSearchResults);
         }
     }
-
-    // INTERNAL FUNCTIONS
 
     updateSearchTerm(newSearchTerm) {
         this._searchTerm = newSearchTerm;
@@ -140,13 +167,25 @@ export default class Lookup extends LightningElement {
                 // Display spinner until results are returned
                 this.loading = true;
 
-                const searchEvent = new CustomEvent('search', {
-                    detail: {
-                        searchTerm: this._cleanSearchTerm,
-                        selectedIds: this._curSelection.map((element) => element.id)
-                    }
-                });
-                this.dispatchEvent(searchEvent);
+                search({
+                    providerClass: this.providerClass,
+                    searchKey: this._cleanSearchTerm,
+                    selectedIds: this._curSelection.map((element) => element.id),
+                    searchParams: this.searchParams
+                })
+                    .then((results) => {
+                        this.setSearchResults(results);
+                    })
+                    .catch((error) => {
+                        this.notifyUser(
+                            'Lookup Error',
+                            'An error occured while searching with the lookup field.',
+                            'error'
+                        );
+                        // eslint-disable-next-line no-console
+                        console.error('Lookup error', JSON.stringify(error));
+                        this._errors = [error];
+                    });
             }
             this._searchThrottlingTimeout = null;
         }, SEARCH_DELAY);
@@ -181,6 +220,18 @@ export default class Lookup extends LightningElement {
         // If selection was changed by user, notify parent components
         if (isUserInteraction) {
             this.dispatchEvent(new CustomEvent('selectionchange', { detail: selectedIds }));
+        }
+    }
+
+    notifyUser(title, message, variant) {
+        if (this.notifyViaAlerts) {
+            // Notify via alert
+            // eslint-disable-next-line no-alert
+            alert(`${title}\n${message}`);
+        } else {
+            // Notify via toast (only works in LEX)
+            const toastEvent = new ShowToastEvent({ title, message, variant });
+            this.dispatchEvent(toastEvent);
         }
     }
 
@@ -288,7 +339,7 @@ export default class Lookup extends LightningElement {
         if (this._hasFocus && this.hasResults()) {
             css += 'slds-has-input-focus ';
         }
-        if (this.errors.length > 0) {
+        if (this._errors.length > 0) {
             css += 'has-custom-error';
         }
         return css;
@@ -305,7 +356,7 @@ export default class Lookup extends LightningElement {
 
     get getInputClass() {
         let css = 'slds-input slds-combobox__input has-custom-height ';
-        if (this.errors.length > 0 || (this._isDirty && this.required && !this.hasSelection())) {
+        if (this._errors.length > 0 || (this._isDirty && this.required && !this.hasSelection())) {
             css += 'has-custom-error ';
         }
         if (!this.isMultiEntry) {

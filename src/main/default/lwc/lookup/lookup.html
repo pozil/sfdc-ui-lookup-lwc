@@ -117,12 +117,8 @@
                             <template if:false={isExpanded}>
                                 <li role="presentation" class="slds-listbox__item">
                                     <span class="slds-media slds-listbox__option_entity" role="option">
-                                        <span if:false={loading} class="slds-media__body">
-                                            No results.
-                                        </span>
-                                        <span if:true={loading} class="slds-media__body">
-                                            Loading...
-                                        </span>
+                                        <span if:false={loading} class="slds-media__body"> No results. </span>
+                                        <span if:true={loading} class="slds-media__body"> Loading... </span>
                                     </span>
                                 </li>
                             </template>
@@ -158,7 +154,7 @@
             <!-- Multi-selection end -->
 
             <!-- Errors start -->
-            <template for:each={errors} for:item="error">
+            <template for:each={_errors} for:item="error">
                 <label key={error.id} role="alert" class="slds-form-element__label slds-var-m-top_xx-small form-error"
                     >{error.message}</label
                 >

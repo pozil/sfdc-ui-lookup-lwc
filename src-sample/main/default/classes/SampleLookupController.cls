@@ -1,8 +1,8 @@
-public with sharing class SampleLookupController {
+public with sharing class SampleLookupController implements LookupSearchProvider {
     private final static Integer MAX_RESULTS = 5;
 
     @AuraEnabled(Cacheable=true)
-    public static List<LookupSearchResult> search(String searchTerm, List<String> selectedIds) {
+    public static List<LookupSearchResult> search(String searchTerm, List<String> selectedIds, String searchParams) {
         // Prepare query paramters
         searchTerm += '*';
 
@@ -56,7 +56,7 @@ public with sharing class SampleLookupController {
     }
 
     @AuraEnabled(Cacheable=true)
-    public static List<LookupSearchResult> getRecentlyViewed() {
+    public static List<LookupSearchResult> getDefaultResults(String searchParams) {
         List<LookupSearchResult> results = new List<LookupSearchResult>();
         // Get recently viewed records of type Account or Opportunity
         List<RecentlyViewed> recentRecords = [

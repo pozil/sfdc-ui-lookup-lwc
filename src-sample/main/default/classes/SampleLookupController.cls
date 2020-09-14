@@ -1,10 +1,11 @@
 public with sharing class SampleLookupController implements LookupSearchProvider {
     private final static Integer MAX_RESULTS = 5;
 
-    @AuraEnabled(Cacheable=true)
     public static List<LookupSearchResult> search(String searchTerm, List<String> selectedIds, String searchParams) {
         // Prepare query paramters
         searchTerm += '*';
+        SearchParams params = (SearchParams) JSON.deserialize(searchParams, SearchParams.class);
+        Integer maxResults = params.maxResults != null ? params.maxResults : MAX_RESULTS;
 
         // Execute search query
         List<List<SObject>> searchResults = [
@@ -13,7 +14,7 @@ public with sharing class SampleLookupController implements LookupSearchProvider
             RETURNING
                 Account(Id, Name, BillingCity WHERE id NOT IN :selectedIds),
                 Opportunity(Id, Name, StageName WHERE id NOT IN :selectedIds)
-            LIMIT :MAX_RESULTS
+            LIMIT :maxResults
         ];
 
         // Prepare results
@@ -55,8 +56,10 @@ public with sharing class SampleLookupController implements LookupSearchProvider
         return results;
     }
 
-    @AuraEnabled(Cacheable=true)
     public static List<LookupSearchResult> getDefaultResults(String searchParams) {
+        SearchParams params = (SearchParams) JSON.deserialize(searchParams, SearchParams.class);
+        Integer maxResults = params.maxResults != null ? params.maxResults : MAX_RESULTS;
+
         List<LookupSearchResult> results = new List<LookupSearchResult>();
         // Get recently viewed records of type Account or Opportunity
         List<RecentlyViewed> recentRecords = [
@@ -64,7 +67,7 @@ public with sharing class SampleLookupController implements LookupSearchProvider
             FROM RecentlyViewed
             WHERE Type = 'Account' OR Type = 'Opportunity'
             ORDER BY LastViewedDate DESC
-            LIMIT 5
+            LIMIT :maxResults
         ];
         // Convert recent records into LookupSearchResult
         for (RecentlyViewed recentRecord : recentRecords) {
@@ -91,5 +94,9 @@ public with sharing class SampleLookupController implements LookupSearchProvider
             }
         }
         return results;
+    }
+
+    private class SearchParams {
+        Integer maxResults;
     }
 }

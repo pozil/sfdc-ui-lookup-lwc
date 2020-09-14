@@ -39,6 +39,10 @@ export default class SampleLookupContainer extends LightningElement {
         }
     }
 
+    handleError() {
+        this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
+    }
+
     handleClear() {
         this.initialSelection = [];
         this.errors = [];

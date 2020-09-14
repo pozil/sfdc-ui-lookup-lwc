@@ -1,5 +1,4 @@
 import { LightningElement, api, wire } from 'lwc';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import search from '@salesforce/apex/LookupSearchController.search';
 import getDefaultResults from '@salesforce/apex/LookupSearchController.getDefaultResults';
 
@@ -17,7 +16,6 @@ export default class Lookup extends LightningElement {
     @api isMultiEntry = false;
     @api scrollAfterNItems;
     @api providerClass;
-    @api searchParams = '';
 
     // Template properties
     searchResultsLocalState = [];
@@ -34,23 +32,42 @@ export default class Lookup extends LightningElement {
     _defaultSearchResults = [];
     _curSelection = [];
     _focusedResultIndex = null;
-    _errors = [];
+    _searchParams;
+    _errors;
 
     // PUBLIC FUNCTIONS AND GETTERS/SETTERS
     @api
+    get selection() {
+        return this._curSelection;
+    }
+
     set selection(initialSelection) {
         this._curSelection = Array.isArray(initialSelection) ? initialSelection : [initialSelection];
         this.processSelectionUpdate(false);
         this._hasFocus = false;
     }
 
-    get selection() {
+    @api
+    getSelection() {
         return this._curSelection;
     }
 
     @api
-    getSelection() {
-        return this._curSelection;
+    get searchParams() {
+        return JSON.stringify(this._searchParams || '');
+    }
+
+    set searchParams(value) {
+        this._searchParams = value;
+    }
+
+    @api
+    get errors() {
+        return this._errors.map(({ message, id }, index) => ({ message, id: id || index }));
+    }
+
+    set errors(value) {
+        this._errors = value;
     }
 
     // WIRE
@@ -60,29 +77,11 @@ export default class Lookup extends LightningElement {
             console.log(JSON.stringify(data));
             this.setDefaultResults(data);
         } else if (error) {
-            this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
+            this.dispatchEvent(new CustomEvent('error', { detail: error }));
             // eslint-disable-next-line no-console
             console.error('Lookup error', JSON.stringify(error));
-            this._errors = [error];
+            this._errors = [{ message: 'An error happened with the lookup', detail: error }];
         }
-    }
-
-    doSearch() {
-        search({
-            providerClass: this.providerClass,
-            searchKey: this._searchTerm,
-            selectedIds: this.selectedIds,
-            searchParams: this.searchParams
-        })
-            .then((results) => {
-                this.setSearchResults(results);
-            })
-            .catch((error) => {
-                this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
-                // eslint-disable-next-line no-console
-                console.error('Lookup error', JSON.stringify(error));
-                this._errors = [error];
-            });
     }
 
     // INTERNAL FUNCTIONS
@@ -177,14 +176,10 @@ export default class Lookup extends LightningElement {
                         this.setSearchResults(results);
                     })
                     .catch((error) => {
-                        this.notifyUser(
-                            'Lookup Error',
-                            'An error occured while searching with the lookup field.',
-                            'error'
-                        );
+                        this.dispatchEvent(new CustomEvent('error', { detail: error }));
                         // eslint-disable-next-line no-console
                         console.error('Lookup error', JSON.stringify(error));
-                        this._errors = [error];
+                        this._errors = [{ message: 'An error happened with the lookup', detail: error }];
                     });
             }
             this._searchThrottlingTimeout = null;
@@ -220,18 +215,6 @@ export default class Lookup extends LightningElement {
         // If selection was changed by user, notify parent components
         if (isUserInteraction) {
             this.dispatchEvent(new CustomEvent('selectionchange', { detail: selectedIds }));
-        }
-    }
-
-    notifyUser(title, message, variant) {
-        if (this.notifyViaAlerts) {
-            // Notify via alert
-            // eslint-disable-next-line no-alert
-            alert(`${title}\n${message}`);
-        } else {
-            // Notify via toast (only works in LEX)
-            const toastEvent = new ShowToastEvent({ title, message, variant });
-            this.dispatchEvent(toastEvent);
         }
     }
 
@@ -339,7 +322,7 @@ export default class Lookup extends LightningElement {
         if (this._hasFocus && this.hasResults()) {
             css += 'slds-has-input-focus ';
         }
-        if (this._errors.length > 0) {
+        if (this.errors.length > 0) {
             css += 'has-custom-error';
         }
         return css;
@@ -356,7 +339,7 @@ export default class Lookup extends LightningElement {
 
     get getInputClass() {
         let css = 'slds-input slds-combobox__input has-custom-height ';
-        if (this._errors.length > 0 || (this._isDirty && this.required && !this.hasSelection())) {
+        if (this.errors.length > 0 || (this._isDirty && this.required && !this.hasSelection())) {
             css += 'has-custom-error ';
         }
         if (!this.isMultiEntry) {

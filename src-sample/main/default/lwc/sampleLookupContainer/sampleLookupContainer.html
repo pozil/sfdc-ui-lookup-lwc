@@ -21,6 +21,8 @@
                 selection={initialSelection}
                 provider-class="SampleLookupController"
                 onselectionchange={handleSelectionChange}
+                onerror={handleError}
+                errors={errors}
                 label="Search"
                 placeholder="Search Salesforce"
                 is-multi-entry={isMultiEntry}

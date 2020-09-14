@@ -154,10 +154,10 @@
             <!-- Multi-selection end -->
 
             <!-- Errors start -->
-            <template for:each={_errors} for:item="error">
-                <label key={error.id} role="alert" class="slds-form-element__label slds-var-m-top_xx-small form-error"
-                    >{error.message}</label
-                >
+            <template for:each={errors} for:item="error">
+                <label key={error.id} role="alert" class="slds-form-element__label slds-var-m-top_xx-small form-error">
+                    {error.message}
+                </label>
             </template>
             <!-- Errors end -->
         </div>

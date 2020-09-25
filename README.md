@@ -15,7 +15,7 @@ Aura version is available [here](https://github.com/pozil/sfdc-ui-lookup) (depre
 1. [Documentation](#documentation)
     1. [Getting started](#getting-started)
     1. [Handling selection changes (optional)](#handling-selection-changes-optional)
-    1. [Providing default search results (optional)](#providing-default-search-results-ptional)
+    1. [Providing default search results (optional)](#providing-default-search-results-optional)
 1. [Reference](#reference)
 
 ## About

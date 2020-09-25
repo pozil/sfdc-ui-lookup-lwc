@@ -190,6 +190,8 @@ Here's how you can retrieve recent records and set them as default search result
 
 ## Reference
 
+### Attributes
+
 | Attribute           | Type                                         | Description                                                                                                                                                                      |
 | ------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `label`             | `String`                                     | Optional lookup label. Label is hidden if attribute is omitted.                                                                                                                  |
@@ -201,12 +203,16 @@ Here's how you can retrieve recent records and set them as default search result
 | `scrollAfterNItems` | `Number`                                     | A null or integer value used to force overflow scroll on the result listbox after N number of items. Valid values are null, 5, 7, or 10. Use null to disable overflow scrolling. |
 | `customKey`         | `String`                                     | _Deprecated_. Custom key that can be used to identify this lookup when placed in a collection of similar components.                                                             |
 
+### Functions
+
 | Function                     | Description                                                                                                                                      |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `setDefaultResults(results)` | Allows to set optional default items returned when search has no result (ex: recent items). `results` is an array of `LookupSearchResult`.       |
 | `setSearchResults(results)`  | Passes a search results array back to the lookup so that they are displayed in the dropdown where `results` is an array of `LookupSearchResult`. |
 | `getSelection()`             | Gets the current lookup selection as an array of `LookupSearchResult`.                                                                           |
 | `getkey()`                   | _Deprecated_. Retrieves the value of the `customKey` attribute.                                                                                  |
+
+### Events
 
 | Event             | Description                                                                                                                                                                     | Data                                              |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |

@@ -152,7 +152,7 @@ Here's how you can retrieve recent records and set them as default search result
     public static List<LookupSearchResult> getRecentlyViewed()
     ```
 
-    See the [full code from the sample app](/blob/master/src-sample/main/default/classes/SampleLookupController.cls#L59)
+    See the [full code from the sample app](/src-sample/main/default/classes/SampleLookupController.cls#L59)
 
 1. Write a utility function that sets your default search results:
 

@@ -21,16 +21,40 @@ export default class SampleLookupContainer extends LightningElement {
         }
     ];
     errors = [];
+    recentlyViewed = [];
 
-    // Load recently viewed records and set them as default lookpup search results (optional)
+    /**
+     * Loads recently viewed records and set them as default lookpup search results (optional)
+     */
     @wire(getRecentlyViewed)
     getRecentlyViewed({ data }) {
         if (data) {
-            this.template.querySelector('c-lookup').setDefaultResults(data);
+            this.recentlyViewed = data;
+            this.initLookupDefaultResults();
         }
     }
 
-    handleSearch(event) {
+    connectedCallback() {
+        this.initLookupDefaultResults();
+    }
+
+    /**
+     * Initializes the lookup default results with a list of recently viewed records (optional)
+     */
+    initLookupDefaultResults() {
+        // Make sure that the lookup is present and if so, set its default results
+        const lookup = this.template.querySelector('c-lookup');
+        if (lookup) {
+            lookup.setDefaultResults(this.recentlyViewed);
+        }
+    }
+
+    /**
+     * Handles the lookup search event.
+     * Calls the server to perform the search and returns the resuls to the lookup.
+     * @param {event} event `search` event emmitted by the lookup
+     */
+    handleLookupSearch(event) {
         // Call Apex endpoint to search for records and pass results to the lookup
         search(event.detail)
             .then((results) => {
@@ -44,14 +68,22 @@ export default class SampleLookupContainer extends LightningElement {
             });
     }
 
+    /**
+     * Handles the lookup selection change
+     * @param {event} event `selectionchange` event emmitted by the lookup.
+     * The event contains the list of selected ids.
+     */
+    // eslint-disable-next-line no-unused-vars
+    handleLookupSelectionChange(event) {
+        this.checkForErrors();
+    }
+
+    // All functions below are part of the sample app form (not required by the lookup).
+
     handleLookupTypeChange(event) {
         this.initialSelection = [];
         this.errors = [];
         this.isMultiEntry = event.target.checked;
-    }
-
-    handleSelectionChange() {
-        this.checkForErrors();
     }
 
     handleMaxSelectionSizeChange(event) {

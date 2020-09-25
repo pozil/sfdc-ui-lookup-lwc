@@ -10,6 +10,14 @@ Aura version is available [here](https://github.com/pozil/sfdc-ui-lookup) (depre
 
 <img src="screenshots/dropdown-open.png" alt="Lookup with dropdown open" width="350" align="right"/>
 
+1. [About](#about)
+1. [Installation](#installation)
+1. [Documentation](#documentation)
+    1. [Getting started](#getting-started)
+    1. [Handling selection changes (optional)](#handling-selection-changes-optional)
+    1. [Providing default search results (optional)](#providing-default-search-results-ptional)
+1. [Reference](#reference)
+
 ## About
 
 This is a generic &amp; customizable lookup component built using Salesforce [Lightning Web Components](https://developer.salesforce.com/docs/component-library/documentation/lwc) and [SLDS](https://www.lightningdesignsystem.com/) style.<br/>
@@ -52,52 +60,54 @@ install-dev.bat
 
 ## Documentation
 
+### Getting Started
+
 Follow these steps in order to use the lookup component:
 
-### 1) Write the search endpoint
+1. **Write the search endpoint**
 
-Implement an Apex `@AuraEnabled(Cacheable=true)` method (`SampleLookupController.search` in our samples) that returns the search results as a `List<LookupSearchResult>`.
-The method name can be different but it needs to match this signature:
+    Implement an Apex `@AuraEnabled(Cacheable=true)` method (`SampleLookupController.search` in our samples) that returns the search results as a `List<LookupSearchResult>`.
+    The method name can be different but it needs to match this signature:
 
-```apex
-@AuraEnabled(Cacheable=true)
-public static List<LookupSearchResult> search(String searchTerm, List<String> selectedIds) {}
-```
+    ```apex
+    @AuraEnabled(Cacheable=true)
+    public static List<LookupSearchResult> search(String searchTerm, List<String> selectedIds) {}
+    ```
 
-### 2) Import a reference to the search endpoint
+1. **Import a reference to the search endpoint**
 
-Import a reference to the `search` Apex method in the lookup parent component's JS:
+    Import a reference to the `search` Apex method in the lookup parent component's JS:
 
-```js
-import apexSearch from '@salesforce/apex/SampleLookupController.search';
-```
+    ```js
+    import apexSearch from '@salesforce/apex/SampleLookupController.search';
+    ```
 
-### 3) Handle the search event and pass search results to the lookup
+1. **Handle the search event and pass search results to the lookup**
 
-The lookup component exposes a `search` event that is fired when a search needs to be performed on the server-side.
-The parent component that contains the lookup must handle the `search` event:
+    The lookup component exposes a `search` event that is fired when a search needs to be performed on the server-side.
+    The parent component that contains the lookup must handle the `search` event:
 
-```xml
-<c-lookup onsearch={handleSearch} label="Search" placeholder="Search Salesforce">
-</c-lookup>
-```
+    ```xml
+    <c-lookup onsearch={handleSearch} label="Search" placeholder="Search Salesforce">
+    </c-lookup>
+    ```
 
-The `search` event handler calls the Apex `search` method and passes the results back to the lookup using the `setSearchResults` function:
+    The `search` event handler calls the Apex `search` method and passes the results back to the lookup using the `setSearchResults(results)` function:
 
-```js
-handleSearch(event) {
-    const target = event.target;
-    apexSearch(event.detail)
-        .then(results => {
-            target.setSearchResults(results);
-        })
-        .catch(error => {
-            // TODO: handle error
-        });
-}
-```
+    ```js
+    handleSearch(event) {
+        const target = event.target;
+        apexSearch(event.detail)
+            .then(results => {
+                target.setSearchResults(results);
+            })
+            .catch(error => {
+                // TODO: handle error
+            });
+    }
+    ```
 
-### 4) Optionally handle selection changes
+### Handling selection changes (optional)
 
 The lookup component exposes a `selectionchange` event that is fired when the selection of the lookup changes.
 The parent component that contains the lookup can handle the `selectionchange` event:
@@ -108,7 +118,7 @@ The parent component that contains the lookup can handle the `selectionchange` e
 </c-lookup>
 ```
 
-The `selectionchange` event handler can then get the current selection with the event detail or by calling the `getSelection` function:
+The `selectionchange` event handler can then get the current selection form the event detail or by calling the `getSelection()` function:
 
 ```js
 handleSelectionChange(event) {
@@ -120,10 +130,65 @@ handleSelectionChange(event) {
 }
 ```
 
-`getSelection` always return a list of selected items.
-That list contains a maximum of one elements if the lookup is a single entry lookup.
+`getSelection()` always return a list of selected items.
+That list contains a maximum of one element if the lookup is a single-entry lookup.
 
-### Reference
+### Providing default search results (optional)
+
+The lookup can return default search results with the `setDefaultResults(results)` function. This is typically used to return a list of recently viewed records (see sample app).
+
+Here's how you can retrieve recent records and set them as default search results:
+
+1. Create a property that holds the default results:
+
+    ```js
+    recentlyViewed = [];
+    ```
+
+1. Implement an Apex endpoint that returns the recent records:
+
+    ```apex
+    @AuraEnabled(Cacheable=true)
+    public static List<LookupSearchResult> getRecentlyViewed()
+    ```
+
+    See the [full code from the sample app](/blob/master/src-sample/main/default/classes/SampleLookupController.cls#L59)
+
+1. Write a utility function that sets your default search results:
+
+    ```js
+    initLookupDefaultResults() {
+        // Make sure that the lookup is present and if so, set its default results
+        const lookup = this.template.querySelector('c-lookup');
+        if (lookup) {
+            lookup.setDefaultResults(this.recentlyViewed);
+        }
+    }
+    ```
+
+1. Retrieve the recent records by calling your endpoint:
+
+    ```js
+    @wire(getRecentlyViewed)
+    getRecentlyViewed({ data }) {
+        if (data) {
+            this.recentlyViewed = data;
+            this.initLookupDefaultResults();
+        }
+    }
+    ```
+
+1. Initialize the lookup default results when the parent component loads:
+
+    ```js
+    connectedCallback() {
+        this.initLookupDefaultResults();
+    }
+    ```
+
+**Note:** `initLookupDefaultResults()` is called in two places because the wire could load before the lookup is rendered.
+
+## Reference
 
 | Attribute           | Type                                         | Description                                                                                                                                                                      |
 | ------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

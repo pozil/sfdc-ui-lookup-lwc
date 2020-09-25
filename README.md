@@ -139,12 +139,6 @@ The lookup can return default search results with the `setDefaultResults(results
 
 Here's how you can retrieve recent records and set them as default search results:
 
-1. Create a property that holds the default results:
-
-    ```js
-    recentlyViewed = [];
-    ```
-
 1. Implement an Apex endpoint that returns the recent records:
 
     ```apex
@@ -153,6 +147,12 @@ Here's how you can retrieve recent records and set them as default search result
     ```
 
     See the [full code from the sample app](/src-sample/main/default/classes/SampleLookupController.cls#L59)
+
+1. In your parent component, create a property that holds the default results:
+
+    ```js
+    recentlyViewed = [];
+    ```
 
 1. Write a utility function that sets your default search results:
 

@@ -1,4 +1,4 @@
-# Salesforce Lookup Component (Lightning Web Component version)
+# Salesforce Lookup Component
 
 [![Github Workflow](https://github.com/pozil/sfdc-ui-lookup-lwc/workflows/CI/badge.svg?branch=master)](https://github.com/pozil/sfdc-ui-lookup-lwc/actions) [![codecov](https://codecov.io/gh/pozil/sfdc-ui-lookup-lwc/branch/master/graph/badge.svg)](https://codecov.io/gh/pozil/sfdc-ui-lookup-lwc)
 

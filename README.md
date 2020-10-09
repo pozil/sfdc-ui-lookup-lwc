@@ -190,25 +190,23 @@ Here's how you can retrieve recent records and set them as default search result
 
 ### Attributes
 
-| Attribute           | Type                                         | Description                                                                                                                                                                      |
-| ------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `label`             | `String`                                     | Optional lookup label. Label is hidden if attribute is omitted.                                                                                                                  |
-| `selection`         | `[LookupSearchResult] OR LookupSearchResult` | Lookup initial selection if any. Array for multi-entry lookup or an Object for single entry lookup.                                                                              |
-| `placeholder`       | `String`                                     | Lookup placeholder text                                                                                                                                                          |
-| `isMultiEntry`      | `Boolean`                                    | Whether the lookup is single (default) or multi entry.                                                                                                                           |
-| `required`          | `Boolean`                                    | Whether the lookup is a required field. Note: Property can be set with `<c-lookup required>`.                                                                                    |
-| `errors`            | `[{ "id": String, "message": String }]`      | List of errors that are displayed under the lookup.                                                                                                                              |
-| `scrollAfterNItems` | `Number`                                     | A null or integer value used to force overflow scroll on the result listbox after N number of items. Valid values are null, 5, 7, or 10. Use null to disable overflow scrolling. |
-| `customKey`         | `String`                                     | _Deprecated_. Custom key that can be used to identify this lookup when placed in a collection of similar components.                                                             |
+| Attribute           | Type                                           | Description                                                                                                                                                                      |
+| ------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`             | `String`                                       | Optional lookup label. Label is hidden if attribute is omitted.                                                                                                                  |
+| `selection`         | `[LookupSearchResult]` OR `LookupSearchResult` | Lookup initial selection if any. Array for multi-entry lookup or an Object for single entry lookup.                                                                              |
+| `placeholder`       | `String`                                       | Lookup placeholder text                                                                                                                                                          |
+| `isMultiEntry`      | `Boolean`                                      | Whether the lookup is single (default) or multi entry.                                                                                                                           |
+| `required`          | `Boolean`                                      | Whether the lookup is a required field. Note: Property can be set with `<c-lookup required>`.                                                                                    |
+| `errors`            | `[{ "id": String, "message": String }]`        | List of errors that are displayed under the lookup.                                                                                                                              |
+| `scrollAfterNItems` | `Number`                                       | A null or integer value used to force overflow scroll on the result listbox after N number of items. Valid values are null, 5, 7, or 10. Use null to disable overflow scrolling. |
 
 ### Functions
 
-| Function                     | Description                                                                                                                                      |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `setDefaultResults(results)` | Allows to set optional default items returned when search has no result (ex: recent items). `results` is an array of `LookupSearchResult`.       |
-| `setSearchResults(results)`  | Passes a search results array back to the lookup so that they are displayed in the dropdown where `results` is an array of `LookupSearchResult`. |
-| `getSelection()`             | Gets the current lookup selection as an array of `LookupSearchResult`.                                                                           |
-| `getkey()`                   | _Deprecated_. Retrieves the value of the `customKey` attribute.                                                                                  |
+| Function                     | Description                                                                                                                                |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `setDefaultResults(results)` | Allows to set optional default items returned when search has no result (ex: recent items). `results` is an array of `LookupSearchResult`. |
+| `setSearchResults(results)`  | Passes a search result array back to the lookup so that they are displayed in the dropdown. `results` is an array of `LookupSearchResult`. |
+| `getSelection()`             | Gets the current lookup selection as an array of `LookupSearchResult`.                                                                     |
 
 ### Events
 

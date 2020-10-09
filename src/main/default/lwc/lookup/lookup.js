@@ -14,7 +14,6 @@ export default class Lookup extends LightningElement {
     @api isMultiEntry = false;
     @api errors = [];
     @api scrollAfterNItems;
-    @api customKey;
 
     // Template properties
     searchResultsLocalState = [];
@@ -93,12 +92,6 @@ export default class Lookup extends LightningElement {
     @api
     getSelection() {
         return this._curSelection;
-    }
-
-    @api
-    getkey() {
-        console.warn('Lookup.getkey() is deprecated and will be removed in a future version.');
-        return this.customKey;
     }
 
     @api

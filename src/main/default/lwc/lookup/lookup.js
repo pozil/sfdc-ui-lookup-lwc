@@ -9,7 +9,8 @@ const ENTER = 13;
 export default class Lookup extends LightningElement {
     // Public properties
     @api label;
-    @api required;
+    @api required = false;
+    @api disabled = false;
     @api placeholder = '';
     @api isMultiEntry = false;
     @api errors = [];
@@ -261,6 +262,9 @@ export default class Lookup extends LightningElement {
     }
 
     handleRemoveSelectedItem(event) {
+        if (this.disabled) {
+            return;
+        }
         const recordId = event.currentTarget.name;
         this._curSelection = this._curSelection.filter((item) => item.id !== recordId);
         // Process selection update

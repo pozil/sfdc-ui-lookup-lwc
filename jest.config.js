@@ -1,4 +1,5 @@
 const { jestConfig } = require('@salesforce/sfdx-lwc-jest/config');
 module.exports = {
-    ...jestConfig
+    ...jestConfig,
+    testMatch: ['**/__tests__/**/*.test.js']
 };

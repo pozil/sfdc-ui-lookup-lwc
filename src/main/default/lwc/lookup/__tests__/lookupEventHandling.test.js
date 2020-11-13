@@ -1,29 +1,8 @@
-import { createElement } from 'lwc';
-import Lookup from 'c/lookup';
+const { createLookupElement, flushPromises, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
 
 const SAMPLE_SEARCH = 'sample';
-const SAMPLE_SEARCH_ITEMS = [
-    {
-        id: 'id1',
-        icon: 'standard:default',
-        title: 'Sample item 1',
-        subtitle: 'sub1'
-    },
-    {
-        id: 'id2',
-        icon: 'standard:default',
-        title: 'Sample item 2',
-        subtitle: 'sub2'
-    }
-];
 const ARROW_DOWN = 40;
 const ENTER = 13;
-
-// Helper function to wait until the microtask queue is empty.
-function flushPromises() {
-    // eslint-disable-next-line no-undef
-    return new Promise((resolve) => setImmediate(resolve));
-}
 
 describe('c-lookup event handling', () => {
     afterEach(() => {
@@ -34,52 +13,45 @@ describe('c-lookup event handling', () => {
     });
 
     it('can clear selection when single entry', () => {
-        // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
+        // Create lookup
+        const lookupEl = createLookupElement({
+            isMultiEntry: false,
+            selection: SAMPLE_SEARCH_ITEMS[0]
         });
-        element.isMultiEntry = false;
-        element.selection = [SAMPLE_SEARCH_ITEMS[0]];
-        document.body.appendChild(element);
 
         // Clear selection
-        const clearSelButton = element.shadowRoot.querySelector('button');
+        const clearSelButton = lookupEl.shadowRoot.querySelector('button');
         clearSelButton.click();
         // Check selection
-        expect(element.selection.length).toBe(0);
+        expect(lookupEl.selection.length).toBe(0);
     });
 
     it('can clear selection when multi entry', () => {
-        // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
+        // Create lookup
+        const lookupEl = createLookupElement({
+            isMultiEntry: true,
+            selection: SAMPLE_SEARCH_ITEMS
         });
-        element.isMultiEntry = true;
-        element.selection = SAMPLE_SEARCH_ITEMS;
-        document.body.appendChild(element);
 
         // Remove a selected item
-        const selPills = element.shadowRoot.querySelectorAll('lightning-pill');
+        const selPills = lookupEl.shadowRoot.querySelectorAll('lightning-pill');
         selPills[0].dispatchEvent(new CustomEvent('remove'));
         // Check selection
-        expect(element.selection.length).toBe(1);
+        expect(lookupEl.selection.length).toBe(1);
     });
 
     it('can select item with mouse', () => {
         jest.useFakeTimers();
 
-        // Create element with search handler
-        const element = createElement('c-lookup', {
-            is: Lookup
-        });
+        // Create lookup with search handler
+        const lookupEl = createLookupElement();
         const searchFn = (event) => {
             event.target.setSearchResults(SAMPLE_SEARCH_ITEMS);
         };
-        element.addEventListener('search', searchFn);
-        document.body.appendChild(element);
+        lookupEl.addEventListener('search', searchFn);
 
         // Set search term and force input change
-        const searchInput = element.shadowRoot.querySelector('input');
+        const searchInput = lookupEl.shadowRoot.querySelector('input');
         searchInput.value = SAMPLE_SEARCH;
         searchInput.dispatchEvent(new CustomEvent('input'));
 
@@ -88,30 +60,27 @@ describe('c-lookup event handling', () => {
 
         return flushPromises().then(() => {
             // Simulate mouse selection
-            const searchResultItem = element.shadowRoot.querySelector('span[role=option]');
+            const searchResultItem = lookupEl.shadowRoot.querySelector('span[role=option]');
             searchResultItem.click();
 
             // Check selection
-            expect(element.selection.length).toBe(1);
-            expect(element.selection[0].id).toBe(SAMPLE_SEARCH_ITEMS[0].id);
+            expect(lookupEl.selection.length).toBe(1);
+            expect(lookupEl.selection[0].id).toBe(SAMPLE_SEARCH_ITEMS[0].id);
         });
     });
 
     it('can select item with keyboard', () => {
         jest.useFakeTimers();
 
-        // Create element with search handler
-        const element = createElement('c-lookup', {
-            is: Lookup
-        });
+        // Create lookup with search handler
+        const lookupEl = createLookupElement();
         const searchFn = (event) => {
             event.target.setSearchResults(SAMPLE_SEARCH_ITEMS);
         };
-        element.addEventListener('search', searchFn);
-        document.body.appendChild(element);
+        lookupEl.addEventListener('search', searchFn);
 
         // Set search term and force input change
-        const searchInput = element.shadowRoot.querySelector('input');
+        const searchInput = lookupEl.shadowRoot.querySelector('input');
         searchInput.focus();
         searchInput.value = SAMPLE_SEARCH;
         searchInput.dispatchEvent(new CustomEvent('input'));
@@ -125,8 +94,8 @@ describe('c-lookup event handling', () => {
             searchInput.dispatchEvent(new KeyboardEvent('keydown', { keyCode: ENTER }));
 
             // Check selection
-            expect(element.selection.length).toBe(1);
-            expect(element.selection[0].id).toBe(SAMPLE_SEARCH_ITEMS[0].id);
+            expect(lookupEl.selection.length).toBe(1);
+            expect(lookupEl.selection[0].id).toBe(SAMPLE_SEARCH_ITEMS[0].id);
         });
     });
 });

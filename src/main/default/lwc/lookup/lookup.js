@@ -262,6 +262,9 @@ export default class Lookup extends LightningElement {
     }
 
     handleRemoveSelectedItem(event) {
+        if (this.disabled) {
+            return;
+        }
         const recordId = event.currentTarget.name;
         this._curSelection = this._curSelection.filter((item) => item.id !== recordId);
         // Process selection update

@@ -37,7 +37,22 @@ describe('c-lookup event handling', () => {
         const selPills = lookupEl.shadowRoot.querySelectorAll('lightning-pill');
         selPills[0].dispatchEvent(new CustomEvent('remove'));
         // Check selection
-        expect(lookupEl.selection.length).toBe(1);
+        expect(lookupEl.selection.length).toBe(SAMPLE_SEARCH_ITEMS.length - 1);
+    });
+
+    it("doesn't remove pill when multi entry and disabled", () => {
+        // Create lookup
+        const lookupEl = createLookupElement({
+            isMultiEntry: true,
+            disabled: true,
+            selection: SAMPLE_SEARCH_ITEMS
+        });
+
+        // Remove a selected item
+        const selPills = lookupEl.shadowRoot.querySelectorAll('lightning-pill');
+        selPills[0].dispatchEvent(new CustomEvent('remove'));
+        // Check selection
+        expect(lookupEl.selection.length).toBe(SAMPLE_SEARCH_ITEMS.length);
     });
 
     it('can select item with mouse', () => {

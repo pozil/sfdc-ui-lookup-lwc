@@ -109,6 +109,17 @@ describe('c-lookup rendering', () => {
         const input = lookupEl.shadowRoot.querySelector('input');
         expect(input.disabled).toBe(true);
     });
+    it('disables clear selection button when single entry and disabled', () => {
+        // Create lookup
+        const lookupEl = createLookupElement({
+            disabled: true,
+            selection: SAMPLE_SEARCH_ITEMS[0]
+        });
+
+        // Clear selection
+        const clearSelButton = lookupEl.shadowRoot.querySelector('button');
+        expect(clearSelButton.disabled).toBeTruthy();
+    });
 
     it('renders errors', () => {
         const errors = [

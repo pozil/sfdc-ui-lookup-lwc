@@ -10,7 +10,7 @@ export const flushPromises = () => {
 };
 
 /**
- * Creates the lookup element with the provided properties attaches it to the document body
+ * Creates the lookup element with the provided properties and attaches it to the document body
  * @param {object} props
  * @returns the lookup element
  */

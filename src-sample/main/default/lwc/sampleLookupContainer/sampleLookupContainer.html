@@ -1,21 +1,30 @@
 <template>
     <lightning-card title="Sample Lookup (Lightning Web Component)">
         <div class="slds-form slds-form_stacked slds-var-m-around_xx-large">
-            <lightning-input
-                type="checkbox"
-                label="Is mutli entry lookup"
-                checked={isMultiEntry}
-                onchange={handleLookupTypeChange}
-            ></lightning-input>
-            <lightning-input
-                if:true={isMultiEntry}
-                type="number"
-                label="Max selected items"
-                min="1"
-                value={maxSelectionSize}
-                onchange={handleMaxSelectionSizeChange}
-                required
-            ></lightning-input>
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col">
+                    <lightning-input
+                        type="toggle"
+                        label="Mutli entry lookup"
+                        checked={isMultiEntry}
+                        onchange={handleLookupTypeChange}
+                    ></lightning-input>
+                </div>
+                <div class="slds-col" if:true={isMultiEntry}>
+                    <lightning-input
+                        type="number"
+                        label="Max selected items"
+                        min="1"
+                        value={maxSelectionSize}
+                        onchange={handleMaxSelectionSizeChange}
+                        required
+                    ></lightning-input>
+                </div>
+            </div>
+
+            <p class="slds-var-m-vertical_large">
+                <strong>Note:</strong> new record creation options only work in Lightning Experience.
+            </p>
 
             <c-lookup
                 selection={initialSelection}
@@ -30,8 +39,10 @@
             >
             </c-lookup>
 
-            <lightning-button label="Clear" onclick={handleClear}></lightning-button>&nbsp;
-            <lightning-button variant="brand" label="Submit" onclick={handleSubmit}></lightning-button>
+            <div class="slds-var-m-top_large">
+                <lightning-button label="Clear" onclick={handleClear}></lightning-button>&nbsp;
+                <lightning-button variant="brand" label="Submit" onclick={handleSubmit}></lightning-button>
+            </div>
         </div>
     </lightning-card>
 </template>

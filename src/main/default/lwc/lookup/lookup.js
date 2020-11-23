@@ -153,10 +153,6 @@ export default class Lookup extends LightningElement {
         return !this.hasSelection();
     }
 
-    hasResults() {
-        return this._searchResults.length > 0;
-    }
-
     hasSelection() {
         return this._curSelection.length > 0;
     }
@@ -280,9 +276,13 @@ export default class Lookup extends LightningElement {
 
     // STYLE EXPRESSIONS
 
+    get hasResults() {
+        return this._searchResults.length > 0;
+    }
+
     get getContainerClass() {
         let css = 'slds-combobox_container slds-has-inline-listbox ';
-        if (this._hasFocus && this.hasResults()) {
+        if (this._hasFocus && this.hasResults) {
             css += 'slds-has-input-focus ';
         }
         if (this.errors.length > 0) {
@@ -294,7 +294,7 @@ export default class Lookup extends LightningElement {
     get getDropdownClass() {
         let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ';
         const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH;
-        if (this._hasFocus && this.isSelectionAllowed() && (isSearchTermValid || this.hasResults())) {
+        if (this._hasFocus && this.isSelectionAllowed() && (isSearchTermValid || this.hasResults)) {
             css += 'slds-is-open';
         }
         return css;
@@ -370,9 +370,5 @@ export default class Lookup extends LightningElement {
             return false;
         }
         return this.hasSelection();
-    }
-
-    get isExpanded() {
-        return this.hasResults();
     }
 }

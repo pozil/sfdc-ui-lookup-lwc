@@ -6,7 +6,7 @@
         </label>
         <div class="slds-form-element__control">
             <div class={getContainerClass}>
-                <div class={getDropdownClass} aria-expanded={isExpanded} aria-haspopup="listbox" role="combobox">
+                <div class={getDropdownClass} aria-expanded={hasResults} aria-haspopup="listbox" role="combobox">
                     <!-- Search input start -->
                     <div class={getComboboxClass} role="none">
                         <template if:false={isMultiEntry}>
@@ -81,7 +81,7 @@
                             </div>
 
                             <!-- Display if results are present -->
-                            <template for:each={searchResultsLocalState} for:item="item" if:true={isExpanded}>
+                            <template for:each={searchResultsLocalState} for:item="item" if:true={hasResults}>
                                 <li key={item.result.id} role="presentation">
                                     <span
                                         class={item.classes}
@@ -116,7 +116,7 @@
                                 </li>
                             </template>
                             <!-- Display that there are no results -->
-                            <template if:false={isExpanded}>
+                            <template if:false={hasResults}>
                                 <li role="presentation">
                                     <span class="slds-media slds-listbox__option_entity" role="option">
                                         <span if:false={loading} class="slds-media__body">No results.</span>

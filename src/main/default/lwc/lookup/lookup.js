@@ -1,4 +1,5 @@
 import { LightningElement, api } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 
 const MINIMAL_SEARCH_TERM_LENGTH = 2; // Min number of chars required to search
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
@@ -6,7 +7,7 @@ const ARROW_UP = 38;
 const ARROW_DOWN = 40;
 const ENTER = 13;
 
-export default class Lookup extends LightningElement {
+export default class Lookup extends NavigationMixin(LightningElement) {
     // Public properties
     @api label;
     @api required = false;
@@ -15,6 +16,7 @@ export default class Lookup extends LightningElement {
     @api isMultiEntry = false;
     @api errors = [];
     @api scrollAfterNItems;
+    @api newRecordOptions = [];
 
     // Template properties
     searchResultsLocalState = [];
@@ -153,10 +155,6 @@ export default class Lookup extends LightningElement {
         return !this.hasSelection();
     }
 
-    hasResults() {
-        return this._searchResults.length > 0;
-    }
-
     hasSelection() {
         return this._curSelection.length > 0;
     }
@@ -278,11 +276,26 @@ export default class Lookup extends LightningElement {
         this.processSelectionUpdate(true);
     }
 
+    handleNewRecordClick(event) {
+        const objectApiName = event.currentTarget.dataset.sobject;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName,
+                actionName: 'new'
+            }
+        });
+    }
+
     // STYLE EXPRESSIONS
+
+    get hasResults() {
+        return this._searchResults.length > 0;
+    }
 
     get getContainerClass() {
         let css = 'slds-combobox_container slds-has-inline-listbox ';
-        if (this._hasFocus && this.hasResults()) {
+        if (this._hasFocus && this.hasResults) {
             css += 'slds-has-input-focus ';
         }
         if (this.errors.length > 0) {
@@ -294,7 +307,7 @@ export default class Lookup extends LightningElement {
     get getDropdownClass() {
         let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ';
         const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH;
-        if (this._hasFocus && this.isSelectionAllowed() && (isSearchTermValid || this.hasResults())) {
+        if (this._hasFocus && this.isSelectionAllowed() && (isSearchTermValid || this.hasResults)) {
             css += 'slds-is-open';
         }
         return css;
@@ -370,9 +383,5 @@ export default class Lookup extends LightningElement {
             return false;
         }
         return this.hasSelection();
-    }
-
-    get isExpanded() {
-        return this.hasResults();
     }
 }

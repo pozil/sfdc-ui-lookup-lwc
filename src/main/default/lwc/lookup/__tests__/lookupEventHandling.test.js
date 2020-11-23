@@ -1,4 +1,5 @@
 const { createLookupElement, flushPromises, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
+import { getNavigateCalledWith } from 'lightning/navigation';
 
 const SAMPLE_SEARCH = 'sample';
 const ARROW_DOWN = 40;
@@ -75,7 +76,7 @@ describe('c-lookup event handling', () => {
 
         return flushPromises().then(() => {
             // Simulate mouse selection
-            const searchResultItem = lookupEl.shadowRoot.querySelector('span[role=option]');
+            const searchResultItem = lookupEl.shadowRoot.querySelector('span[data-recordid]');
             searchResultItem.click();
 
             // Check selection
@@ -111,6 +112,39 @@ describe('c-lookup event handling', () => {
             // Check selection
             expect(lookupEl.selection.length).toBe(1);
             expect(lookupEl.selection[0].id).toBe(SAMPLE_SEARCH_ITEMS[0].id);
+        });
+    });
+
+    it('can create new record', () => {
+        jest.useFakeTimers();
+
+        // Create lookup with search handler
+        const newRecordOptions = [{ value: 'Account', label: 'New Account' }];
+        const lookupEl = createLookupElement({ newRecordOptions });
+        const searchFn = (event) => {
+            event.target.setSearchResults([]);
+        };
+        lookupEl.addEventListener('search', searchFn);
+
+        // Set search term and force input change
+        const searchInput = lookupEl.shadowRoot.querySelector('input');
+        searchInput.value = SAMPLE_SEARCH;
+        searchInput.dispatchEvent(new CustomEvent('input'));
+
+        // Disable search throttling
+        jest.runAllTimers();
+
+        return flushPromises().then(() => {
+            // Simulate mouse selection
+            const newRecordEl = lookupEl.shadowRoot.querySelector('div[data-sobject]');
+            expect(newRecordEl).not.toBeNull();
+            newRecordEl.click();
+
+            // Verify that we navigate to the right page
+            const { pageReference } = getNavigateCalledWith();
+            expect(pageReference.type).toBe('standard__objectPage');
+            expect(pageReference.attributes.objectApiName).toBe(newRecordOptions[0].value);
+            expect(pageReference.attributes.actionName).toBe('new');
         });
     });
 });

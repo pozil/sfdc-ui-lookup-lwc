@@ -22,6 +22,10 @@ export default class SampleLookupContainer extends LightningElement {
     ];
     errors = [];
     recentlyViewed = [];
+    newRecordOptions = [
+        { value: 'Account', label: 'New Account' },
+        { value: 'Opportunity', label: 'New Opportunity' }
+    ];
 
     /**
      * Loads recently viewed records and set them as default lookpup search results (optional)

@@ -1,4 +1,5 @@
 import { LightningElement, api } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 
 const MINIMAL_SEARCH_TERM_LENGTH = 2; // Min number of chars required to search
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
@@ -6,7 +7,7 @@ const ARROW_UP = 38;
 const ARROW_DOWN = 40;
 const ENTER = 13;
 
-export default class Lookup extends LightningElement {
+export default class Lookup extends NavigationMixin(LightningElement) {
     // Public properties
     @api label;
     @api required = false;
@@ -15,6 +16,7 @@ export default class Lookup extends LightningElement {
     @api isMultiEntry = false;
     @api errors = [];
     @api scrollAfterNItems;
+    @api newRecordOptions = [];
 
     // Template properties
     searchResultsLocalState = [];
@@ -272,6 +274,17 @@ export default class Lookup extends LightningElement {
         this._hasFocus = false;
         // Process selection update
         this.processSelectionUpdate(true);
+    }
+
+    handleNewRecordClick(event) {
+        const objectApiName = event.currentTarget.dataset.sobject;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: {
+                objectApiName,
+                actionName: 'new'
+            }
+        });
     }
 
     // STYLE EXPRESSIONS

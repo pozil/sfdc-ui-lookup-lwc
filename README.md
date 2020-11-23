@@ -27,9 +27,10 @@ The lookup component provides the following features:
 
 -   customizable data source that can return mixed sObject types
 -   single or multiple selection mode
+-   ability to create new records
 -   client-side caching & request throttling
 -   built-in server request rate limit mechanism
--   project is unit tested
+-   project is unit tested with great coverage
 
 <p align="center">
     <img src="screenshots/selection-types.png" alt="Multiple or single entry lookup"/>

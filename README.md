@@ -214,7 +214,7 @@ Here's how you can retrieve recent records and set them as default search result
 
 ### Events
 
-| Event             | Description                                                                                                                                                                                   | Data                                              |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `search`          | Event fired when a search needs to be performed on the server-side.                                                                                                                           | `{ searchTerm: String, selectedIds: [ String ] }` |
-| `selectionchange` | Event fired when the selection of the lookup changes. Selection ids are in the event `detail` property.<br/>You can also use `target.getSelection()` to retrieve the selected lookup objects. | `{ detail: [ String ] }                           |
+| Event             | Description                                                                                                                                                                                    | Data                                              |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `search`          | Event fired when a search needs to be performed on the server-side.                                                                                                                            | `{ searchTerm: String, selectedIds: [ String ] }` |
+| `selectionchange` | Event fired when the selection of the lookup changes. Selected ids are in the event's `detail` property.<br/>You can also use `target.getSelection()` to retrieve the selected lookup objects. | `{ detail: [ String ] }`                          |

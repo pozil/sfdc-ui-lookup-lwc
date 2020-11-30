@@ -36,6 +36,7 @@ describe('c-lookup event fires', () => {
         const searchEvent = mockSearchFn.mock.calls[0][0];
         expect(searchEvent.detail).toEqual({
             searchTerm: SAMPLE_SEARCH_CLEAN,
+            rawSearchTerm: SAMPLE_SEARCH_RAW,
             selectedIds: ['id1', 'id2']
         });
     });
@@ -88,6 +89,7 @@ describe('c-lookup event fires', () => {
         const searchEvent = mockSearchFn.mock.calls[0][0];
         expect(searchEvent.detail).toEqual({
             searchTerm: SAMPLE_SEARCH_CLEAN,
+            rawSearchTerm: SAMPLE_SEARCH_RAW,
             selectedIds: []
         });
     });

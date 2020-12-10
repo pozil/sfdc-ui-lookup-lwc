@@ -9,6 +9,7 @@ const ENTER = 13;
 
 export default class Lookup extends NavigationMixin(LightningElement) {
     // Public properties
+	@api labelInline = false;
     @api label;
     @api required = false;
     @api disabled = false;
@@ -292,6 +293,16 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     get hasResults() {
         return this._searchResults.length > 0;
+    }
+	
+	get getElementClass() {
+        let css;
+        if (this.labelInline) {
+            css = 'slds-form-element_horizontal slds-form-element';
+        } else {
+            css = 'slds-form-element';
+        }
+        return css;
     }
 
     get getContainerClass() {

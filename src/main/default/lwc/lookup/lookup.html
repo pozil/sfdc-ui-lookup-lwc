@@ -1,5 +1,5 @@
 <template>
-    <div class="slds-form-element">
+    <div class={getElementClass}>
         <label if:true={label} class="slds-form-element__label" for="combobox">
             <abbr if:true={required} title="required" class="slds-required">*</abbr>
             {label}

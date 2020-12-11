@@ -29,13 +29,14 @@ describe('c-lookup rendering', () => {
         });
     });
 
-    it('renders label', () => {
+    it('renders label by default', () => {
         const props = { label: 'Sample Lookup' };
         const lookupEl = createLookupElement(props);
 
         // Verify label
         const labelEl = lookupEl.shadowRoot.querySelector('label');
         expect(labelEl.textContent).toBe(props.label);
+        expect(labelEl.className).toBe('slds-form-element__label');
     });
 
     it('does not render label if omitted', () => {
@@ -46,6 +47,30 @@ describe('c-lookup rendering', () => {
         expect(labelEl).toBe(null);
     });
 
+    it('renders but hides label when variant set to label-hidden', () => {
+        const props = {
+            label: 'Sample Lookup',
+            variant: 'label-hidden'
+        };
+        const lookupEl = createLookupElement(props);
+
+        // Verify label
+        const labelEl = lookupEl.shadowRoot.querySelector('label');
+        expect(labelEl).not.toBeNull();
+        expect(labelEl.classList).toContain('slds-assistive-text');
+    });
+
+    it('renders horizontal label when variant set to label-inline', () => {
+        const props = {
+            label: 'Sample Lookup',
+            variant: 'label-inline'
+        };
+        const lookupEl = createLookupElement(props);
+
+        // Verify form element
+        const formElementEl = lookupEl.shadowRoot.querySelector('div:first-child');
+        expect(formElementEl.classList).toContain('slds-form-element_horizontal');
+    });
     it('renders single entry (no selection)', () => {
         const lookupEl = createLookupElement({ isMultiEntry: false });
 

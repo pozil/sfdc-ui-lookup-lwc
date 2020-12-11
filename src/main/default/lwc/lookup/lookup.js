@@ -3,12 +3,18 @@ import { NavigationMixin } from 'lightning/navigation';
 
 const MINIMAL_SEARCH_TERM_LENGTH = 2; // Min number of chars required to search
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
-const ARROW_UP = 38;
-const ARROW_DOWN = 40;
-const ENTER = 13;
+
+const KEY_ARROW_UP = 38;
+const KEY_ARROW_DOWN = 40;
+const KEY_ENTER = 13;
+
+const VARIANT_LABEL_STACKED = 'label-stacked';
+const VARIANT_LABEL_INLINE = 'label-inline';
+const VARIANT_LABEL_HIDDEN = 'label-hidden';
 
 export default class Lookup extends NavigationMixin(LightningElement) {
     // Public properties
+    @api variant = VARIANT_LABEL_STACKED;
     @api label;
     @api required = false;
     @api disabled = false;
@@ -191,21 +197,21 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this._focusedResultIndex === null) {
             this._focusedResultIndex = -1;
         }
-        if (event.keyCode === ARROW_DOWN) {
+        if (event.keyCode === KEY_ARROW_DOWN) {
             // If we hit 'down', select the next item, or cycle over.
             this._focusedResultIndex++;
             if (this._focusedResultIndex >= this._searchResults.length) {
                 this._focusedResultIndex = 0;
             }
             event.preventDefault();
-        } else if (event.keyCode === ARROW_UP) {
+        } else if (event.keyCode === KEY_ARROW_UP) {
             // If we hit 'up', select the previous item, or cycle over.
             this._focusedResultIndex--;
             if (this._focusedResultIndex < 0) {
                 this._focusedResultIndex = this._searchResults.length - 1;
             }
             event.preventDefault();
-        } else if (event.keyCode === ENTER && this._hasFocus && this._focusedResultIndex >= 0) {
+        } else if (event.keyCode === KEY_ENTER && this._hasFocus && this._focusedResultIndex >= 0) {
             // If the user presses enter, and the box is open, and we have used arrows,
             // treat this just like a click on the listbox item
             const selectedId = this._searchResults[this._focusedResultIndex].id;
@@ -292,6 +298,18 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     get hasResults() {
         return this._searchResults.length > 0;
+    }
+
+    get getFormElementClass() {
+        return this.variant === VARIANT_LABEL_INLINE
+            ? 'slds-form-element slds-form-element_horizontal'
+            : 'slds-form-element';
+    }
+
+    get getLabelClass() {
+        return this.variant === VARIANT_LABEL_HIDDEN
+            ? 'slds-form-element__label slds-assistive-text'
+            : 'slds-form-element__label';
     }
 
     get getContainerClass() {

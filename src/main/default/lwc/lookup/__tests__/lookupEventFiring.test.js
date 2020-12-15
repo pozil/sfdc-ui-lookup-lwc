@@ -1,4 +1,4 @@
-const { createLookupElement, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
+const { createLookupElement, inputSearchTerm, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
 
 const SAMPLE_SEARCH_TOO_SHORT = 'A ';
 const SAMPLE_SEARCH_RAW = 'Sample search* ';
@@ -12,7 +12,7 @@ describe('c-lookup event fires', () => {
         }
     });
 
-    it('search event fires', () => {
+    it('fires search event', () => {
         jest.useFakeTimers();
 
         // Create lookup with mock search handler
@@ -23,13 +23,8 @@ describe('c-lookup event fires', () => {
         const mockSearchFn = jest.fn();
         lookupEl.addEventListener('search', mockSearchFn);
 
-        // Set search term and force input change
-        const searchInput = lookupEl.shadowRoot.querySelector('input');
-        searchInput.value = SAMPLE_SEARCH_RAW;
-        searchInput.dispatchEvent(new CustomEvent('input'));
-
-        // Disable search throttling
-        jest.runAllTimers();
+        // Simulate search term input
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH_RAW);
 
         // Check fired search event
         expect(mockSearchFn).toHaveBeenCalledTimes(1);
@@ -41,7 +36,7 @@ describe('c-lookup event fires', () => {
         });
     });
 
-    it('search event does not fires when search term is too short', () => {
+    it('does not fire search event when search term is too short', () => {
         jest.useFakeTimers();
 
         // Create lookup with mock search handler
@@ -49,19 +44,44 @@ describe('c-lookup event fires', () => {
         const mockSearchFn = jest.fn();
         lookupEl.addEventListener('search', mockSearchFn);
 
-        // Set search term and force input change
-        const searchInput = lookupEl.shadowRoot.querySelector('input');
-        searchInput.value = SAMPLE_SEARCH_TOO_SHORT;
-        searchInput.dispatchEvent(new CustomEvent('input'));
-
-        // Disable search throttling
-        jest.runAllTimers();
+        // Simulate search term input
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH_TOO_SHORT);
 
         // Check that search event wasn't fired
         expect(mockSearchFn).not.toBeCalled();
     });
 
-    it('search event does not fires twice when search term matches clean search term', () => {
+    it('does not fire search event when search term is under custom minimum length', () => {
+        jest.useFakeTimers();
+
+        // Create lookup with mock search handler and custom minimum search term length
+        const lookupEl = createLookupElement({ minSearchTermLength: SAMPLE_SEARCH_CLEAN.length + 1 });
+        const mockSearchFn = jest.fn();
+        lookupEl.addEventListener('search', mockSearchFn);
+
+        // Simulate search term input
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH_CLEAN);
+
+        // Check that search event wasn't fired
+        expect(mockSearchFn).not.toBeCalled();
+    });
+
+    it('fires search event when search term is above custom minimum length', () => {
+        jest.useFakeTimers();
+
+        // Create lookup with mock search handler
+        const lookupEl = createLookupElement({ minSearchTermLength: SAMPLE_SEARCH_CLEAN.length });
+        const mockSearchFn = jest.fn();
+        lookupEl.addEventListener('search', mockSearchFn);
+
+        // Simulate search term input
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH_CLEAN);
+
+        // Check fired search event
+        expect(mockSearchFn).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not fire search event twice when search term matches clean search term', () => {
         jest.useFakeTimers();
 
         // Create lookup with mock search handler
@@ -69,22 +89,13 @@ describe('c-lookup event fires', () => {
         const mockSearchFn = jest.fn();
         lookupEl.addEventListener('search', mockSearchFn);
 
-        // Set search term and force input change
-        const searchInput = lookupEl.shadowRoot.querySelector('input');
-        searchInput.value = SAMPLE_SEARCH_RAW;
-        searchInput.dispatchEvent(new CustomEvent('input'));
+        // Simulate search term input
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH_RAW);
 
-        // Disable search throttling
-        jest.runAllTimers();
+        // Simulate search term input a second time
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH_CLEAN);
 
-        // Update search term
-        searchInput.value = SAMPLE_SEARCH_CLEAN;
-        searchInput.dispatchEvent(new CustomEvent('input'));
-
-        // Disable search throttling
-        jest.runAllTimers();
-
-        // Check fired search event
+        // Check fired search events
         expect(mockSearchFn).toHaveBeenCalledTimes(1);
         const searchEvent = mockSearchFn.mock.calls[0][0];
         expect(searchEvent.detail).toEqual({

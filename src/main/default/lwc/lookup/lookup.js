@@ -1,7 +1,6 @@
 import { LightningElement, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 
-const MINIMAL_SEARCH_TERM_LENGTH = 2; // Min number of chars required to search
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
 
 const KEY_ARROW_UP = 38;
@@ -15,14 +14,15 @@ const VARIANT_LABEL_HIDDEN = 'label-hidden';
 export default class Lookup extends NavigationMixin(LightningElement) {
     // Public properties
     @api variant = VARIANT_LABEL_STACKED;
-    @api label;
+    @api label = '';
     @api required = false;
     @api disabled = false;
     @api placeholder = '';
     @api isMultiEntry = false;
     @api errors = [];
-    @api scrollAfterNItems;
+    @api scrollAfterNItems = null;
     @api newRecordOptions = [];
+    @api minSearchTermLength = 2;
 
     // Template properties
     searchResultsLocalState = [];
@@ -126,7 +126,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         this._cleanSearchTerm = newCleanSearchTerm;
 
         // Ignore search terms that are too small
-        if (newCleanSearchTerm.length < MINIMAL_SEARCH_TERM_LENGTH) {
+        if (newCleanSearchTerm.length < this.minSearchTermLength) {
             this.setSearchResults(this._defaultSearchResults);
             return;
         }
@@ -138,7 +138,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // eslint-disable-next-line @lwc/lwc/no-async-operation
         this._searchThrottlingTimeout = setTimeout(() => {
             // Send search event if search term is long enougth
-            if (this._cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH) {
+            if (this._cleanSearchTerm.length >= this.minSearchTermLength) {
                 // Display spinner until results are returned
                 this.loading = true;
 
@@ -325,7 +325,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     get getDropdownClass() {
         let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ';
-        const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= MINIMAL_SEARCH_TERM_LENGTH;
+        const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= this.minSearchTermLength;
         if (this._hasFocus && this.isSelectionAllowed() && (isSearchTermValid || this.hasResults)) {
             css += 'slds-is-open';
         }

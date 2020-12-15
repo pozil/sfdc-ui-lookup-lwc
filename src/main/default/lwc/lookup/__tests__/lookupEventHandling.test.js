@@ -1,4 +1,4 @@
-const { createLookupElement, flushPromises, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
+const { createLookupElement, inputSearchTerm, flushPromises, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
 import { getNavigateCalledWith } from 'lightning/navigation';
 
 const SAMPLE_SEARCH = 'sample';
@@ -66,13 +66,8 @@ describe('c-lookup event handling', () => {
         };
         lookupEl.addEventListener('search', searchFn);
 
-        // Set search term and force input change
-        const searchInput = lookupEl.shadowRoot.querySelector('input');
-        searchInput.value = SAMPLE_SEARCH;
-        searchInput.dispatchEvent(new CustomEvent('input'));
-
-        // Disable search throttling
-        jest.runAllTimers();
+        // Simulate search term input
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH);
 
         return flushPromises().then(() => {
             // Simulate mouse selection
@@ -126,13 +121,8 @@ describe('c-lookup event handling', () => {
         };
         lookupEl.addEventListener('search', searchFn);
 
-        // Set search term and force input change
-        const searchInput = lookupEl.shadowRoot.querySelector('input');
-        searchInput.value = SAMPLE_SEARCH;
-        searchInput.dispatchEvent(new CustomEvent('input'));
-
-        // Disable search throttling
-        jest.runAllTimers();
+        // Simulate search term input
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH);
 
         return flushPromises().then(() => {
             // Simulate mouse selection

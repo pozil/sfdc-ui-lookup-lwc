@@ -1,4 +1,4 @@
-const { createLookupElement, flushPromises, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
+const { createLookupElement, inputSearchTerm, flushPromises, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
 
 describe('c-lookup exposed functions', () => {
     afterEach(() => {
@@ -41,6 +41,26 @@ describe('c-lookup exposed functions', () => {
             expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
             const resultItemEls = listItemEls[0].querySelectorAll('lightning-formatted-rich-text');
             expect(resultItemEls.length).toBe(2);
+        });
+    });
+
+    it('setSearchResults supports special regex characters in search term', () => {
+        jest.useFakeTimers();
+
+        // Create lookup with search handler
+        const lookupEl = createLookupElement();
+        const searchFn = (event) => {
+            event.target.setSearchResults(SAMPLE_SEARCH_ITEMS);
+        };
+        lookupEl.addEventListener('search', searchFn);
+
+        // Simulate search term input with regex characters
+        inputSearchTerm(lookupEl, '[a');
+
+        // Query for rendered list items
+        return flushPromises().then(() => {
+            const listItemEls = lookupEl.shadowRoot.querySelectorAll('li');
+            expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
         });
     });
 });

@@ -11,6 +11,8 @@ const VARIANT_LABEL_STACKED = 'label-stacked';
 const VARIANT_LABEL_INLINE = 'label-inline';
 const VARIANT_LABEL_HIDDEN = 'label-hidden';
 
+const REGEX_TRAP = /[+\\?^${}()|[\]\\]/g;
+
 export default class Lookup extends NavigationMixin(LightningElement) {
     // Public properties
     @api variant = VARIANT_LABEL_STACKED;
@@ -59,7 +61,8 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Clone results before modifying them to avoid Locker restriction
         const resultsLocal = JSON.parse(JSON.stringify(results));
         // Format results
-        const regex = new RegExp(`(${this._searchTerm})`, 'gi');
+        const cleanSearchTerm = this._searchTerm.replace(REGEX_TRAP, '');
+        const regex = new RegExp(`(${cleanSearchTerm})`, 'gi');
         this._searchResults = resultsLocal.map((result) => {
             // Format title and subtitle
             if (this._searchTerm.length > 0) {

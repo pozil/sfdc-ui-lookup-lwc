@@ -288,11 +288,15 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     handleNewRecordClick(event) {
         const objectApiName = event.currentTarget.dataset.sobject;
+        const objectDefaults = event.currentTarget.dataset.defaults;
         this[NavigationMixin.Navigate]({
             type: 'standard__objectPage',
             attributes: {
                 objectApiName,
                 actionName: 'new'
+            },
+            state: {
+                defaultFieldValues: objectDefaults
             }
         });
     }

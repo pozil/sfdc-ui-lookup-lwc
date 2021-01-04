@@ -1,7 +1,7 @@
 {
     "name": "sfdc-ui-lookup-lwc",
     "private": true,
-    "version": "2.6.0",
+    "version": "2.7.0",
     "description": "Salesforce Lookup Component (Lightning Web Components version)",
     "engines": {
         "node": ">= 10.13.0",
@@ -22,7 +22,7 @@
     "devDependencies": {
         "@salesforce/eslint-config-lwc": "^0.8.0",
         "@salesforce/sfdx-lwc-jest": "^0.10.2",
-        "eslint": "^7.16.0",
+        "eslint": "^7.17.0",
         "husky": "^4.3.6",
         "prettier": "^2.2.1",
         "prettier-plugin-apex": "^1.7.0",

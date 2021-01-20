@@ -1,20 +1,8 @@
-import { createElement } from 'lwc';
-import Lookup from 'c/lookup';
+const { createLookupElement, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
+import { registerApexTestWireAdapter } from '@salesforce/sfdx-lwc-jest';
+import getDefaultResults from '@salesforce/apex/LookupSearchController.getDefaultResults';
 
-const SAMPLE_SELECTION_ITEMS = [
-    {
-        id: 'id1',
-        icon: 'standard:default',
-        title: 'Sample item 1',
-        subtitle: 'sub1'
-    },
-    {
-        id: 'id2',
-        icon: 'standard:default',
-        title: 'Sample item 2',
-        subtitle: 'sub2'
-    }
-];
+const getDefaultResultsAdapter = registerApexTestWireAdapter(getDefaultResults);
 
 describe('c-lookup rendering', () => {
     afterEach(() => {
@@ -26,142 +14,160 @@ describe('c-lookup rendering', () => {
 
     it('shows no results by default', () => {
         // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
-        });
-        document.body.appendChild(element);
+        const lookupEl = createLookupElement();
 
         // Query for rendered list items
-        const listItemEls = element.shadowRoot.querySelectorAll('li');
+        const listItemEls = lookupEl.shadowRoot.querySelectorAll('li');
         expect(listItemEls.length).toBe(1);
         expect(listItemEls[0].textContent).toBe('No results.');
     });
 
     it('shows default search results by default', () => {
         // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
-        });
-        document.body.appendChild(element);
-        element.setDefaultResults(SAMPLE_SELECTION_ITEMS);
+        const lookupEl = createLookupElement();
+        getDefaultResultsAdapter.emit(SAMPLE_SEARCH_ITEMS);
 
         // Query for rendered list items
         return Promise.resolve().then(() => {
-            const listItemEls = element.shadowRoot.querySelectorAll('span[role=option]');
-            expect(listItemEls.length).toBe(SAMPLE_SELECTION_ITEMS.length);
-            expect(listItemEls[0].dataset.recordid).toBe(SAMPLE_SELECTION_ITEMS[0].id);
+            const listItemEls = lookupEl.shadowRoot.querySelectorAll('span[role=option]');
+            expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
+            expect(listItemEls[0].dataset.recordid).toBe(SAMPLE_SEARCH_ITEMS[0].id);
         });
     });
 
-    it('renders label', () => {
-        // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
-        });
-        element.label = 'Sample Lookup';
-        document.body.appendChild(element);
+    it('renders label by default', () => {
+        const props = { label: 'Sample Lookup' };
+        const lookupEl = createLookupElement(props);
 
         // Verify label
-        const detailEl = element.shadowRoot.querySelector('label');
-        expect(detailEl.textContent).toBe('Sample Lookup');
+        const labelEl = lookupEl.shadowRoot.querySelector('label');
+        expect(labelEl.textContent).toBe(props.label);
+        expect(labelEl.className).toBe('slds-form-element__label');
     });
 
     it('does not render label if omitted', () => {
-        // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
-        });
-        element.label = '';
-        document.body.appendChild(element);
+        const lookupEl = createLookupElement({ label: '' });
 
         // Verify label doesn't exist
-        const detailEl = element.shadowRoot.querySelector('label');
-        expect(detailEl).toBe(null);
+        const labelEl = lookupEl.shadowRoot.querySelector('label');
+        expect(labelEl).toBe(null);
+    });
+
+    it('renders but hides label when variant set to label-hidden', () => {
+        const props = {
+            label: 'Sample Lookup',
+            variant: 'label-hidden'
+        };
+        const lookupEl = createLookupElement(props);
+
+        // Verify label
+        const labelEl = lookupEl.shadowRoot.querySelector('label');
+        expect(labelEl).not.toBeNull();
+        expect(labelEl.classList).toContain('slds-assistive-text');
+    });
+
+    it('renders horizontal label when variant set to label-inline', () => {
+        const props = {
+            label: 'Sample Lookup',
+            variant: 'label-inline'
+        };
+        const lookupEl = createLookupElement(props);
+
+        // Verify form element
+        const formElementEl = lookupEl.shadowRoot.querySelector('div:first-child');
+        expect(formElementEl.classList).toContain('slds-form-element_horizontal');
     });
 
     it('renders single entry (no selection)', () => {
-        // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
-        });
-        element.isMultiEntry = false;
-        document.body.appendChild(element);
+        const lookupEl = createLookupElement({ isMultiEntry: false });
 
         // Verify selected icon
-        const selIcon = element.shadowRoot.querySelector('lightning-icon');
+        const selIcon = lookupEl.shadowRoot.querySelector('lightning-icon');
         expect(selIcon.alternativeText).toBe('Selected item icon');
         // Verify clear selection button
-        const clearSelButton = element.shadowRoot.querySelector('button');
+        const clearSelButton = lookupEl.shadowRoot.querySelector('button');
         expect(clearSelButton.title).toBe('Remove selected option');
         // Verify result list is NOT rendered
-        const selList = element.shadowRoot.querySelectorAll('ul.slds-listbox_inline');
+        const selList = lookupEl.shadowRoot.querySelectorAll('ul.slds-listbox_inline');
         expect(selList.length).toBe(0);
     });
 
     it('renders multi entry (no selection)', () => {
-        // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
-        });
-        element.isMultiEntry = true;
-        document.body.appendChild(element);
+        const lookupEl = createLookupElement({ isMultiEntry: true });
 
         // Verify selected icon is NOT rendered
-        const selIcon = element.shadowRoot.querySelectorAll('lightning-icon');
+        const selIcon = lookupEl.shadowRoot.querySelectorAll('lightning-icon');
         expect(selIcon.length).toBe(1);
         // Verify clear selection button is NOT rendered
-        const clearSelButton = element.shadowRoot.querySelectorAll('button');
+        const clearSelButton = lookupEl.shadowRoot.querySelectorAll('button');
         expect(clearSelButton.length).toBe(0);
         // Verify result list is rendered
-        const selList = element.shadowRoot.querySelectorAll('ul.slds-listbox_inline');
+        const selList = lookupEl.shadowRoot.querySelectorAll('ul.slds-listbox_inline');
         expect(selList.length).toBe(1);
     });
 
     it('renders title on selection in single-select', () => {
-        // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
+        const lookupEl = createLookupElement({
+            isMultiEntry: false,
+            selection: SAMPLE_SEARCH_ITEMS[0]
         });
-        element.isMultiEntry = false;
-        element.selection = [SAMPLE_SELECTION_ITEMS[0]];
-        document.body.appendChild(element);
 
-        const inputBox = element.shadowRoot.querySelector('input');
-        expect(inputBox.title).toBe(SAMPLE_SELECTION_ITEMS[0].title);
+        const inputBox = lookupEl.shadowRoot.querySelector('input');
+        expect(inputBox.title).toBe(SAMPLE_SEARCH_ITEMS[0].title);
     });
 
     it('renders title on selection in multi-select', () => {
-        // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
+        const lookupEl = createLookupElement({
+            isMultiEntry: true,
+            selection: SAMPLE_SEARCH_ITEMS
         });
-        element.isMultiEntry = true;
-        element.selection = SAMPLE_SELECTION_ITEMS;
-        document.body.appendChild(element);
 
-        const inputBox = element.shadowRoot.querySelector('input');
+        const inputBox = lookupEl.shadowRoot.querySelector('input');
         expect(inputBox.title).toBe('');
 
-        const selPills = element.shadowRoot.querySelectorAll('lightning-pill');
+        // Verify that default selection is showing up
+        const selPills = lookupEl.shadowRoot.querySelectorAll('lightning-pill');
         expect(selPills.length).toBe(2);
-        expect(selPills[0].title).toBe(SAMPLE_SELECTION_ITEMS[0].title);
-        expect(selPills[1].title).toBe(SAMPLE_SELECTION_ITEMS[1].title);
+        expect(selPills[0].title).toBe(SAMPLE_SEARCH_ITEMS[0].title);
+        expect(selPills[1].title).toBe(SAMPLE_SEARCH_ITEMS[1].title);
+    });
+
+    it('can be disabled', () => {
+        const lookupEl = createLookupElement({
+            disabled: true
+        });
+
+        // Verify that input is disabled
+        const input = lookupEl.shadowRoot.querySelector('input');
+        expect(input.disabled).toBe(true);
+    });
+
+    it('disables clear selection button when single entry and disabled', () => {
+        // Create lookup
+        const lookupEl = createLookupElement({
+            disabled: true,
+            selection: SAMPLE_SEARCH_ITEMS[0]
+        });
+
+        // Clear selection
+        const clearSelButton = lookupEl.shadowRoot.querySelector('button');
+        expect(clearSelButton.disabled).toBeTruthy();
     });
 
     it('renders errors', () => {
-        // Create element
-        const element = createElement('c-lookup', {
-            is: Lookup
-        });
-        element.errors = [
+        const errors = [
             { id: 'e1', message: 'Sample error 1' },
             { id: 'e2', message: 'Sample error 2' }
         ];
-        document.body.appendChild(element);
+        const lookupEl = createLookupElement({
+            disabled: true,
+            errors
+        });
 
         // Verify errors
-        const errors = element.shadowRoot.querySelectorAll('label.form-error');
-        expect(errors.length).toBe(2);
-        expect(errors[0].textContent).toBe('Sample error 1');
+        const errorEls = lookupEl.shadowRoot.querySelectorAll('label.form-error');
+        expect(errorEls.length).toBe(errors.length);
+        expect(errorEls[0].textContent).toBe(errors[0].message);
+        expect(errorEls[1].textContent).toBe(errors[1].message);
     });
 });

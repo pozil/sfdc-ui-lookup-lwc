@@ -24,15 +24,8 @@ public with sharing class SampleLookupController implements LookupSearchProvider
         String accountIcon = 'standard:account';
         Account[] accounts = (List<Account>) searchResults[0];
         for (Account account : accounts) {
-            results.add(
-                new LookupSearchResult(
-                    account.Id,
-                    'Account',
-                    accountIcon,
-                    account.Name,
-                    'Account • ' + account.BillingCity
-                )
-            );
+            String subtitle = 'Account' + account.BillingCity == null ? '' : ' • ' + account.BillingCity;
+            results.add(new LookupSearchResult(account.Id, 'Account', accountIcon, account.Name, subtitle));
         }
 
         // Extract Opportunities & convert them into LookupSearchResult

@@ -17,15 +17,27 @@ export default class SampleLookupContainer extends LightningElement {
         }
     ];
     errors = [];
+    recentlyViewed = [];
+    newRecordOptions = [
+        { value: 'Account', label: 'New Account' },
+        { value: 'Opportunity', label: 'New Opportunity' }
+    ];
 
+    /**
+     * Handles the lookup selection change
+     * @param {event} event `selectionchange` event emmitted by the lookup.
+     * The event contains the list of selected ids.
+     */
+    // eslint-disable-next-line no-unused-vars
+    handleLookupSelectionChange(event) {
+        this.checkForErrors();
+    }
+
+    // All functions below are part of the sample app form (not required by the lookup).
     handleLookupTypeChange(event) {
         this.initialSelection = [];
         this.errors = [];
         this.isMultiEntry = event.target.checked;
-    }
-
-    handleSelectionChange() {
-        this.checkForErrors();
     }
 
     handleMaxSelectionSizeChange(event) {

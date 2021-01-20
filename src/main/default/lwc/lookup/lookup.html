@@ -1,12 +1,12 @@
 <template>
-    <div class="slds-form-element">
-        <label if:true={label} class="slds-form-element__label" for="combobox">
+    <div class={getFormElementClass}>
+        <label if:true={label} class={getLabelClass} for="combobox">
             <abbr if:true={required} title="required" class="slds-required">*</abbr>
             {label}
         </label>
         <div class="slds-form-element__control">
             <div class={getContainerClass}>
-                <div class={getDropdownClass} aria-expanded={isExpanded} aria-haspopup="listbox" role="combobox">
+                <div class={getDropdownClass} aria-expanded={hasResults} aria-haspopup="listbox" role="combobox">
                     <!-- Search input start -->
                     <div class={getComboboxClass} role="none">
                         <template if:false={isMultiEntry}>
@@ -32,6 +32,7 @@
                             value={getInputValue}
                             title={getInputTitle}
                             readonly={isInputReadonly}
+                            disabled={disabled}
                             onfocus={handleFocus}
                             onblur={handleBlur}
                             oninput={handleInput}
@@ -53,6 +54,7 @@
                                 type="button"
                                 onclick={handleClearSelection}
                                 class={getClearSelectionButtonClass}
+                                disabled={disabled}
                             >
                                 <lightning-icon
                                     icon-name="utility:close"
@@ -78,9 +80,9 @@
                                 <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
                             </div>
 
-                            <!-- Display if results are present -->
-                            <template for:each={searchResultsLocalState} for:item="item" if:true={isExpanded}>
-                                <li key={item.result.id} role="presentation" class="slds-listbox__item">
+                            <!-- Result list start -->
+                            <template for:each={searchResultsLocalState} for:item="item" if:true={hasResults}>
+                                <li key={item.result.id} role="presentation">
                                     <span
                                         class={item.classes}
                                         role="option"
@@ -95,14 +97,14 @@
                                             ></lightning-icon>
                                         </span>
                                         <span class="slds-media__body">
-                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity">
+                                            <span class="slds-listbox__option-text_entity">
                                                 <lightning-formatted-rich-text
                                                     value={item.result.titleFormatted}
                                                     disable-linkify
                                                 >
                                                 </lightning-formatted-rich-text>
                                             </span>
-                                            <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
+                                            <span class="slds-listbox__option-meta">
                                                 <lightning-formatted-rich-text
                                                     value={item.result.subtitleFormatted}
                                                     disable-linkify
@@ -113,15 +115,43 @@
                                     </span>
                                 </li>
                             </template>
-                            <!-- Display that there are no results -->
-                            <template if:false={isExpanded}>
-                                <li role="presentation" class="slds-listbox__item">
+                            <!-- Result list end -->
+
+                            <!-- No results start -->
+                            <template if:false={hasResults}>
+                                <li role="presentation">
                                     <span class="slds-media slds-listbox__option_entity" role="option">
-                                        <span if:false={loading} class="slds-media__body"> No results. </span>
-                                        <span if:true={loading} class="slds-media__body"> Loading... </span>
+                                        <span if:false={loading} class="slds-media__body">No results.</span>
+                                        <span if:true={loading} class="slds-media__body">Loading...</span>
                                     </span>
                                 </li>
                             </template>
+                            <!-- No results end -->
+
+                            <!-- Create new records -->
+                            <template for:each={newRecordOptions} for:item="newRecord">
+                                <li key={newRecord.value} role="presentation">
+                                    <div
+                                        class="slds-media slds-media_center slds-listbox__option slds-listbox__option_entity"
+                                        onclick={handleNewRecordClick}
+                                        data-sobject={newRecord.value}
+                                        data-defaults={newRecord.defaults}
+                                        role="option"
+                                    >
+                                        <span class="slds-media__figure">
+                                            <lightning-icon
+                                                icon-name="utility:add"
+                                                size="small"
+                                                alternative-text={newRecord.label}
+                                            ></lightning-icon>
+                                        </span>
+                                        <span class="slds-media__body">
+                                            <span class="slds-listbox__option-text">{newRecord.label}</span>
+                                        </span>
+                                    </div>
+                                </li>
+                            </template>
+                            <!-- Create new records end -->
                         </ul>
                     </div>
                     <!-- Result list box end -->
@@ -137,7 +167,7 @@
                         aria-label="Selected Options:"
                     >
                         <template for:each={selection} for:item="item">
-                            <li key={item.id} role="presentation" class="slds-listbox__item">
+                            <li key={item.id} role="presentation">
                                 <lightning-pill
                                     label={item.title}
                                     title={item.title}

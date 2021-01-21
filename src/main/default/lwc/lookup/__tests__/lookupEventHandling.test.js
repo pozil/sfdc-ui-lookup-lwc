@@ -108,10 +108,10 @@ describe('c-lookup event handling', () => {
         expect(lookupEl.selection[0].id).toBe(SAMPLE_SEARCH_ITEMS[0].id);
     });
 
-    it('can create new record', async () => {
+    it('can create new record without pre-navigate callback', async () => {
         jest.useFakeTimers();
 
-        // Create lookup with search handler
+        // Create lookup with search handler and new record options
         const newRecordOptions = [{ value: 'Account', label: 'New Account' }];
         const lookupEl = createLookupElement({ newRecordOptions });
         const searchFn = (event) => {
@@ -127,6 +127,42 @@ describe('c-lookup event handling', () => {
         const newRecordEl = lookupEl.shadowRoot.querySelector('div[data-sobject]');
         expect(newRecordEl).not.toBeNull();
         newRecordEl.click();
+        await flushPromises();
+
+        // Verify that we navigate to the right page
+        const { pageReference } = getNavigateCalledWith();
+        expect(pageReference.type).toBe('standard__objectPage');
+        expect(pageReference.attributes.objectApiName).toBe(newRecordOptions[0].value);
+        expect(pageReference.attributes.actionName).toBe('new');
+    });
+
+    it('can create new record with pre-navigate callback', async () => {
+        jest.useFakeTimers();
+
+        // Create mock pre-navigate callback
+        const preNavigateCallback = jest.fn(() => Promise.resolve());
+
+        // Create lookup with search handler and new record options
+        const newRecordOptions = [{ value: 'Account', label: 'New Account', preNavigateCallback }];
+        const lookupEl = createLookupElement({ newRecordOptions });
+        const searchFn = (event) => {
+            event.target.setSearchResults([]);
+        };
+        lookupEl.addEventListener('search', searchFn);
+
+        // Simulate search term input
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH);
+        await flushPromises();
+
+        // Simulate mouse selection
+        const newRecordEl = lookupEl.shadowRoot.querySelector('div[data-sobject]');
+        expect(newRecordEl).not.toBeNull();
+        newRecordEl.click();
+
+        // Verify that preNavigateCallback got called
+        expect(preNavigateCallback).toHaveBeenCalled();
+        const newRecordOption = preNavigateCallback.mock.calls[0][0];
+        expect(newRecordOption.value).toBe(newRecordOptions[0].value);
         await flushPromises();
 
         // Verify that we navigate to the right page

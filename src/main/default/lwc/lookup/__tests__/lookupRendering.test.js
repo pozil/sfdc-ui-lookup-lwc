@@ -1,4 +1,4 @@
-const { createLookupElement, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
+const { createLookupElement, flushPromises, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
 
 describe('c-lookup rendering', () => {
     afterEach(() => {
@@ -17,16 +17,15 @@ describe('c-lookup rendering', () => {
         expect(listItemEls[0].textContent).toBe('No results.');
     });
 
-    it('shows default search results by default', () => {
+    it('shows default search results by default', async () => {
         const lookupEl = createLookupElement();
         lookupEl.setDefaultResults(SAMPLE_SEARCH_ITEMS);
+        await flushPromises();
 
         // Query for rendered list items
-        return Promise.resolve().then(() => {
-            const listItemEls = lookupEl.shadowRoot.querySelectorAll('span[role=option]');
-            expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
-            expect(listItemEls[0].dataset.recordid).toBe(SAMPLE_SEARCH_ITEMS[0].id);
-        });
+        const listItemEls = lookupEl.shadowRoot.querySelectorAll('span[role=option]');
+        expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
+        expect(listItemEls[0].dataset.recordid).toBe(SAMPLE_SEARCH_ITEMS[0].id);
     });
 
     it('renders label by default', () => {
@@ -71,6 +70,7 @@ describe('c-lookup rendering', () => {
         const formElementEl = lookupEl.shadowRoot.querySelector('div:first-child');
         expect(formElementEl.classList).toContain('slds-form-element_horizontal');
     });
+
     it('renders single entry (no selection)', () => {
         const lookupEl = createLookupElement({ isMultiEntry: false });
 

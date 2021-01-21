@@ -288,16 +288,22 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     handleNewRecordClick(event) {
         const objectApiName = event.currentTarget.dataset.sobject;
-        const objectDefaults = event.currentTarget.dataset.defaults;
-        this[NavigationMixin.Navigate]({
-            type: 'standard__objectPage',
-            attributes: {
-                objectApiName,
-                actionName: 'new'
-            },
-            state: {
-                defaultFieldValues: objectDefaults
-            }
+        const selection = this.newRecordOptions.find((option) => option.value === objectApiName);
+
+        const preNavigateCallback = selection.preNavigateCallback
+            ? selection.preNavigateCallback
+            : () => Promise.resolve();
+        preNavigateCallback(selection).then(() => {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__objectPage',
+                attributes: {
+                    objectApiName,
+                    actionName: 'new'
+                },
+                state: {
+                    defaultFieldValues: selection.defaults
+                }
+            });
         });
     }
 

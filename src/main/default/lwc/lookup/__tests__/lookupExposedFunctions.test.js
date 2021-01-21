@@ -30,21 +30,20 @@ describe('c-lookup exposed functions', () => {
         expect(selection.length).toBe(1);
     });
 
-    it('setSearchResults renders correct results', () => {
+    it('setSearchResults renders correct results', async () => {
         // Create lookup
         const lookupEl = createLookupElement();
         lookupEl.setSearchResults(SAMPLE_SEARCH_ITEMS);
+        await flushPromises();
 
         // Query for rendered list items
-        return flushPromises().then(() => {
-            const listItemEls = lookupEl.shadowRoot.querySelectorAll('li');
-            expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
-            const resultItemEls = listItemEls[0].querySelectorAll('lightning-formatted-rich-text');
-            expect(resultItemEls.length).toBe(2);
-        });
+        const listItemEls = lookupEl.shadowRoot.querySelectorAll('li');
+        expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
+        const resultItemEls = listItemEls[0].querySelectorAll('lightning-formatted-rich-text');
+        expect(resultItemEls.length).toBe(2);
     });
 
-    it('setSearchResults supports special regex characters in search term', () => {
+    it('setSearchResults supports special regex characters in search term', async () => {
         jest.useFakeTimers();
 
         // Create lookup with search handler
@@ -56,11 +55,10 @@ describe('c-lookup exposed functions', () => {
 
         // Simulate search term input with regex characters
         inputSearchTerm(lookupEl, '[a');
+        await flushPromises();
 
         // Query for rendered list items
-        return flushPromises().then(() => {
-            const listItemEls = lookupEl.shadowRoot.querySelectorAll('li');
-            expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
-        });
+        const listItemEls = lookupEl.shadowRoot.querySelectorAll('li');
+        expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
     });
 });

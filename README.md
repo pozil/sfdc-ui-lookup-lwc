@@ -221,7 +221,6 @@ connectedCallback() {
 
 **Tip:** consider working with cookies to store information in a temporary state.
 
-
 ## Reference
 
 ### Attributes

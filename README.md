@@ -97,10 +97,10 @@ Follow these steps in order to use the lookup component:
 
     ```js
     handleSearch(event) {
-        const target = event.target;
+        const lookupElement = event.target;
         apexSearch(event.detail)
             .then(results => {
-                target.setSearchResults(results);
+                lookupElement.setSearchResults(results);
             })
             .catch(error => {
                 // TODO: handle error

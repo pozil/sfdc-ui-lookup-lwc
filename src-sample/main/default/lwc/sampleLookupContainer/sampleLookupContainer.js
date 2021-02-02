@@ -59,10 +59,11 @@ export default class SampleLookupContainer extends LightningElement {
      * @param {event} event `search` event emmitted by the lookup
      */
     handleLookupSearch(event) {
+        const lookupElement = event.target;
         // Call Apex endpoint to search for records and pass results to the lookup
         search(event.detail)
             .then((results) => {
-                this.template.querySelector('c-lookup').setSearchResults(results);
+                lookupElement.setSearchResults(results);
             })
             .catch((error) => {
                 this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');

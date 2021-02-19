@@ -326,7 +326,10 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get getContainerClass() {
-        let css = 'slds-combobox_container slds-has-inline-listbox ';
+        let css = 'slds-combobox_container '; 
+        if (this.isMultiEntry) {
+            css += 'slds-has-inline-listbox ';
+        }
         if (this._hasFocus && this.hasResults) {
             css += 'slds-has-input-focus ';
         }

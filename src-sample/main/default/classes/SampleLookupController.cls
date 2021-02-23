@@ -23,7 +23,7 @@ public with sharing class SampleLookupController {
         String accountIcon = 'standard:account';
         Account[] accounts = (List<Account>) searchResults[0];
         for (Account account : accounts) {
-            String subtitle = 'Account' + account.BillingCity == null ? '' : ' • ' + account.BillingCity;
+            String subtitle = account.BillingCity == null ? 'Account' : 'Account • ' + account.BillingCity;
             results.add(new LookupSearchResult(account.Id, 'Account', accountIcon, account.Name, subtitle));
         }
 

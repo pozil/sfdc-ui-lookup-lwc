@@ -22,8 +22,8 @@
     "devDependencies": {
         "@salesforce/eslint-config-lwc": "^0.9.0",
         "@salesforce/sfdx-lwc-jest": "^0.10.4",
-        "eslint": "^7.20.0",
-        "husky": "^5.1.1",
+        "eslint": "^7.21.0",
+        "husky": "^5.1.2",
         "prettier": "^2.2.1",
         "prettier-plugin-apex": "^1.8.0",
         "semver": "^7.3.4"

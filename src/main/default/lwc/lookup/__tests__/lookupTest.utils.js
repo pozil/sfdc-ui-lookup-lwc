@@ -51,3 +51,5 @@ export const SAMPLE_SEARCH_ITEMS = [
         subtitle: 'sub2'
     }
 ];
+
+export const LABEL_NO_RESULTS = 'No results.';

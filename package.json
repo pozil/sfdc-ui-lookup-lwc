@@ -1,7 +1,7 @@
 {
     "name": "sfdc-ui-lookup-lwc",
     "private": true,
-    "version": "2.8.0",
+    "version": "2.9.0",
     "description": "Salesforce Lookup Component (Lightning Web Components version)",
     "engines": {
         "node": ">= 10.13.0",
@@ -15,23 +15,18 @@
         "test:coverage": "sfdx-lwc-jest --coverage",
         "prettier": "prettier --write '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
         "prettier:verify": "prettier --list-different '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
-        "postinstall": "node install-scripts/check-version.js",
+        "postinstall": "node install-scripts/check-version.js && husky install",
         "qualitygate": "npm run prettier:verify && npm run lint && npm run test"
     },
     "author": "Philippe Ozil",
     "devDependencies": {
         "@salesforce/eslint-config-lwc": "^0.9.0",
-        "@salesforce/sfdx-lwc-jest": "^0.11.0",
-        "eslint": "^7.19.0",
-        "husky": "^4.3.8",
+        "@salesforce/sfdx-lwc-jest": "^0.10.4",
+        "eslint": "^7.21.0",
+        "husky": "^5.1.2",
         "prettier": "^2.2.1",
         "prettier-plugin-apex": "^1.8.0",
         "semver": "^7.3.4"
-    },
-    "husky": {
-        "hooks": {
-            "pre-push": "npm run qualitygate"
-        }
     },
     "repository": {
         "type": "git",

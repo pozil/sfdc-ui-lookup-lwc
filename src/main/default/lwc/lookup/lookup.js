@@ -47,7 +47,6 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     set selection(initialSelection) {
         this._curSelection = Array.isArray(initialSelection) ? initialSelection : [initialSelection];
         this.processSelectionUpdate(false);
-        this._hasFocus = false;
     }
 
     get selection() {
@@ -59,7 +58,10 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Reset the spinner
         this.loading = false;
         // Clone results before modifying them to avoid Locker restriction
-        const resultsLocal = JSON.parse(JSON.stringify(results));
+        let resultsLocal = JSON.parse(JSON.stringify(results));
+        // Remove selected items from search results
+        const selectedIds = this._curSelection.map((sel) => sel.id);
+        resultsLocal = resultsLocal.filter((result) => selectedIds.indexOf(result.id) === -1);
         // Format results
         const cleanSearchTerm = this._searchTerm.replace(REGEX_TRAP, '');
         const regex = new RegExp(`(${cleanSearchTerm})`, 'gi');
@@ -173,15 +175,12 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Reset search
         this._cleanSearchTerm = '';
         this._searchTerm = '';
-        // Remove selected items from default search results
-        const selectedIds = this._curSelection.map((sel) => sel.id);
-        let defaultResults = [...this._defaultSearchResults];
-        defaultResults = defaultResults.filter((result) => selectedIds.indexOf(result.id) === -1);
-        this.setSearchResults(defaultResults);
+        this.setSearchResults([...this._defaultSearchResults]);
         // Indicate that component was interacted with
         this._isDirty = isUserInteraction;
         // If selection was changed by user, notify parent components
         if (isUserInteraction) {
+            const selectedIds = this._curSelection.map((sel) => sel.id);
             this.dispatchEvent(new CustomEvent('selectionchange', { detail: selectedIds }));
         }
     }

@@ -11,7 +11,8 @@ const VARIANT_LABEL_STACKED = 'label-stacked';
 const VARIANT_LABEL_INLINE = 'label-inline';
 const VARIANT_LABEL_HIDDEN = 'label-hidden';
 
-const REGEX_TRAP = /[+\\?^${}()|[\]\\]/g;
+const REGEX_SOSL_RESERVED = /(\?|&|\||!|\{|\}|\[|\]|\(|\)|\^|~|\*|:|"|\+|-)/g;
+const REGEX_EXTRA_TRAP = /(\$|\\)/g;
 
 export default class Lookup extends NavigationMixin(LightningElement) {
     // Public properties
@@ -63,7 +64,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         const selectedIds = this._curSelection.map((sel) => sel.id);
         resultsLocal = resultsLocal.filter((result) => selectedIds.indexOf(result.id) === -1);
         // Format results
-        const cleanSearchTerm = this._searchTerm.replace(REGEX_TRAP, '');
+        const cleanSearchTerm = this._searchTerm.replace(REGEX_SOSL_RESERVED, '.?').replace(REGEX_EXTRA_TRAP, '\\$1');
         const regex = new RegExp(`(${cleanSearchTerm})`, 'gi');
         this._searchResults = resultsLocal.map((result) => {
             // Format title and subtitle
@@ -122,7 +123,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         this._searchTerm = newSearchTerm;
 
         // Compare clean new search term with current one and abort if identical
-        const newCleanSearchTerm = newSearchTerm.trim().replace(/\*/g, '').toLowerCase();
+        const newCleanSearchTerm = newSearchTerm.trim().replace(REGEX_SOSL_RESERVED, '?').toLowerCase();
         if (this._cleanSearchTerm === newCleanSearchTerm) {
             return;
         }

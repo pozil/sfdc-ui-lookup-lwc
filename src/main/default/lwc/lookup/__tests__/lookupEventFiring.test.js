@@ -2,7 +2,7 @@ const { createLookupElement, inputSearchTerm, SAMPLE_SEARCH_ITEMS } = require('.
 
 const SAMPLE_SEARCH_TOO_SHORT = 'A ';
 const SAMPLE_SEARCH_RAW = 'Sample search* ';
-const SAMPLE_SEARCH_CLEAN = 'sample search';
+const SAMPLE_SEARCH_CLEAN = 'sample search?';
 
 describe('c-lookup event fires', () => {
     afterEach(() => {

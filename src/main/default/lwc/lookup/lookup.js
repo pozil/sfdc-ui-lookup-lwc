@@ -131,8 +131,8 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Save clean search term
         this._cleanSearchTerm = newCleanSearchTerm;
 
-        // Ignore search terms that are too small
-        if (newCleanSearchTerm.length < this.minSearchTermLength) {
+        // Ignore search terms that are too small after removing special characters
+        if (newCleanSearchTerm.replace(/\?/g, '').length < this.minSearchTermLength) {
             this.setSearchResults(this._defaultSearchResults);
             return;
         }

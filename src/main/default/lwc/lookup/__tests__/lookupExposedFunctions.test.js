@@ -54,7 +54,7 @@ describe('c-lookup exposed functions', () => {
         lookupEl.addEventListener('search', searchFn);
 
         // Simulate search term input with regex characters
-        inputSearchTerm(lookupEl, '[a');
+        inputSearchTerm(lookupEl, '[ab');
         await flushPromises();
 
         // Query for rendered list items

@@ -11,7 +11,7 @@ const VARIANT_LABEL_STACKED = 'label-stacked';
 const VARIANT_LABEL_INLINE = 'label-inline';
 const VARIANT_LABEL_HIDDEN = 'label-hidden';
 
-const REGEX_SOSL_RESERVED = /(\?|&|\||!|\{|\}|\[|\]|\(|\)|\^|~|\*|:|"|\+|-)/g;
+const REGEX_SOSL_RESERVED = /(\?|&|\||!|\{|\}|\[|\]|\(|\)|\^|~|\*|:|"|\+|-|\\)/g;
 const REGEX_EXTRA_TRAP = /(\$|\\)/g;
 
 export default class Lookup extends NavigationMixin(LightningElement) {

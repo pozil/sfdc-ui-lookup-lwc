@@ -1,8 +1,9 @@
 const { createLookupElement, inputSearchTerm, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
 
-const SAMPLE_SEARCH_TOO_SHORT = 'A ';
+const SAMPLE_SEARCH_TOO_SHORT_WHITESPACE = 'A ';
+const SAMPLE_SEARCH_TOO_SHORT_SPECIAL = 'a*';
 const SAMPLE_SEARCH_RAW = 'Sample search* ';
-const SAMPLE_SEARCH_CLEAN = 'sample search';
+const SAMPLE_SEARCH_CLEAN = 'sample search?';
 
 describe('c-lookup event fires', () => {
     afterEach(() => {
@@ -36,7 +37,7 @@ describe('c-lookup event fires', () => {
         });
     });
 
-    it('does not fire search event when search term is too short', () => {
+    it('does not fire search event when search term is too short with whitespace', () => {
         jest.useFakeTimers();
 
         // Create lookup with mock search handler
@@ -45,7 +46,22 @@ describe('c-lookup event fires', () => {
         lookupEl.addEventListener('search', mockSearchFn);
 
         // Simulate search term input
-        inputSearchTerm(lookupEl, SAMPLE_SEARCH_TOO_SHORT);
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH_TOO_SHORT_WHITESPACE);
+
+        // Check that search event wasn't fired
+        expect(mockSearchFn).not.toBeCalled();
+    });
+
+    it('does not fire search event when search term is too short with special chars', () => {
+        jest.useFakeTimers();
+
+        // Create lookup with mock search handler
+        const lookupEl = createLookupElement();
+        const mockSearchFn = jest.fn();
+        lookupEl.addEventListener('search', mockSearchFn);
+
+        // Simulate search term input
+        inputSearchTerm(lookupEl, SAMPLE_SEARCH_TOO_SHORT_SPECIAL);
 
         // Check that search event wasn't fired
         expect(mockSearchFn).not.toBeCalled();
@@ -70,12 +86,42 @@ describe('c-lookup event fires', () => {
         jest.useFakeTimers();
 
         // Create lookup with mock search handler
-        const lookupEl = createLookupElement({ minSearchTermLength: SAMPLE_SEARCH_CLEAN.length });
+        const lookupEl = createLookupElement({ minSearchTermLength: 5 });
         const mockSearchFn = jest.fn();
         lookupEl.addEventListener('search', mockSearchFn);
 
         // Simulate search term input
-        inputSearchTerm(lookupEl, SAMPLE_SEARCH_CLEAN);
+        inputSearchTerm(lookupEl, '123456');
+
+        // Check fired search event
+        expect(mockSearchFn).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not fire search event when search term is under custom minimum length with special characters', () => {
+        jest.useFakeTimers();
+
+        // Create lookup with mock search handler and custom minimum search term length
+        const lookupEl = createLookupElement({ minSearchTermLength: 5 });
+        const mockSearchFn = jest.fn();
+        lookupEl.addEventListener('search', mockSearchFn);
+
+        // Simulate search term input
+        inputSearchTerm(lookupEl, '1234*?');
+
+        // Check that search event wasn't fired
+        expect(mockSearchFn).not.toBeCalled();
+    });
+
+    it('fires search event when search term is above custom minimum length with special characters', () => {
+        jest.useFakeTimers();
+
+        // Create lookup with mock search handler
+        const lookupEl = createLookupElement({ minSearchTermLength: 5 });
+        const mockSearchFn = jest.fn();
+        lookupEl.addEventListener('search', mockSearchFn);
+
+        // Simulate search term input
+        inputSearchTerm(lookupEl, '123456*?');
 
         // Check fired search event
         expect(mockSearchFn).toHaveBeenCalledTimes(1);

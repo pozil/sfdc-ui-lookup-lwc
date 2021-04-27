@@ -2,7 +2,7 @@
 public class SampleLookupControllerTest {
     @isTest
     static void search_should_return_Account_and_Opportunity() {
-        List<Id> fixedResults = new List<Id>(2);
+        List<Id> fixedResults = new Id[2];
         Account account = createAccount('Account');
         fixedResults.add(account.Id);
         Opportunity oppty = createOpportunity('Oppty');
@@ -19,7 +19,7 @@ public class SampleLookupControllerTest {
 
     @isTest
     static void search_should_not_return_selected_item() {
-        List<Id> fixedResults = new List<Id>(2);
+        List<Id> fixedResults = new Id[2];
         Account account1 = createAccount('Account1');
         fixedResults.add(account1.Id);
         Account account2 = createAccount('Account2');

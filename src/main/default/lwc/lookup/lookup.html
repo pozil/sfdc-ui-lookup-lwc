@@ -132,7 +132,10 @@
                             <template for:each={newRecordOptions} for:item="newRecord">
                                 <li key={newRecord.value} role="presentation">
                                     <div
-                                        class="slds-media slds-media_center slds-listbox__option slds-listbox__option_entity"
+                                        class="
+                                            slds-media slds-media_center
+                                            slds-listbox__option slds-listbox__option_entity
+                                        "
                                         onclick={handleNewRecordClick}
                                         data-sobject={newRecord.value}
                                         role="option"

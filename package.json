@@ -1,7 +1,7 @@
 {
     "name": "sfdc-ui-lookup-lwc",
     "private": true,
-    "version": "2.9.1",
+    "version": "2.10.0",
     "description": "Salesforce Lookup Component (Lightning Web Components version)",
     "engines": {
         "node": ">= 10.13.0",
@@ -9,26 +9,41 @@
     },
     "scripts": {
         "lint": "eslint **/lwc/**",
-        "test": "sfdx-lwc-jest",
-        "test:watch": "sfdx-lwc-jest --watch",
-        "test:debug": "sfdx-lwc-jest --debug",
-        "test:coverage": "sfdx-lwc-jest --coverage",
+        "test": "sfdx-lwc-jest --skipApiVersionCheck",
+        "test:watch": "sfdx-lwc-jest --watch --skipApiVersionCheck",
+        "test:debug": "sfdx-lwc-jest --debug --skipApiVersionCheck",
+        "test:coverage": "sfdx-lwc-jest --coverage --skipApiVersionCheck",
         "prettier": "prettier --write '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
         "prettier:verify": "prettier --list-different '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
         "postinstall": "node install-scripts/check-version.js && husky install",
-        "qualitygate": "npm run prettier:verify && npm run lint && npm run test"
+        "precommit": "lint-staged"
+    },
+    "lint-staged": {
+        "**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}": [
+            "prettier --write"
+        ],
+        "**/{aura,lwc}/**": [
+            "eslint"
+        ],
+        "**/lwc/**": [
+            "sfdx-lwc-jest --skipApiVersionCheck -- --bail --findRelatedTests"
+        ]
     },
     "author": "Philippe Ozil",
     "devDependencies": {
-        "@lwc/eslint-plugin-lwc": "^1.0.0",
-        "@salesforce/eslint-config-lwc": "^1.0.0",
-        "@salesforce/sfdx-lwc-jest": "^0.10.4",
-        "eslint": "^7.25.0",
-        "eslint-plugin-import": "^2.22.1",
-        "eslint-plugin-jest": "^23.8.2",
+        "@lwc/eslint-plugin-lwc": "^1.0.1",
+        "@prettier/plugin-xml": "^0.13.1",
+        "@salesforce/eslint-config-lwc": "^2.0.0",
+        "@salesforce/eslint-plugin-lightning": "^0.1.1",
+        "@salesforce/sfdx-lwc-jest": "^0.13.0",
+        "eslint": "^7.29.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-import": "^2.23.4",
+        "eslint-plugin-jest": "^24.3.6",
         "husky": "^6.0.0",
-        "prettier": "^2.2.1",
-        "prettier-plugin-apex": "^1.9.0",
+        "lint-staged": "^11.0.0",
+        "prettier": "^2.3.1",
+        "prettier-plugin-apex": "^1.10.0",
         "semver": "^7.3.5"
     },
     "repository": {

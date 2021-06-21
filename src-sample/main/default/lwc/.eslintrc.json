@@ -1,3 +1,11 @@
 {
-    "extends": "@salesforce/eslint-config-lwc/recommended"
+    "extends": ["@salesforce/eslint-config-lwc/recommended", "prettier"],
+    "overrides": [
+        {
+            "files": ["**/__tests__/**"],
+            "env": {
+                "node": true
+            }
+        }
+    ]
 }

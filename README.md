@@ -15,6 +15,7 @@
     1. [Handling selection changes (optional)](#handling-selection-changes-optional)
     1. [Providing default search results (optional)](#providing-default-search-results-optional)
     1. [Saving form state when creating new records (optional)](#saving-form-state-when-creating-new-records-optional)
+    1. [Passing custom data to JavaScript and Apex (optional)](#passing-custom-data-to-javascript-and-apex-optional)
 1. [Reference](#reference)
 
 ## About
@@ -220,6 +221,34 @@ connectedCallback() {
 ```
 
 **Tip:** consider working with cookies to store information in a temporary state.
+
+### Passing custom data to JavaScript and Apex (optional)
+
+Sometimes, you may want to pass extra data from the lookup component to Apex. To do so, use [dataset](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset) attributes:
+
+1. In the parent component that uses the lookup, add a dataset attribute (`data-custom` in this example):
+
+    ```xml
+    <c-lookup
+        selection={initialSelection}
+        onsearch={handleLookupSearch}
+        label="Search"
+        is-multi-entry={isMultiEntry}
+        data-custom="My custom value"
+    >
+    ```
+
+1. In the parent JS, use the dataset attribute that you just added:
+
+    ```js
+    handleLookupSearch(event) {
+        const lookupElement = event.target;
+
+        alert(lookupElement.dataset.custom); // My custom value
+
+        // Actual search code
+    }
+    ```
 
 ## Reference
 

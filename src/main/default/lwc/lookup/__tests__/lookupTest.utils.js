@@ -4,9 +4,8 @@ import Lookup from 'c/lookup';
 /**
  * Helper function to wait until the microtask queue is empty
  */
-export const flushPromises = () => {
-    // eslint-disable-next-line no-undef
-    return new Promise((resolve) => setImmediate(resolve));
+export const flushPromises = async () => {
+    return Promise.resolve();
 };
 
 /**

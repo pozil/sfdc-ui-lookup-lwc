@@ -179,6 +179,10 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         this.setSearchResults([...this._defaultSearchResults]);
         // Indicate that component was interacted with
         this._isDirty = isUserInteraction;
+        // Blur input after single select lookup selection
+        if (!this.isMultiEntry && this.hasSelection()) {
+            this._hasFocus = false;
+        }
         // If selection was changed by user, notify parent components
         if (isUserInteraction) {
             const selectedIds = this._curSelection.map((sel) => sel.id);
@@ -326,10 +330,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get getContainerClass() {
-        let css = 'slds-combobox_container slds-has-inline-listbox ';
-        if (this._hasFocus && this.hasResults) {
-            css += 'slds-has-input-focus ';
-        }
+        let css = 'slds-combobox_container ';
         if (this.errors.length > 0) {
             css += 'has-custom-error';
         }
@@ -347,6 +348,9 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     get getInputClass() {
         let css = 'slds-input slds-combobox__input has-custom-height ';
+        if (this._hasFocus && this.hasResults) {
+            css += 'slds-has-focus ';
+        }
         if (this.errors.length > 0 || (this._isDirty && this.required && !this.hasSelection())) {
             css += 'has-custom-error ';
         }
@@ -405,8 +409,9 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     get getListboxClass() {
         return (
-            'slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid ' +
-            (this.scrollAfterNItems ? 'slds-dropdown_length-with-icon-' + this.scrollAfterNItems : '')
+            'slds-dropdown ' +
+            (this.scrollAfterNItems ? `slds-dropdown_length-with-icon-${this.scrollAfterNItems} ` : '') +
+            'slds-dropdown_fluid'
         );
     }
 

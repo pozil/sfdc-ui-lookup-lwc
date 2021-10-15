@@ -1,10 +1,10 @@
 {
     "name": "sfdc-ui-lookup-lwc",
     "private": true,
-    "version": "2.10.0",
+    "version": "2.11.0",
     "description": "Salesforce Lookup Component (Lightning Web Components version)",
     "scripts": {
-        "lint": "eslint **/lwc/**",
+        "lint": "eslint **/lwc/**/*.js",
         "test": "sfdx-lwc-jest --skipApiVersionCheck",
         "test:watch": "sfdx-lwc-jest --watch --skipApiVersionCheck",
         "test:debug": "sfdx-lwc-jest --debug --skipApiVersionCheck",
@@ -18,7 +18,7 @@
         "**/*.{cls,css,html,js,json,md,trigger,xml,yaml,yml}": [
             "prettier --write"
         ],
-        "**/lwc/**": [
+        "**/lwc/**/*.js": [
             "eslint",
             "sfdx-lwc-jest --skipApiVersionCheck -- --bail --findRelatedTests"
         ]

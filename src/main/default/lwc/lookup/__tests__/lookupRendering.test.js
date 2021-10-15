@@ -23,7 +23,7 @@ describe('c-lookup rendering', () => {
         await flushPromises();
 
         // Query for rendered list items
-        const listItemEls = lookupEl.shadowRoot.querySelectorAll('span[role=option]');
+        const listItemEls = lookupEl.shadowRoot.querySelectorAll('div[role=option]');
         expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
         expect(listItemEls[0].dataset.recordid).toBe(SAMPLE_SEARCH_ITEMS[0].id);
     });
@@ -148,6 +148,7 @@ describe('c-lookup rendering', () => {
         const input = lookupEl.shadowRoot.querySelector('input');
         expect(input.disabled).toBe(true);
     });
+
     it('disables clear selection button when single entry and disabled', () => {
         // Create lookup
         const lookupEl = createLookupElement({

@@ -73,8 +73,9 @@
                         role="listbox"
                         onmousedown={handleComboboxMouseDown}
                         onmouseup={handleComboboxMouseUp}
+                        class={getListboxClass}
                     >
-                        <ul class={getListboxClass} role="presentation">
+                        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
                             <!-- Spinner to display when waiting for results of search -->
                             <div if:true={loading}>
                                 <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
@@ -82,14 +83,14 @@
 
                             <!-- Result list start -->
                             <template for:each={searchResultsLocalState} for:item="item" if:true={hasResults}>
-                                <li key={item.result.id} role="presentation">
-                                    <span
+                                <li key={item.result.id} role="presentation" class="slds-listbox__item">
+                                    <div
                                         class={item.classes}
                                         role="option"
                                         onclick={handleResultClick}
                                         data-recordid={item.result.id}
                                     >
-                                        <span class="slds-media__figure">
+                                        <span class="slds-media__figure slds-listbox__option-icon">
                                             <lightning-icon
                                                 icon-name={item.result.icon}
                                                 size="small"
@@ -97,14 +98,14 @@
                                             ></lightning-icon>
                                         </span>
                                         <span class="slds-media__body">
-                                            <span class="slds-listbox__option-text_entity">
+                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity">
                                                 <lightning-formatted-rich-text
                                                     value={item.result.titleFormatted}
                                                     disable-linkify
                                                 >
                                                 </lightning-formatted-rich-text>
                                             </span>
-                                            <span class="slds-listbox__option-meta">
+                                            <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
                                                 <lightning-formatted-rich-text
                                                     value={item.result.subtitleFormatted}
                                                     disable-linkify
@@ -112,7 +113,7 @@
                                                 </lightning-formatted-rich-text>
                                             </span>
                                         </span>
-                                    </span>
+                                    </div>
                                 </li>
                             </template>
                             <!-- Result list end -->
@@ -130,7 +131,7 @@
 
                             <!-- Create new records -->
                             <template for:each={newRecordOptions} for:item="newRecord">
-                                <li key={newRecord.value} role="presentation">
+                                <li key={newRecord.value} role="presentation" class="slds-listbox__item">
                                     <div
                                         class="
                                             slds-media slds-media_center
@@ -140,7 +141,7 @@
                                         data-sobject={newRecord.value}
                                         role="option"
                                     >
-                                        <span class="slds-media__figure">
+                                        <span class="slds-media__figure slds-listbox__option-icon">
                                             <lightning-icon
                                                 icon-name="utility:add"
                                                 size="small"

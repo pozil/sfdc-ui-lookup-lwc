@@ -71,7 +71,7 @@ describe('c-lookup event handling', () => {
         await flushPromises();
 
         // Simulate mouse selection
-        const searchResultItem = lookupEl.shadowRoot.querySelector('span[data-recordid]');
+        const searchResultItem = lookupEl.shadowRoot.querySelector('div[data-recordid]');
         searchResultItem.click();
 
         // Check selection

@@ -1,7 +1,7 @@
 {
     "name": "sfdc-ui-lookup-lwc",
     "private": true,
-    "version": "2.11.0",
+    "version": "2.12.0",
     "description": "Salesforce Lookup Component (Lightning Web Components version)",
     "scripts": {
         "lint": "eslint **/lwc/**/*.js",
@@ -10,7 +10,7 @@
         "test:debug": "sfdx-lwc-jest --debug --skipApiVersionCheck",
         "test:coverage": "sfdx-lwc-jest --coverage --skipApiVersionCheck",
         "prettier": "prettier --write '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
-        "prettier:verify": "prettier --list-different '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
+        "prettier:verify": "prettier --check '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
         "postinstall": "husky install",
         "precommit": "lint-staged"
     },
@@ -25,17 +25,17 @@
     },
     "author": "Philippe Ozil",
     "devDependencies": {
-        "@lwc/eslint-plugin-lwc": "^1.1.0",
+        "@lwc/eslint-plugin-lwc": "^1.1.1",
         "@prettier/plugin-xml": "^1.1.0",
-        "@salesforce/eslint-config-lwc": "^3.0.0",
-        "@salesforce/eslint-plugin-lightning": "^0.1.1",
-        "@salesforce/sfdx-lwc-jest": "^1.0.1",
-        "eslint": "^7.32.0",
-        "eslint-plugin-import": "^2.24.2",
-        "eslint-plugin-jest": "^24.5.2",
-        "husky": "^7.0.2",
-        "lint-staged": "^11.2.0",
-        "prettier": "^2.4.1",
+        "@salesforce/eslint-config-lwc": "^3.2.1",
+        "@salesforce/eslint-plugin-lightning": "^1.0.0",
+        "@salesforce/sfdx-lwc-jest": "^1.1.0",
+        "eslint": "^8.4.1",
+        "eslint-plugin-import": "^2.25.3",
+        "eslint-plugin-jest": "^25.3.0",
+        "husky": "^7.0.4",
+        "lint-staged": "^12.1.2",
+        "prettier": "^2.5.1",
         "prettier-plugin-apex": "^1.10.0"
     },
     "repository": {
@@ -43,7 +43,7 @@
         "url": "git+https://github.com/pozil/sfdc-ui-lookup-lwc"
     },
     "volta": {
-        "node": "14.17.3",
-        "npm": "6.14.13"
+        "node": "14.18.2",
+        "npm": "6.14.15"
     }
 }

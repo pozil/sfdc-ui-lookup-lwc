@@ -340,7 +340,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     get getDropdownClass() {
         let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ';
         const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= this.minSearchTermLength;
-        if (this._hasFocus && this.isSelectionAllowed() && (isSearchTermValid || this.hasResults)) {
+        if (this._hasFocus && this.isSelectionAllowed() && (isSearchTermValid || this.hasResults || this.newRecordOptions.length)) {
             css += 'slds-is-open';
         }
         return css;

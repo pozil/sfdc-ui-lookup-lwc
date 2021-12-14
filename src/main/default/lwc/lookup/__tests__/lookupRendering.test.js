@@ -139,6 +139,16 @@ describe('c-lookup rendering', () => {
         expect(listItemEls[0].textContent).toBe(LABEL_NO_RESULTS);
     });
 
+    it('renders new record creation option when no selection', () => {
+        const lookupEl = createLookupElement({ newRecordOptions: [{ value: 'Account', label: 'New Account' }] });
+
+        // Query for rendered list items
+        const listItemEls = lookupEl.shadowRoot.querySelectorAll('li span.slds-media__body');
+        expect(listItemEls.length).toBe(2);
+        expect(listItemEls[0].textContent).toBe('No results.');
+        expect(listItemEls[1].textContent).toBe('New Account');
+    });
+
     it('can be disabled', () => {
         const lookupEl = createLookupElement({
             disabled: true

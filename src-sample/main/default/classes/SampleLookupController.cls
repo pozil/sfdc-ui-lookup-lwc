@@ -24,7 +24,8 @@ public with sharing class SampleLookupController {
         Account[] accounts = (List<Account>) searchResults[0];
         for (Account account : accounts) {
             String subtitle = account.BillingCity == null ? 'Account' : 'Account • ' + account.BillingCity;
-            results.add(new LookupSearchResult(account.Id, 'Account', accountIcon, account.Name, subtitle));
+            String url = '/' + account.Id;
+            results.add(new LookupSearchResult(account.Id, 'Account', accountIcon, account.Name, subtitle, url));
         }
 
         // Extract Opportunities & convert them into LookupSearchResult
@@ -37,7 +38,8 @@ public with sharing class SampleLookupController {
                     'Opportunity',
                     opptyIcon,
                     oppty.Name,
-                    'Opportunity • ' + oppty.StageName
+                    'Opportunity • ' + oppty.StageName,
+                    '/' + oppty.Id
                 )
             );
         }

@@ -8,6 +8,7 @@ public virtual class LookupSearchResult implements Comparable {
     protected String icon;
     protected String title;
     protected String subtitle;
+    protected String url;
 
     protected LookupSearchResult() {
     }
@@ -18,6 +19,11 @@ public virtual class LookupSearchResult implements Comparable {
         this.icon = icon;
         this.title = title;
         this.subtitle = subtitle;
+    }
+
+    public LookupSearchResult(Id id, String sObjectType, String icon, String title, String subtitle, String url) {
+        this(id, sObjectType, icon, title, subtitle);
+        this.url = url;
     }
 
     @AuraEnabled
@@ -43,6 +49,11 @@ public virtual class LookupSearchResult implements Comparable {
     @AuraEnabled
     public String getSubtitle() {
         return subtitle;
+    }
+
+    @AuraEnabled
+    public String getUrl() {
+        return url;
     }
 
     /**

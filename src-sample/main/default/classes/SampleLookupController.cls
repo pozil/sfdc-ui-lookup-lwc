@@ -70,7 +70,8 @@ public with sharing class SampleLookupController {
                         'Account',
                         'standard:account',
                         recentRecord.Name,
-                        'Account • ' + recentRecord.Name
+                        'Account',
+                        '/' + account.Id
                     )
                 );
             } else {
@@ -80,7 +81,8 @@ public with sharing class SampleLookupController {
                         'Opportunity',
                         'standard:opportunity',
                         recentRecord.Name,
-                        'Opportunity • ' + recentRecord.Name
+                        'Opportunity',
+                        '/' + oppty.Id
                     )
                 );
             }

@@ -343,7 +343,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (
             this._hasFocus &&
             this.isSelectionAllowed() &&
-            (isSearchTermValid || this.hasResults || this.newRecordOptions.length)
+            (isSearchTermValid || this.hasResults || this.newRecordOptions?.length)
         ) {
             css += 'slds-is-open';
         }

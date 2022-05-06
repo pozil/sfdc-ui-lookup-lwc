@@ -120,7 +120,7 @@ The parent component that contains the lookup can handle the `selectionchange` e
 </c-lookup>
 ```
 
-The `selectionchange` event handler can then get the current selection form the event detail or by calling the `getSelection()` function:
+The `selectionchange` event handler can then get the current selection from the event detail or by calling the `getSelection()` function:
 
 ```js
 handleSelectionChange(event) {

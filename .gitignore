@@ -1,6 +1,7 @@
 **/__MACOSX
 **/.DS_Store
 **/jsconfig.json
+.sf
 .sfdx
 .vscode
 .localdevserver

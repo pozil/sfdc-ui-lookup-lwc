@@ -93,8 +93,10 @@ export default class Lookup extends NavigationMixin(LightningElement) {
                 result,
                 state: {},
                 get classes() {
-                    let cls =
-                        'slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta';
+                    let cls = 'slds-media slds-media_center slds-listbox__option slds-listbox__option_entity';
+                    if (result.subtitleFormatted) {
+                        cls += ' slds-listbox__option_has-meta';
+                    }
                     if (self._focusedResultIndex === i) {
                         cls += ' slds-has-focus';
                     }

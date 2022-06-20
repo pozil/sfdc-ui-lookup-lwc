@@ -3,7 +3,7 @@
  * The Lookup controller returns a List<LookupSearchResult> when sending search result back to Lightning
  */
 public virtual class LookupSearchResult implements Comparable {
-    protected Id id;
+    protected String id;
     protected String sObjectType;
     protected String icon;
     protected String title;
@@ -12,7 +12,14 @@ public virtual class LookupSearchResult implements Comparable {
     protected LookupSearchResult() {
     }
 
-    public LookupSearchResult(Id id, String sObjectType, String icon, String title, String subtitle) {
+    /**
+     * @param id the lookup entry identifier (generally a record ID)
+     * @param sObjectType Optional - The sObject type of the selected record. This value is not used for lookup rendering. It's passed back to the selection handler in case you search on multiple object types.
+     * @param icon Optional - A qualified SLDS icon name taken from https://www.lightningdesignsystem.com/icons. It defaults to standard:default.
+     * @param title Required - The label of the lookup entry
+     * @param subtitle Optional - A subtitle that is displayed under the lookup entry label
+     */
+    public LookupSearchResult(String id, String sObjectType, String icon, String title, String subtitle) {
         this.id = id;
         this.sObjectType = sObjectType;
         this.icon = icon;
@@ -21,7 +28,7 @@ public virtual class LookupSearchResult implements Comparable {
     }
 
     @AuraEnabled
-    public Id getId() {
+    public String getId() {
         return id;
     }
 

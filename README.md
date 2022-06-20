@@ -17,6 +17,8 @@
     1. [Saving form state when creating new records (optional)](#saving-form-state-when-creating-new-records-optional)
     1. [Passing custom data to JavaScript and Apex (optional)](#passing-custom-data-to-javascript-and-apex-optional)
 1. [Reference](#reference)
+1. [Special use cases](#special-use-cases)
+    1. [Working with picklists values](#working-with-picklists-values)
 
 ## About
 
@@ -64,15 +66,15 @@ install-dev.bat
 
 ### Getting Started
 
-Follow these steps in order to use the lookup component:
+Follow these steps to use the lookup component:
 
 1. **Write the search endpoint**
 
-    Implement an Apex `@AuraEnabled(Cacheable=true)` method (`SampleLookupController.search` in our samples) that returns the search results as a `List<LookupSearchResult>`.
+    Implement an Apex `@AuraEnabled(cacheable=true scope='global')` method (`SampleLookupController.search` in our samples) that returns the search results as a `List<LookupSearchResult>`.
     The method name can be different, but it needs to match this signature:
 
     ```apex
-    @AuraEnabled(Cacheable=true)
+    @AuraEnabled(cacheable=true scope='global')
     public static List<LookupSearchResult> search(String searchTerm, List<String> selectedIds) {}
     ```
 
@@ -144,7 +146,7 @@ Here's how you can retrieve recent records and set them as default search result
 1. Implement an Apex endpoint that returns the recent records:
 
     ```apex
-    @AuraEnabled(Cacheable=true)
+    @AuraEnabled(cacheable=true scope='global')
     public static List<LookupSearchResult> getRecentlyViewed()
     ```
 
@@ -254,19 +256,19 @@ Sometimes, you may want to pass extra data from the lookup component to Apex. To
 
 ### Attributes
 
-| Attribute             | Type                                                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Default         |
-| --------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| `disabled`            | `Boolean`                                                                                     | Whether the lookup selection can be changed.                                                                                                                                                                                                                                                                                                                                                                                                                                  | `false`         |
-| `errors`              | `[{ "id": String, "message": String }]`                                                       | List of errors that are displayed under the lookup.                                                                                                                                                                                                                                                                                                                                                                                                                           | `[]`            |
-| `isMultiEntry`        | `Boolean`                                                                                     | Whether the lookup is single (default) or multi entry.                                                                                                                                                                                                                                                                                                                                                                                                                        | `false`         |
-| `label`               | `String`                                                                                      | Optional lookup label. Label is hidden if attribute is omitted.                                                                                                                                                                                                                                                                                                                                                                                                               | `''`            |
-| `minSearchTermLength` | `Number`                                                                                      | Mininimum number of characters required to perform a search.                                                                                                                                                                                                                                                                                                                                                                                                                  | `2`             |
-| `newRecordOptions`    | `[{ "value": String, "label": String, "defaults": String, "preNavigateCallback": Function }]` | List of options that lets the user create new records.<br/>`value` is an sObject API name (ie: "Account")<br/>`label` is the label displayed in the lookup (ie: "New Account").<br/>`defaults` is an optional comma-separated list of default field values (ie: "Name=Foo,Type\_\_c=Bar")<br/>`preNavigateCallback` is an optional callback used for [saving the form state](#saving-form-state-when-creating-new-records-optional) before navigating to the new record form. | `[]`            |
-| `placeholder`         | `String`                                                                                      | Lookup placeholder text.                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `''`            |
-| `required`            | `Boolean`                                                                                     | Whether the lookup is a required field. Note: Property can be set with `<c-lookup required>`.                                                                                                                                                                                                                                                                                                                                                                                 | `false`         |
-| `scrollAfterNItems`   | `Number`                                                                                      | A null or integer value used to force overflow scroll on the result listbox after N number of items.<br/>Valid values are `null`, `5`, `7`, or `10`.<br/>Use `null` to disable overflow scrolling.                                                                                                                                                                                                                                                                            | `null`          |
-| `selection`           | `[LookupSearchResult]` OR `LookupSearchResult`                                                | Lookup initial selection if any. Array for multi-entry lookup or an Object for single entry lookup.                                                                                                                                                                                                                                                                                                                                                                           | `[]`            |
-| `variant`             | `String`                                                                                      | Changes the appearance of the lookup. Accepted variants:<br/>`label-stacked` - places the label above the lookup.<br/>`label-hidden` - hides the label but make it available to assistive technology.<br/>`label-inline` - aligns horizontally the label and lookup.                                                                                                                                                                                                          | `label-stacked` |
+| Attribute             | Type                                                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Default         |
+| --------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `disabled`            | `Boolean`                                                                                     | Whether the lookup selection can be changed.                                                                                                                                                                                                                                                                                                                                                                                                                                        | `false`         |
+| `errors`              | `[{ "id": String, "message": String }]`                                                       | List of errors that are displayed under the lookup.                                                                                                                                                                                                                                                                                                                                                                                                                                 | `[]`            |
+| `isMultiEntry`        | `Boolean`                                                                                     | Whether the lookup is single (default) or multi entry.                                                                                                                                                                                                                                                                                                                                                                                                                              | `false`         |
+| `label`               | `String`                                                                                      | Optional lookup label. Label is hidden if attribute is omitted.                                                                                                                                                                                                                                                                                                                                                                                                                     | `''`            |
+| `minSearchTermLength` | `Number`                                                                                      | Minimum number of characters required to perform a search.                                                                                                                                                                                                                                                                                                                                                                                                                          | `2`             |
+| `newRecordOptions`    | `[{ "value": String, "label": String, "defaults": String, "preNavigateCallback": Function }]` | List of options that lets the user create new records.<br/>`value` is an sObject API name (i.e.: "Account")<br/>`label` is the label displayed in the lookup (i.e.: "New Account").<br/>`defaults` is an optional comma-separated list of default field values (i.e.: "Name=Foo,Type\_\_c=Bar")<br/>`preNavigateCallback` is an optional callback used for [saving the form state](#saving-form-state-when-creating-new-records-optional) before navigating to the new record form. | `[]`            |
+| `placeholder`         | `String`                                                                                      | Lookup placeholder text.                                                                                                                                                                                                                                                                                                                                                                                                                                                            | `''`            |
+| `required`            | `Boolean`                                                                                     | Whether the lookup is a required field. Note: Property can be set with `<c-lookup required>`.                                                                                                                                                                                                                                                                                                                                                                                       | `false`         |
+| `scrollAfterNItems`   | `Number`                                                                                      | A null or integer value used to force overflow scroll on the result listbox after N number of items.<br/>Valid values are `null`, `5`, `7`, or `10`.<br/>Use `null` to disable overflow scrolling.                                                                                                                                                                                                                                                                                  | `null`          |
+| `selection`           | `[LookupSearchResult]` OR `LookupSearchResult`                                                | Lookup initial selection if any. Array for multi-entry lookup or an Object for single entry lookup.                                                                                                                                                                                                                                                                                                                                                                                 | `[]`            |
+| `variant`             | `String`                                                                                      | Changes the appearance of the lookup. Accepted variants:<br/>`label-stacked` - places the label above the lookup.<br/>`label-hidden` - hides the label but make it available to assistive technology.<br/>`label-inline` - aligns horizontally the label and lookup.                                                                                                                                                                                                                | `label-stacked` |
 
 ### Functions
 
@@ -282,3 +284,37 @@ Sometimes, you may want to pass extra data from the lookup component to Apex. To
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `search`          | Event fired when a search needs to be performed on the server-side.<br/>`searchTerm` is the sanitized (lowercase, trimmed...) search term that should be sent to the server.<br/>`rawSearchTerm` is the unsanitized user input.<br/>`selectedIds` is an array of selected record Ids. | `{ searchTerm: String, rawSearchTerm: String, selectedIds: [ String ] }` |
 | `selectionchange` | Event fired when the selection of the lookup changes. The event's `detail` property holds the list of selected ids.<br/>You can also use `target.getSelection()` to retrieve the selected lookup objects.                                                                             | `[ String ]`                                                             |
+
+## Special use cases
+
+### Working with picklists values
+
+The lookup component can also be used to select values from picklist fields.
+
+This Apex sample example demonstrates how you can query for the values of `Account.Industry`:
+
+```apex
+@AuraEnabled(cacheable=true scope='global')
+public static List<LookupSearchResult> search(String searchTerm, List<String> selectedIds) {
+    // Prepare query parameters
+    searchTerm = '%' + searchTerm + '%';
+    // Execute search query
+    List<PicklistValueInfo> entries = [
+        SELECT Label, Value
+        FROM PicklistValueInfo
+        WHERE
+            EntityParticle.EntityDefinition.QualifiedApiName = 'Account'
+            AND EntityParticle.QualifiedApiName = 'Industry'
+            AND isActive = TRUE
+            AND Label LIKE :searchTerm
+            AND Id NOT IN :selectedIds
+        LIMIT 5
+    ];
+    // Prepare results
+    List<LookupSearchResult> results = new List<LookupSearchResult>();
+    for (PicklistValueInfo entry : entries) {
+        results.add(new LookupSearchResult(entry.Value, null, null, entry.Label, null));
+    }
+    return results;
+}
+```

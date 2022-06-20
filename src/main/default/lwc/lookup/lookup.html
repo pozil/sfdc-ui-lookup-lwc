@@ -105,7 +105,10 @@
                                                 >
                                                 </lightning-formatted-rich-text>
                                             </span>
-                                            <span class="slds-listbox__option-meta slds-listbox__option-meta_entity">
+                                            <span
+                                                if:true={item.result.subtitleFormatted}
+                                                class="slds-listbox__option-meta slds-listbox__option-meta_entity"
+                                            >
                                                 <lightning-formatted-rich-text
                                                     value={item.result.subtitleFormatted}
                                                     disable-linkify

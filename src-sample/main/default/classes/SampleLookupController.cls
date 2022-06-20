@@ -1,9 +1,9 @@
 public with sharing class SampleLookupController {
     private final static Integer MAX_RESULTS = 5;
 
-    @AuraEnabled(Cacheable=true)
+    @AuraEnabled(cacheable=true scope='global')
     public static List<LookupSearchResult> search(String searchTerm, List<String> selectedIds) {
-        // Prepare query paramters
+        // Prepare query parameters
         searchTerm += '*';
 
         // Execute search query
@@ -48,7 +48,7 @@ public with sharing class SampleLookupController {
         return results;
     }
 
-    @AuraEnabled(Cacheable=true)
+    @AuraEnabled(cacheable=true scope='global')
     public static List<LookupSearchResult> getRecentlyViewed() {
         List<LookupSearchResult> results = new List<LookupSearchResult>();
         // Get recently viewed records of type Account or Opportunity

@@ -307,7 +307,7 @@ public static List<LookupSearchResult> search(String searchTerm, List<String> se
             AND EntityParticle.QualifiedApiName = 'Industry'
             AND isActive = TRUE
             AND Label LIKE :searchTerm
-            AND Id NOT IN :selectedIds
+            AND Value NOT IN :selectedIds
         LIMIT 5
     ];
     // Prepare results

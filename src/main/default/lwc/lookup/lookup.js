@@ -1,5 +1,6 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
+import { getRecords } from 'lightning/uiRecordApi';
 
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
 
@@ -26,9 +27,13 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     @api scrollAfterNItems = null;
     @api newRecordOptions = [];
     @api minSearchTermLength = 2;
+    @api title = 'Name';
+    @api subtitle;
+    @api icon;
+    @api wireDefaultOptions;
 
     // Template properties
-    searchResultsLocalState = [];
+    searchResultsLocalState;
     loading = false;
 
     // Private properties
@@ -38,22 +43,61 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     _cleanSearchTerm;
     _cancelBlur = false;
     _searchThrottlingTimeout;
-    _searchResults = [];
-    _defaultSearchResults = [];
-    _curSelection = [];
+    _searchResults;
+    _defaultSearchResults;
+    _curSelection;
     _focusedResultIndex = null;
+    _fields;
+    @track recordsParam;
 
     // PUBLIC FUNCTIONS AND GETTERS/SETTERS
     @api
+    get fields(){
+      return this._fields?.filter((field, index) => index <= 1) ?? [this.title, this.subtitle]?.filter(value => !!value);
+    }
+    set fields(value){
+      switch(typeof(value)){
+        case 'string':
+          this._fields = value?.split(',')?.map(field => field.trim());
+          break;
+        case 'object':
+          if(Array.isArray(value)) this._fields = value?.map(field => field?.trim());
+          break;
+        default:
+          break;
+      }
+    }
+    @api 
+    get options(){
+      return this._searchResults ?? this._defaultSearchResults; //this.searchResultsLocalState;
+    }
+    set options(value){
+      value = Array.isArray(value) ? value : [value];
+      this.setDefaultResults(value);
+    }
+    @api
     set selection(initialSelection) {
-        this._curSelection = Array.isArray(initialSelection) ? initialSelection : [initialSelection];
+        let selection;
+        switch(typeof(initialSelection)){
+          case 'string':
+            initialSelection = initialSelection?.split?.(';');
+            const options = this._searchResults ?? this._defaultSearchResults;
+            selection = options?.length ? options?.filter(({id}) => initialSelection.includes(id)) : initialSelection;
+            break;
+          case 'object':
+            selection = Array.isArray(initialSelection) ? initialSelection : [initialSelection];
+            break;
+          default:
+            selection = initialSelection;
+            break;
+        }
+        this._curSelection = selection;
         this.processSelectionUpdate(false);
     }
-
     get selection() {
         return this._curSelection;
     }
-
+    
     @api
     setSearchResults(results) {
         // Reset the spinner
@@ -61,23 +105,25 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Clone results before modifying them to avoid Locker restriction
         let resultsLocal = JSON.parse(JSON.stringify(results));
         // Remove selected items from search results
-        const selectedIds = this._curSelection.map((sel) => sel.id);
-        resultsLocal = resultsLocal.filter((result) => selectedIds.indexOf(result.id) === -1);
+        const selectedIds = this._curSelection?.filter(sel => !!sel?.id)?.map((sel) => sel.id) ?? [];
+        if(selectedIds?.length){
+          resultsLocal = resultsLocal?.filter(({id}) => selectedIds?.indexOf(id) === -1);
+        }
         // Format results
         const cleanSearchTerm = this._searchTerm.replace(REGEX_SOSL_RESERVED, '.?').replace(REGEX_EXTRA_TRAP, '\\$1');
         const regex = new RegExp(`(${cleanSearchTerm})`, 'gi');
-        this._searchResults = resultsLocal.map((result) => {
+        this._searchResults = resultsLocal?.map((result) => {
             // Format title and subtitle
-            if (this._searchTerm.length > 0) {
-                result.titleFormatted = result.title
-                    ? result.title.replace(regex, '<strong>$1</strong>')
-                    : result.title;
-                result.subtitleFormatted = result.subtitle
-                    ? result.subtitle.replace(regex, '<strong>$1</strong>')
-                    : result.subtitle;
+            if (this._searchTerm?.length > 0 && !!result) {
+                result.titleFormatted = result?.title
+                    ? result?.title?.replace(regex, '<strong>$1</strong>')
+                    : result?.title;
+                result.subtitleFormatted = result?.subtitle
+                    ? result?.subtitle?.replace(regex, '<strong>$1</strong>')
+                    : result?.subtitle;
             } else {
-                result.titleFormatted = result.title;
-                result.subtitleFormatted = result.subtitle;
+                result.titleFormatted = result?.title;
+                result.subtitleFormatted = result?.subtitle;
             }
             // Add icon if missing
             if (typeof result.icon === 'undefined') {
@@ -88,12 +134,12 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Add local state and dynamic class to search results
         this._focusedResultIndex = null;
         const self = this;
-        this.searchResultsLocalState = this._searchResults.map((result, i) => {
+        this.searchResultsLocalState = this._searchResults?.map((result, i) => {
             return {
                 result,
                 state: {},
                 get classes() {
-                    let cls = 'slds-media slds-media_center slds-listbox__option slds-listbox__option_entity';
+                    let cls = 'slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta';
                     if (result.subtitleFormatted) {
                         cls += ' slds-listbox__option_has-meta';
                     }
@@ -114,12 +160,50 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     @api
     setDefaultResults(results) {
         this._defaultSearchResults = [...results];
-        if (this._searchResults.length === 0) {
+        if (this._searchResults?.length === 0) {
             this.setSearchResults(this._defaultSearchResults);
         }
     }
+    
+    //lifecycle hooks
+    connectedCallback(){
+      if(this.wireDefaultOptions) this.recordsParam = this.getRecordsParam();
+    }
+
+    // WIRED PROPERTIES/FUNCTIONS
+    @wire(getRecords, {records: '$recordsParam', fields: '$fields'})
+    handleGetRecordsResponse(response){
+      // console.log(`%c**getRecords response => ${JSON.stringify(response)}`, 'color:purple;font-wight:bold;');
+      // const {data:{results}} = response;
+      const results = response?.data?.results;
+      const icon = this.icon;
+      const defaultOptions = results?.map(({statusCode, result}) =>{
+        // console.log(`%c**statusCode => ${statusCode}, result => ${JSON.stringify(result)}`, `color: ${statusCode === 200 ? 'green;' : 'red;'}`);
+        if(statusCode === 200 && !!result){
+          const {fields, id} = result;
+          const option = {id, icon}
+          this.fields?.map((field, index) => {
+            const apiName = field?.split('.')?.at(1);
+            const propName = index === 0 ? 'title' : 'subtitle';
+            const value = fields[apiName]?.displayValue ?? fields[apiName]?.value;
+            option[propName] = value;
+          });
+          return option;
+        }
+      }) ?? [];
+      this.options = defaultOptions;
+      this._curSelection = this.options?.filter(({id}) => this.selectedIds?.includes(id));
+    }
 
     // INTERNAL FUNCTIONS
+    getRecordsParam(recordIds = this.selectedIds){
+      const fields =  this.fields;
+      if(!recordIds || !fields) return;
+      return recordIds?.reduce((records, recordId) =>{
+        !!recordId ? records.push({recordIds: [recordId], fields}) : null;
+        return records;
+      }, []);
+    }
 
     updateSearchTerm(newSearchTerm) {
         this._searchTerm = newSearchTerm;
@@ -154,24 +238,13 @@ export default class Lookup extends NavigationMixin(LightningElement) {
                     detail: {
                         searchTerm: this._cleanSearchTerm,
                         rawSearchTerm: newSearchTerm,
-                        selectedIds: this._curSelection.map((element) => element.id)
+                        selectedIds: this.selectedIds;
                     }
                 });
                 this.dispatchEvent(searchEvent);
             }
             this._searchThrottlingTimeout = null;
         }, SEARCH_DELAY);
-    }
-
-    isSelectionAllowed() {
-        if (this.isMultiEntry) {
-            return true;
-        }
-        return !this.hasSelection();
-    }
-
-    hasSelection() {
-        return this._curSelection.length > 0;
     }
 
     processSelectionUpdate(isUserInteraction) {
@@ -182,12 +255,12 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Indicate that component was interacted with
         this._isDirty = isUserInteraction;
         // Blur input after single select lookup selection
-        if (!this.isMultiEntry && this.hasSelection()) {
+        if (!this.isMultiEntry && this.hasSelection) {
             this._hasFocus = false;
         }
         // If selection was changed by user, notify parent components
         if (isUserInteraction) {
-            const selectedIds = this._curSelection.map((sel) => sel.id);
+            const selectedIds = this.selectedIds;
             this.dispatchEvent(new CustomEvent('selectionchange', { detail: selectedIds }));
         }
     }
@@ -195,11 +268,12 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     // EVENT HANDLING
 
     handleInput(event) {
+        const {target: {value}} = event;
         // Prevent action if selection is not allowed
-        if (!this.isSelectionAllowed()) {
+        if (!this.isSelectionAllowed) {
             return;
         }
-        this.updateSearchTerm(event.target.value);
+        this.updateSearchTerm(value);
     }
 
     handleKeyDown(event) {
@@ -237,9 +311,8 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (!selectedItem) {
             return;
         }
-        const newSelection = [...this._curSelection];
-        newSelection.push(selectedItem);
-        this._curSelection = newSelection;
+        const curSelection = !!this._curSelection ? [...this._curSelection] : [];
+        this._curSelection = [...curSelection, selectedItem];
 
         // Process selection update
         this.processSelectionUpdate(true);
@@ -260,7 +333,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     handleFocus() {
         // Prevent action if selection is not allowed
-        if (!this.isSelectionAllowed()) {
+        if (!this.isSelectionAllowed) {
             return;
         }
         this._hasFocus = true;
@@ -269,7 +342,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     handleBlur() {
         // Prevent action if selection is either not allowed or cancelled
-        if (!this.isSelectionAllowed() || this._cancelBlur) {
+        if (!this.isSelectionAllowed || this._cancelBlur) {
             return;
         }
         this._hasFocus = false;
@@ -280,13 +353,13 @@ export default class Lookup extends NavigationMixin(LightningElement) {
             return;
         }
         const recordId = event.currentTarget.name;
-        this._curSelection = this._curSelection.filter((item) => item.id !== recordId);
+        this._curSelection = this._curSelection?.filter(({id}) => id !== recordId);
         // Process selection update
         this.processSelectionUpdate(true);
     }
 
     handleClearSelection() {
-        this._curSelection = [];
+        this._curSelection = undefined;
         this._hasFocus = false;
         // Process selection update
         this.processSelectionUpdate(true);
@@ -316,8 +389,30 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     // STYLE EXPRESSIONS
 
     get hasResults() {
-        return this._searchResults.length > 0;
+        return this._searchResults?.length > 0;
     }
+
+    get hasSelection(){
+      return this._curSelection?.length > 0;
+    }
+
+    get selectedIds(){
+      return this._curSelection?.map(value => {
+        switch(typeof(value)){
+          case 'string':
+            return value;
+          default:
+            return value?.id;
+        }
+      });
+    }
+    
+    get isSelectionAllowed() {
+      if (this.isMultiEntry) {
+          return true;
+      }
+      return !this.hasSelection;
+  }
 
     get getFormElementClass() {
         return this.variant === VARIANT_LABEL_INLINE
@@ -344,7 +439,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= this.minSearchTermLength;
         if (
             this._hasFocus &&
-            this.isSelectionAllowed() &&
+            this.isSelectionAllowed &&
             (isSearchTermValid || this.hasResults || this.newRecordOptions?.length)
         ) {
             css += 'slds-is-open';
@@ -357,11 +452,11 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this._hasFocus && this.hasResults) {
             css += 'slds-has-focus ';
         }
-        if (this.errors.length > 0 || (this._isDirty && this.required && !this.hasSelection())) {
+        if (this.errors?.length > 0 || (this._isDirty && this.required && !this.hasSelection)) {
             css += 'has-custom-error ';
         }
         if (!this.isMultiEntry) {
-            css += 'slds-combobox__input-value ' + (this.hasSelection() ? 'has-custom-border' : '');
+            css += 'slds-combobox__input-value ' + (this.hasSelection ? 'has-custom-border' : '');
         }
         return css;
     }
@@ -371,7 +466,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this.isMultiEntry) {
             css += 'slds-input-has-icon_right';
         } else {
-            css += this.hasSelection() ? 'slds-input-has-icon_left-right' : 'slds-input-has-icon_right';
+            css += this.hasSelection ? 'slds-input-has-icon_left-right' : 'slds-input-has-icon_right';
         }
         return css;
     }
@@ -379,7 +474,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     get getSearchIconClass() {
         let css = 'slds-input__icon slds-input__icon_right ';
         if (!this.isMultiEntry) {
-            css += this.hasSelection() ? 'slds-hide' : '';
+            css += this.hasSelection ? 'slds-hide' : '';
         }
         return css;
     }
@@ -387,30 +482,30 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     get getClearSelectionButtonClass() {
         return (
             'slds-button slds-button_icon slds-input__icon slds-input__icon_right ' +
-            (this.hasSelection() ? '' : 'slds-hide')
+            (this.hasSelection ? '' : 'slds-hide')
         );
     }
 
     get getSelectIconName() {
-        return this.hasSelection() ? this._curSelection[0].icon : 'standard:default';
+        return this.hasSelection ? this._curSelection?.at(0)?.icon : 'standard:default';
     }
 
     get getSelectIconClass() {
-        return 'slds-combobox__input-entity-icon ' + (this.hasSelection() ? '' : 'slds-hide');
+        return 'slds-combobox__input-entity-icon ' + (this.hasSelection ? '' : 'slds-hide');
     }
 
     get getInputValue() {
         if (this.isMultiEntry) {
             return this._searchTerm;
         }
-        return this.hasSelection() ? this._curSelection[0].title : this._searchTerm;
+        return this.hasSelection ? this._curSelection?.at(0)?.title : this._searchTerm;
     }
 
     get getInputTitle() {
         if (this.isMultiEntry) {
             return '';
         }
-        return this.hasSelection() ? this._curSelection[0].title : '';
+        return this.hasSelection ? this._curSelection?.at(0)?.title : '';
     }
 
     get getListboxClass() {
@@ -425,6 +520,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this.isMultiEntry) {
             return false;
         }
-        return this.hasSelection();
+        return this.hasSelection;
     }
+
 }

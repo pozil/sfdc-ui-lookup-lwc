@@ -487,7 +487,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get getSelectIconName() {
-        return this.hasSelection ? this._curSelection?.[0]?.icon : 'standard:default';
+        return this.hasSelection ? this._curSelection?.at(0)?.icon : 'standard:default';
     }
 
     get getSelectIconClass() {

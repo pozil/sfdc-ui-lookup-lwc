@@ -127,7 +127,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
             }
             // Add icon if missing
             if (typeof result.icon === 'undefined') {
-                result.icon = 'standard:default';
+                result.icon = this.icon ?? 'standard:default';
             }
             return result;
         });
@@ -423,22 +423,22 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get getContainerClass() {
-        let css = 'slds-combobox_container ';
+        let css = 'slds-combobox_container';
         if (this.errors.length > 0) {
-            css += 'has-custom-error';
+            css += ' has-custom-error';
         }
         return css;
     }
 
     get getDropdownClass() {
-        let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ';
+        let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click';
         const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= this.minSearchTermLength;
         if (
             this._hasFocus &&
             this.isSelectionAllowed &&
             (isSearchTermValid || this.hasResults || this.newRecordOptions?.length)
         ) {
-            css += 'slds-is-open';
+            css += ' slds-is-open';
         }
         return css;
     }
@@ -487,7 +487,9 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get getSelectIconClass() {
-        return 'slds-combobox__input-entity-icon ' + (this.hasSelection ? '' : 'slds-hide');
+        let cls = 'slds-combobox__input-entity-icon';
+        !this.hasSelection ? cls += ' slds-hide';
+        return cls;
     }
 
     get getInputValue() {
@@ -499,11 +501,10 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get getListboxClass() {
-        return (
-            'slds-dropdown ' +
-            (this.scrollAfterNItems ? `slds-dropdown_length-with-icon-${this.scrollAfterNItems} ` : '') +
-            'slds-dropdown_fluid'
-        );
+        let cls = 'slds-dropdown';
+        this.scrollAfterNItems ? cls += ' slds-dropdown_length-with-icon-${this.scollAfterNItems}` : null;
+        cls += 'slds-dropdwon_fluid';
+        return cls;
     }
 
     get isInputReadonly() {

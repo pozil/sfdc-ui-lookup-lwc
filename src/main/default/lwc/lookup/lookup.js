@@ -296,8 +296,8 @@ export default class Lookup extends NavigationMixin(LightningElement) {
                 if(this._hasFocus && this._focusedResultIndex >= 0) {
                     // If the user presses enter, and the box is open, and we have used arrows,
                     // treat this just like a click on the listbox item
-                    const selectedId = this._searchResults[this._focusedResultIndex].id;
-                    this.template.querySelector(`[data-recordid="${selectedId}"]`).click();
+                    const selectedId = this._searchResults?.at(this._focusedResultIndex)?.id;
+                    this.template.querySelector(`[data-recordid="${selectedId}"]`)?.click();
                 }
                 break;
             default:

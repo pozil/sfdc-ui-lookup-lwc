@@ -269,45 +269,48 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     handleInput(event) {
         const {target: {value}} = event;
-        // Prevent action if selection is not allowed
-        if (!this.isSelectionAllowed) {
-            return;
-        }
-        this.updateSearchTerm(value);
+        return this.isSelectionAllowed ? this.updateSearchTerm(value) : undefined;
     }
 
     handleKeyDown(event) {
+        const {keyCode, preventDefault} = event;
         if (this._focusedResultIndex === null) {
             this._focusedResultIndex = -1;
         }
-        if (event.keyCode === KEY_ARROW_DOWN) {
-            // If we hit 'down', select the next item, or cycle over.
-            this._focusedResultIndex++;
-            if (this._focusedResultIndex >= this._searchResults.length) {
-                this._focusedResultIndex = 0;
-            }
-            event.preventDefault();
-        } else if (event.keyCode === KEY_ARROW_UP) {
-            // If we hit 'up', select the previous item, or cycle over.
-            this._focusedResultIndex--;
-            if (this._focusedResultIndex < 0) {
-                this._focusedResultIndex = this._searchResults.length - 1;
-            }
-            event.preventDefault();
-        } else if (event.keyCode === KEY_ENTER && this._hasFocus && this._focusedResultIndex >= 0) {
-            // If the user presses enter, and the box is open, and we have used arrows,
-            // treat this just like a click on the listbox item
-            const selectedId = this._searchResults[this._focusedResultIndex].id;
-            this.template.querySelector(`[data-recordid="${selectedId}"]`).click();
-            event.preventDefault();
+        switch(keyCode){
+            case KEY_ARROW_DOWN:
+                // If we hit 'down', select the next item, or cycle over.
+                this._focusedResultIndex++;
+                if (this._focusedResultIndex >= this._searchResults?.length) {
+                    this._focusedResultIndex = 0;
+                }
+                break;
+            case KEY_ARROW_UP:
+                // If we hit 'up', select the previous item, or cycle over.
+                this._focusedResultIndex--;
+                if (this._focusedResultIndex < 0) {
+                    this._focusedResultIndex = this._searchResults.length - 1;
+                }
+                break;
+            case KEY_ENTER:
+                if(this._hasFocus && this._focusedResultIndex >= 0) {
+                    // If the user presses enter, and the box is open, and we have used arrows,
+                    // treat this just like a click on the listbox item
+                    const selectedId = this._searchResults[this._focusedResultIndex].id;
+                    this.template.querySelector(`[data-recordid="${selectedId}"]`).click();
+                }
+                break;
+            default:
+                break;
         }
+        preventDefault();
     }
 
     handleResultClick(event) {
         const recordId = event.currentTarget.dataset.recordid;
 
         // Save selection
-        const selectedItem = this._searchResults.find((result) => result.id === recordId);
+        const selectedItem = this._searchResults.find(({id}) => id === recordId);
         if (!selectedItem) {
             return;
         }
@@ -328,16 +331,15 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     handleComboboxMouseUp() {
         this._cancelBlur = false;
         // Re-focus to text input for the next blur event
-        this.template.querySelector('input').focus();
+        this.template.querySelector('input')?.focus();
     }
 
     handleFocus() {
         // Prevent action if selection is not allowed
-        if (!this.isSelectionAllowed) {
-            return;
+        if (!!this.isSelectionAllowed) {
+            this._hasFocus = true;
+            this._focusedResultIndex = null;
         }
-        this._hasFocus = true;
-        this._focusedResultIndex = null;
     }
 
     handleBlur() {
@@ -364,26 +366,23 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Process selection update
         this.processSelectionUpdate(true);
     }
-
-    handleNewRecordClick(event) {
-        const objectApiName = event.currentTarget.dataset.sobject;
-        const selection = this.newRecordOptions.find((option) => option.value === objectApiName);
-
-        const preNavigateCallback = selection.preNavigateCallback
-            ? selection.preNavigateCallback
-            : () => Promise.resolve();
-        preNavigateCallback(selection).then(() => {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__objectPage',
-                attributes: {
-                    objectApiName,
-                    actionName: 'new'
-                },
-                state: {
-                    defaultFieldValues: selection.defaults
-                }
-            });
-        });
+    
+    async handleNewRecordClick(event){
+        const objectApiName = event?.currentTarget?.dataset?.sobject;
+        const selection = this.newRecordOptions?.find(({value}) => value === objectApiName);
+        const preNavigateCallback = selection?.preNavigateCallback ?? () => Promise.resolve();
+        if(!!selection) {
+            await preNavigateCallback(selection);
+            const actionName = 'new';
+            const type = 'standard__objectPage';
+            const attributes = {
+                objectApiName,
+                actionName
+            }
+            const defaultFieldValues = selection?.defaults;
+            const state = { defaultFieldValues }
+            this[NavigationMixin.Navigate]({ attributes, state, type });
+        }
     }
 
     // STYLE EXPRESSIONS
@@ -408,11 +407,8 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
     
     get isSelectionAllowed() {
-      if (this.isMultiEntry) {
-          return true;
-      }
-      return !this.hasSelection;
-  }
+        return this.isMultiEntry ? true : !this.hasSelection;
+    }
 
     get getFormElementClass() {
         return this.variant === VARIANT_LABEL_INLINE
@@ -495,17 +491,11 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get getInputValue() {
-        if (this.isMultiEntry) {
-            return this._searchTerm;
-        }
-        return this.hasSelection ? this._curSelection?.at(0)?.title : this._searchTerm;
+        return this.isMultiEntry ? this._searchTerm : this._curSelection?.at(0)?.title ?? this._searchTerm;
     }
 
     get getInputTitle() {
-        if (this.isMultiEntry) {
-            return '';
-        }
-        return this.hasSelection ? this._curSelection?.at(0)?.title : '';
+        return !this.isMultiEntry ? this._curSelection?.at(0)?.title ?? '' : '';
     }
 
     get getListboxClass() {
@@ -517,10 +507,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get isInputReadonly() {
-        if (this.isMultiEntry) {
-            return false;
-        }
-        return this.hasSelection;
+        return this.isMultiEntry ? false : this.hasSelection;
     }
 
 }

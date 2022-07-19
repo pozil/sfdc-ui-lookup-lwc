@@ -238,7 +238,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
                     detail: {
                         searchTerm: this._cleanSearchTerm,
                         rawSearchTerm: newSearchTerm,
-                        selectedIds: this.selectedIds;
+                        selectedIds: this.selectedIds
                     }
                 });
                 this.dispatchEvent(searchEvent);

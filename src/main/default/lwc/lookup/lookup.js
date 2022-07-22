@@ -19,12 +19,12 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     // Public properties
     @api variant = VARIANT_LABEL_STACKED;
     @api label = '';
-    @api required = false;
-    @api disabled = false;
+    @api required;
+    @api disabled;
     @api placeholder = '';
-    @api isMultiEntry = false;
+    @api isMultiEntry;
     @api errors = [];
-    @api scrollAfterNItems = null;
+    @api scrollAfterNItems;
     @api newRecordOptions = [];
     @api minSearchTermLength = 2;
     @api title = 'Name';
@@ -34,19 +34,19 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     // Template properties
     searchResultsLocalState;
-    loading = false;
+    loading;
 
     // Private properties
-    _hasFocus = false;
-    _isDirty = false;
-    _searchTerm = '';
+    _hasFocus;
+    _isDirty;
+    _searchTerm;
     _cleanSearchTerm;
-    _cancelBlur = false;
+    _cancelBlur;
     _searchThrottlingTimeout;
     _searchResults;
     _defaultSearchResults;
     _curSelection;
-    _focusedResultIndex = null;
+    _focusedResultIndex;
     _fields;
     @track recordsParam;
 
@@ -97,6 +97,11 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     get selection() {
         return this._curSelection;
     }
+
+    //public functions
+    @api reportValidity(){
+        return this.required ? this.selection?.length : true;
+    }
     
     @api
     setSearchResults(results) {
@@ -114,7 +119,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         const regex = new RegExp(`(${cleanSearchTerm})`, 'gi');
         this._searchResults = resultsLocal?.map((result) => {
             // Format title and subtitle
-            if (this._searchTerm?.length > 0 && !!result) {
+            if (!!this._searchTerm?.length && !!result) {
                 result.titleFormatted = result?.title
                     ? result?.title?.replace(regex, '<strong>$1</strong>')
                     : result?.title;
@@ -139,14 +144,14 @@ export default class Lookup extends NavigationMixin(LightningElement) {
                 result,
                 state: {},
                 get classes() {
-                    let cls = 'slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta';
+                    let css = 'slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta';
                     if (result.subtitleFormatted) {
-                        cls += ' slds-listbox__option_has-meta';
+                        css += ' slds-listbox__option_has-meta';
                     }
                     if (self._focusedResultIndex === i) {
-                        cls += ' slds-has-focus';
+                        css += ' slds-has-focus';
                     }
-                    return cls;
+                    return css;
                 }
             };
         });
@@ -269,54 +274,51 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     handleInput(event) {
         const {target: {value}} = event;
-        return this.isSelectionAllowed ? this.updateSearchTerm(value) : undefined;
+        // Prevent action if selection is not allowed
+        if (!this.isSelectionAllowed) {
+            return;
+        }
+        this.updateSearchTerm(value);
     }
 
     handleKeyDown(event) {
-        const {keyCode, preventDefault} = event;
-        if (this._focusedResultIndex === null) {
-            this._focusedResultIndex = -1;
-        }
+        const {keyCode} = event;
+        let index = this._focusedResultIndex ?? -1;
+        
         switch(keyCode){
             case KEY_ARROW_DOWN:
-                // If we hit 'down', select the next item, or cycle over.
-                this._focusedResultIndex++;
-                if (this._focusedResultIndex >= this._searchResults?.length) {
-                    this._focusedResultIndex = 0;
-                }
+                index++;
+                index = index >= this._searchResults?.length ? 0 : index;
+                this._focusedResultIndex = index;
+                event.preventDefault();
                 break;
             case KEY_ARROW_UP:
-                // If we hit 'up', select the previous item, or cycle over.
-                this._focusedResultIndex--;
-                if (this._focusedResultIndex < 0) {
-                    this._focusedResultIndex = this._searchResults.length - 1;
-                }
+                index--;
+                index = index < 0 ? this._searchResults?.length -1 ?? -1 : index;
+                this._focusedResultIndex = index;
+                event.preventDefault();
                 break;
             case KEY_ENTER:
-                if(this._hasFocus && this._focusedResultIndex >= 0) {
-                    // If the user presses enter, and the box is open, and we have used arrows,
-                    // treat this just like a click on the listbox item
-                    const selectedId = this._searchResults?.at(this._focusedResultIndex)?.id;
+                if(this._hasFocus && index >= 0){
+                    const selectedId = this._searchResults?.at(index)?.id;
                     this.template.querySelector(`[data-recordid="${selectedId}"]`)?.click();
+                    this._focusedResultIndex = index;
+                    event.preventDefault();
                 }
                 break;
             default:
                 break;
         }
-        preventDefault();
+
     }
 
     handleResultClick(event) {
         const recordId = event.currentTarget.dataset.recordid;
-
         // Save selection
         const selectedItem = this._searchResults.find(({id}) => id === recordId);
-        if (!selectedItem) {
-            return;
-        }
+        if(!selectedItem) return;
         const curSelection = !!this._curSelection ? [...this._curSelection] : [];
         this._curSelection = [...curSelection, selectedItem];
-
         // Process selection update
         this.processSelectionUpdate(true);
     }
@@ -366,33 +368,35 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Process selection update
         this.processSelectionUpdate(true);
     }
-    
-    async handleNewRecordClick(event){
-        const objectApiName = event?.currentTarget?.dataset?.sobject;
-        const selection = this.newRecordOptions?.find(({value}) => value === objectApiName);
-        const preNavigateCallback = selection?.preNavigateCallback ?? () => Promise.resolve();
-        if(!!selection) {
-            await preNavigateCallback(selection);
-            const actionName = 'new';
-            const type = 'standard__objectPage';
-            const attributes = {
-                objectApiName,
-                actionName
-            }
-            const defaultFieldValues = selection?.defaults;
-            const state = { defaultFieldValues }
-            this[NavigationMixin.Navigate]({ attributes, state, type });
-        }
+
+    handleNewRecordClick(event) {
+        const objectApiName = event.currentTarget.dataset.sobject;
+        const selection = this.newRecordOptions.find((option) => option.value === objectApiName);
+
+        const preNavigateCallback = selection.preNavigateCallback
+            ? selection.preNavigateCallback
+            : () => Promise.resolve();
+        preNavigateCallback(selection).then(() => {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__objectPage',
+                attributes: {
+                    objectApiName,
+                    actionName: 'new'
+                },
+                state: {
+                    defaultFieldValues: selection.defaults
+                }
+            });
+        });
     }
 
     // STYLE EXPRESSIONS
-
     get hasResults() {
         return this._searchResults?.length > 0;
     }
 
     get hasSelection(){
-      return this._curSelection?.length > 0;
+      return this.selection?.length > 0;
     }
 
     get selectedIds(){
@@ -407,8 +411,11 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
     
     get isSelectionAllowed() {
-        return this.isMultiEntry ? true : !this.hasSelection;
-    }
+      if (this.isMultiEntry) {
+          return true;
+      }
+      return !this.hasSelection;
+  }
 
     get getFormElementClass() {
         return this.variant === VARIANT_LABEL_INLINE
@@ -423,11 +430,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get getContainerClass() {
-        let css = 'slds-combobox_container';
-        if (this.errors.length > 0) {
-            css += ' has-custom-error';
-        }
-        return css;
+        return `slds-combobox_container${this.errors?.length ? ' has-custom-error' : ''}`;
     }
 
     get getDropdownClass() {
@@ -444,42 +447,39 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get getInputClass() {
-        let css = 'slds-input slds-combobox__input has-custom-height ';
-        if (this._hasFocus && this.hasResults) {
-            css += 'slds-has-focus ';
-        }
-        if (this.errors?.length > 0 || (this._isDirty && this.required && !this.hasSelection)) {
-            css += 'has-custom-error ';
-        }
-        if (!this.isMultiEntry) {
-            css += 'slds-combobox__input-value ' + (this.hasSelection ? 'has-custom-border' : '');
+        let css = 'slds-input slds-combobox__input has-custom-height';
+        switch(true){
+            case (this._hasFocus && this.hasResults):
+                css += ' slds-has-focus';
+                break;
+            case (this.errors?.length > 0 || (this._isDirty && this.required && !this.hasSelection)):
+                css += ' has-custom-error';
+                break;
+            case !this.isMultiEntry:
+                css += ` slds-combobox__input-value ${this.hasSelection ? ' has-custom-border' : ''}`;
+                break;
+            default:
+                break;
         }
         return css;
     }
 
     get getComboboxClass() {
-        let css = 'slds-combobox__form-element slds-input-has-icon ';
-        if (this.isMultiEntry) {
-            css += 'slds-input-has-icon_right';
-        } else {
-            css += this.hasSelection ? 'slds-input-has-icon_left-right' : 'slds-input-has-icon_right';
-        }
+        let css = 'slds-combobox__form-element slds-input-has-icon';
+        this.hasSelection ? css += ' slds-input-has-icon_left-right' : css += ' slds-input-has-icon_right';
         return css;
     }
 
     get getSearchIconClass() {
-        let css = 'slds-input__icon slds-input__icon_right ';
-        if (!this.isMultiEntry) {
-            css += this.hasSelection ? 'slds-hide' : '';
-        }
+        let css = 'slds-input__icon slds-input__icon_right';
+        !this.isMultiEntry ? css += ' slds-hide' : null;
         return css;
     }
 
     get getClearSelectionButtonClass() {
-        return (
-            'slds-button slds-button_icon slds-input__icon slds-input__icon_right ' +
-            (this.hasSelection ? '' : 'slds-hide')
-        );
+        let css = 'slds-button slds-button_icon slds-input__icon slds-input__icon_right';
+        css += `${!this.hasSelection ? ' slds-hide' : ''}`;
+        return css;
     }
 
     get getSelectIconName() {
@@ -487,24 +487,23 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     get getSelectIconClass() {
-        let cls = 'slds-combobox__input-entity-icon';
-        !this.hasSelection ? cls += ' slds-hide';
-        return cls;
+        let css = 'slds-combobox__input-entity-icon';
+        css += `${!this.hasSelection ? ' slds-hide' : ''}`;
+        return css;
     }
 
     get getInputValue() {
-        return this.isMultiEntry ? this._searchTerm : this._curSelection?.at(0)?.title ?? this._searchTerm;
+        const value = this.hasSelection ? this._curSelection?.at(0)?.title ?? this._searchTerm : this._searchTerm;
+        return this.isMultiEntry ? this._searchTerm : value;
     }
 
     get getInputTitle() {
-        return !this.isMultiEntry ? this._curSelection?.at(0)?.title ?? '' : '';
+        const title = this.selection?.at(0)?.title ?? '';
+        return this.hasSelection ? title : '';
     }
 
     get getListboxClass() {
-        let cls = 'slds-dropdown';
-        this.scrollAfterNItems ? cls += ' slds-dropdown_length-with-icon-${this.scollAfterNItems}` : null;
-        cls += 'slds-dropdwon_fluid';
-        return cls;
+        return `slds-dropdown${this.scrollAfterNItems ? ` slds-dropdown_length-with-icon-${this.scrollAfterNItems} slds-dropdown_fluid`: ' slds-dropdown_fluid'}`;
     }
 
     get isInputReadonly() {

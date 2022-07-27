@@ -211,8 +211,9 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     // INTERNAL FUNCTIONS
     getRecordsParam(recordIds = this.selectedIds) {
-        const params = [];
+        let params;
         if (this.fields && recordIds) {
+            params = [];
             const fields = this.fields;
             recordIds.reduce((records, recordId) => {
                 records.push({ recordIds: [recordId], fields });

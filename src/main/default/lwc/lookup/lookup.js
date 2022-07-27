@@ -189,33 +189,46 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         const results = response?.data?.results;
         const icon = this.icon;
         const defaultOptions =
-            results?.map(({ statusCode, result }) => {
-                // console.log(`%c**statusCode => ${statusCode}, result => ${JSON.stringify(result)}`, `color: ${statusCode === 200 ? 'green;' : 'red;'}`);
-                if (statusCode === 200 && !!result) {
+            results?.reduce((options, item) => {
+                const { result, statusCode } = item;
+                if (statusCode === 200 && result) {
                     const { fields, id } = result;
                     const option = { id, icon };
-                    this.fields?.map((field, index) => {
+                    this.fields?.forEach((field, index) => {
                         const apiName = field?.split('.')?.at(1);
                         const propName = index === 0 ? 'title' : 'subtitle';
                         const value = fields[apiName]?.displayValue ?? fields[apiName]?.value;
                         option[propName] = value;
                     });
-                    return option;
+                    options.push(option);
                 }
-            }) ?? [];
-        this.options = defaultOptions;
+                return options;
+            }, []) ?? [];
+        this._options = defaultOptions;
+        this.setDefaultResults(defaultOptions);
         this._curSelection = this.options?.filter(({ id }) => this.selectedIds?.includes(id));
     }
 
     // INTERNAL FUNCTIONS
     getRecordsParam(recordIds = this.selectedIds) {
-        const fields = this.fields;
-        if (!recordIds || !fields) return;
-        return recordIds?.reduce((records, recordId) => {
-            !!recordId ? records.push({ recordIds: [recordId], fields }) : null;
-            return records;
-        }, []);
+        const params = [];
+        if (this.fields && recordIds) {
+            const fields = this.fields;
+            recordIds.reduce((records, recordId) => {
+                records.push({ recordIds: [recordId], fields });
+                return records;
+            }, params);
+        }
+        return params;
     }
+    // getRecordsParam(recordIds = this.selectedIds) {
+    //     const fields = this.fields;
+    //     if (!recordIds || !fields) return;
+    //     return recordIds?.reduce((records, recordId) => {
+    //         recordId ? records.push({ recordIds: [recordId], fields }) : null;
+    //         return records;
+    //     }, []);
+    // }
 
     updateSearchTerm(newSearchTerm) {
         this._searchTerm = newSearchTerm;
@@ -325,7 +338,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Save selection
         const selectedItem = this._searchResults.find(({ id }) => id === recordId);
         if (!selectedItem) return;
-        const curSelection = !!this._curSelection ? [...this._curSelection] : [];
+        const curSelection = this._curSelection ? [...this._curSelection] : [];
         this._curSelection = [...curSelection, selectedItem];
         // Process selection update
         this.processSelectionUpdate(true);
@@ -346,7 +359,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     handleFocus() {
         // Prevent action if selection is not allowed
-        if (!!this.isSelectionAllowed) {
+        if (this.isSelectionAllowed) {
             this._hasFocus = true;
             this._focusedResultIndex = null;
         }
@@ -471,13 +484,13 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     get getComboboxClass() {
         let css = 'slds-combobox__form-element slds-input-has-icon';
-        this.hasSelection ? (css += ' slds-input-has-icon_left-right') : (css += ' slds-input-has-icon_right');
+        css += `${this.hasSelection ? ' slds-input-has-icon_left-right' : ' slds-input-has-icon_right'}`;
         return css;
     }
 
     get getSearchIconClass() {
         let css = 'slds-input__icon slds-input__icon_right';
-        !this.isMultiEntry ? (css += ' slds-hide') : null;
+        if (!this.isMultiEntry) css += ' slds-hide';
         return css;
     }
 

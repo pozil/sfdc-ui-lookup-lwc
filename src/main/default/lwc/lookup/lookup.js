@@ -80,11 +80,11 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
     @api
     set selection(initialSelection) {
-        let selection;
+        let options, selection;
         switch (typeof initialSelection) {
             case 'string':
                 initialSelection = initialSelection?.split?.(';');
-                const options = this._searchResults ?? this._defaultSearchResults;
+                options = this._searchResults ?? this._defaultSearchResults;
                 selection = options?.length
                     ? options?.filter(({ id }) => initialSelection.includes(id))
                     : initialSelection;

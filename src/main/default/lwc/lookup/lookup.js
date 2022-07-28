@@ -105,19 +105,29 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     //public functions
     @api reportValidity() {
-        return this.required ? this.selection?.length : true;
+        const isValid = this.required ? this.selectedIds?.length : true;
+        const formElement = this.template.querySelector('.slds-form-element');
+        // isValid ? formElement?.classList?.remove('slds-has-error') : formElement?.classList?.add('slds-has-error');
+        if (isValid) {
+            formElement?.classList?.remove('slds-has-error');
+        }
+        if (!isValid) {
+            formElement?.classList?.add('slds-has-error');
+        }
+        return isValid;
     }
 
     @api
     setSearchResults(results) {
+        if (!results) return;
         // Reset the spinner
         this.loading = false;
         // Clone results before modifying them to avoid Locker restriction
         let resultsLocal = JSON.parse(JSON.stringify(results));
         // Remove selected items from search results
-        const selectedIds = this.selectedIds;
-        if (selectedIds?.length) {
-            resultsLocal = resultsLocal?.filter(({ id }) => selectedIds?.indexOf(id) === -1);
+        if (resultsLocal?.length) {
+            const selectedIds = this.selectedIds ?? [];
+            resultsLocal = resultsLocal?.filter((item) => selectedIds?.indexOf(item?.id) === -1);
         }
         // Format results
         const cleanSearchTerm = this._searchTerm.replace(REGEX_SOSL_RESERVED, '.?').replace(REGEX_EXTRA_TRAP, '\\$1');
@@ -343,6 +353,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         this._curSelection = [...curSelection, selectedItem];
         // Process selection update
         this.processSelectionUpdate(true);
+        this.reportValidity();
     }
 
     handleComboboxMouseDown(event) {
@@ -372,6 +383,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
             return;
         }
         this._hasFocus = false;
+        this.reportValidity();
     }
 
     handleRemoveSelectedItem(event) {
@@ -382,6 +394,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         this._curSelection = this._curSelection?.filter(({ id }) => id !== recordId);
         // Process selection update
         this.processSelectionUpdate(true);
+        this.reportValidity();
     }
 
     handleClearSelection() {

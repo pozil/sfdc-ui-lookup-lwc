@@ -17,38 +17,40 @@ const REGEX_EXTRA_TRAP = /(\$|\\)/g;
 
 export default class Lookup extends NavigationMixin(LightningElement) {
     // Public properties
-    @api variant = VARIANT_LABEL_STACKED;
-    @api label = '';
-    @api required;
     @api disabled;
-    @api placeholder = '';
-    @api isMultiEntry;
+    @api errorMessage = `Please select an option.`;
     @api errors = [];
-    @api scrollAfterNItems;
-    @api newRecordOptions = [];
-    @api minSearchTermLength = 2;
-    @api title = 'Name';
-    @api subtitle;
     @api icon;
+    @api isMultiEntry;
+    @api label = '';
+    @api minSearchTermLength = 2;
+    @api newRecordOptions = [];
+    @api placeholder = '';
+    @api required;
+    @api scrollAfterNItems;
+    @api subtitle;
+    @api title = 'Name';
+    @api variant = VARIANT_LABEL_STACKED;
     @api wireDefaultOptions;
 
     // Template properties
-    searchResultsLocalState;
+    isValid = true;
     loading;
+    searchResultsLocalState;
 
     // Private properties
+    _cancelBlur;
+    _cleanSearchTerm;
+    _curSelection;
+    _defaultSearchResults;
+    _fields;
+    _focusedResultIndex;
     _hasFocus;
     _isDirty;
+    @track _recordParam;
     _searchTerm;
-    _cleanSearchTerm;
-    _cancelBlur;
     _searchThrottlingTimeout;
     _searchResults;
-    _defaultSearchResults;
-    _curSelection;
-    _focusedResultIndex;
-    _fields;
-    @track recordsParam;
 
     // PUBLIC FUNCTIONS AND GETTERS/SETTERS
     @api
@@ -104,19 +106,30 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     //public functions
+    @api
+    getSelection() {
+        return this._curSelection;
+    }
     @api reportValidity() {
         const isValid = this.required ? this.selectedIds?.length : true;
-        const formElement = this.template.querySelector('.slds-form-element');
-        // isValid ? formElement?.classList?.remove('slds-has-error') : formElement?.classList?.add('slds-has-error');
+        this.isValid = isValid;
+        const input = this.template.querySelector('input');
+        // isValid ? input?.classList?.remove('slds-has-error') : input?.classList?.add('slds-has-error');
         if (isValid) {
-            formElement?.classList?.remove('slds-has-error');
+            input?.classList?.remove('slds-has-error');
         }
         if (!isValid) {
-            formElement?.classList?.add('slds-has-error');
+            input?.classList?.add('slds-has-error');
         }
         return isValid;
     }
-
+    @api
+    setDefaultResults(results) {
+        this._defaultSearchResults = [...results];
+        if (this._searchResults?.length === 0) {
+            this.setSearchResults(this._defaultSearchResults);
+        }
+    }
     @api
     setSearchResults(results) {
         if (!results) return;
@@ -173,26 +186,13 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         });
     }
 
-    @api
-    getSelection() {
-        return this._curSelection;
-    }
-
-    @api
-    setDefaultResults(results) {
-        this._defaultSearchResults = [...results];
-        if (this._searchResults?.length === 0) {
-            this.setSearchResults(this._defaultSearchResults);
-        }
-    }
-
     //lifecycle hooks
     connectedCallback() {
-        if (this.wireDefaultOptions) this.recordsParam = this.getRecordsParam();
+        if (this.wireDefaultOptions) this._recordParam = this.getRecordsParam();
     }
 
     // WIRED PROPERTIES/FUNCTIONS
-    @wire(getRecords, { records: '$recordsParam', fields: '$fields' })
+    @wire(getRecords, { records: '$_recordParam', fields: '$fields' })
     handleGetRecordsResponse(response) {
         // console.log(`%c**getRecords response => ${JSON.stringify(response)}`, 'color:purple;font-wight:bold;');
         // const {data:{results}} = response;
@@ -241,6 +241,24 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     //     }, []);
     // }
 
+    processSelectionUpdate(isUserInteraction) {
+        // Reset search
+        this._cleanSearchTerm = '';
+        this._searchTerm = '';
+        this.setSearchResults([...this._defaultSearchResults]);
+        // Indicate that component was interacted with
+        this._isDirty = isUserInteraction;
+        // Blur input after single select lookup selection
+        if (!this.isMultiEntry && this.hasSelection) {
+            this._hasFocus = false;
+        }
+        // If selection was changed by user, notify parent components
+        if (isUserInteraction) {
+            const selectedIds = this.selectedIds;
+            this.dispatchEvent(new CustomEvent('selectionchange', { detail: selectedIds }));
+        }
+    }
+
     updateSearchTerm(newSearchTerm) {
         this._searchTerm = newSearchTerm;
 
@@ -283,25 +301,43 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         }, SEARCH_DELAY);
     }
 
-    processSelectionUpdate(isUserInteraction) {
-        // Reset search
-        this._cleanSearchTerm = '';
-        this._searchTerm = '';
-        this.setSearchResults([...this._defaultSearchResults]);
-        // Indicate that component was interacted with
-        this._isDirty = isUserInteraction;
-        // Blur input after single select lookup selection
-        if (!this.isMultiEntry && this.hasSelection) {
-            this._hasFocus = false;
+    // EVENT HANDLING
+    handleBlur() {
+        // Prevent action if selection is either not allowed or cancelled
+        if (!this.isSelectionAllowed || this._cancelBlur) {
+            return;
         }
-        // If selection was changed by user, notify parent components
-        if (isUserInteraction) {
-            const selectedIds = this.selectedIds;
-            this.dispatchEvent(new CustomEvent('selectionchange', { detail: selectedIds }));
+        this._hasFocus = false;
+        this.reportValidity();
+    }
+
+    handleClearSelection() {
+        this._curSelection = undefined;
+        this._hasFocus = false;
+        // Process selection update
+        this.processSelectionUpdate(true);
+    }
+
+    handleComboboxMouseDown(event) {
+        const mainButton = 0;
+        if (event.button === mainButton) {
+            this._cancelBlur = true;
         }
     }
 
-    // EVENT HANDLING
+    handleComboboxMouseUp() {
+        this._cancelBlur = false;
+        // Re-focus to text input for the next blur event
+        this.template.querySelector('input')?.focus();
+    }
+
+    handleFocus() {
+        // Prevent action if selection is not allowed
+        if (this.isSelectionAllowed) {
+            this._hasFocus = true;
+            this._focusedResultIndex = null;
+        }
+    }
 
     handleInput(event) {
         const {
@@ -344,66 +380,6 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         }
     }
 
-    handleResultClick(event) {
-        const recordId = event.currentTarget.dataset.recordid;
-        // Save selection
-        const selectedItem = this._searchResults.find(({ id }) => id === recordId);
-        if (!selectedItem) return;
-        const curSelection = this._curSelection ? [...this._curSelection] : [];
-        this._curSelection = [...curSelection, selectedItem];
-        // Process selection update
-        this.processSelectionUpdate(true);
-        this.reportValidity();
-    }
-
-    handleComboboxMouseDown(event) {
-        const mainButton = 0;
-        if (event.button === mainButton) {
-            this._cancelBlur = true;
-        }
-    }
-
-    handleComboboxMouseUp() {
-        this._cancelBlur = false;
-        // Re-focus to text input for the next blur event
-        this.template.querySelector('input')?.focus();
-    }
-
-    handleFocus() {
-        // Prevent action if selection is not allowed
-        if (this.isSelectionAllowed) {
-            this._hasFocus = true;
-            this._focusedResultIndex = null;
-        }
-    }
-
-    handleBlur() {
-        // Prevent action if selection is either not allowed or cancelled
-        if (!this.isSelectionAllowed || this._cancelBlur) {
-            return;
-        }
-        this._hasFocus = false;
-        this.reportValidity();
-    }
-
-    handleRemoveSelectedItem(event) {
-        if (this.disabled) {
-            return;
-        }
-        const recordId = event.currentTarget.name;
-        this._curSelection = this._curSelection?.filter(({ id }) => id !== recordId);
-        // Process selection update
-        this.processSelectionUpdate(true);
-        this.reportValidity();
-    }
-
-    handleClearSelection() {
-        this._curSelection = undefined;
-        this._hasFocus = false;
-        // Process selection update
-        this.processSelectionUpdate(true);
-    }
-
     handleNewRecordClick(event) {
         const objectApiName = event.currentTarget.dataset.sobject;
         const selection = this.newRecordOptions.find((option) => option.value === objectApiName);
@@ -423,6 +399,29 @@ export default class Lookup extends NavigationMixin(LightningElement) {
                 }
             });
         });
+    }
+
+    handleRemoveSelectedItem(event) {
+        if (this.disabled) {
+            return;
+        }
+        const recordId = event.currentTarget.name;
+        this._curSelection = this._curSelection?.filter(({ id }) => id !== recordId);
+        // Process selection update
+        this.processSelectionUpdate(true);
+        this.reportValidity();
+    }
+
+    handleResultClick(event) {
+        const recordId = event.currentTarget.dataset.recordid;
+        // Save selection
+        const selectedItem = this._searchResults.find(({ id }) => id === recordId);
+        if (!selectedItem) return;
+        const curSelection = this._curSelection ? [...this._curSelection] : [];
+        this._curSelection = [...curSelection, selectedItem];
+        // Process selection update
+        this.processSelectionUpdate(true);
+        this.reportValidity();
     }
 
     // STYLE EXPRESSIONS

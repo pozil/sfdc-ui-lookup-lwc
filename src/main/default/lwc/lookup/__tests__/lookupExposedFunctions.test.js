@@ -54,11 +54,33 @@ describe('c-lookup exposed functions', () => {
         lookupEl.addEventListener('search', searchFn);
 
         // Simulate search term input with regex characters
-        inputSearchTerm(lookupEl, '[ab');
-        await flushPromises();
+        await inputSearchTerm(lookupEl, '[ab');
 
         // Query for rendered list items
         const listItemEls = lookupEl.shadowRoot.querySelectorAll('li');
         expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
+    });
+
+    it('blurs removes focus and closes dropdown', async () => {
+        jest.useFakeTimers();
+
+        // Create lookup with search handler
+        const lookupEl = createLookupElement();
+        const searchFn = (event) => {
+            event.target.setSearchResults(SAMPLE_SEARCH_ITEMS);
+        };
+        lookupEl.addEventListener('search', searchFn);
+
+        // Simulate search term input (forces focus on lookup and opens drowdown)
+        await inputSearchTerm(lookupEl, 'sample');
+
+        // Blur
+        lookupEl.blur();
+        await flushPromises();
+
+        // Check that lookup no longer has focus and that dropdown is closed
+        expect(document.activeElement).not.toBe(lookupEl);
+        const dropdownEl = lookupEl.shadowRoot.querySelector('div[role="combobox"]');
+        expect(dropdownEl.classList).not.toContain('slds-is-open');
     });
 });

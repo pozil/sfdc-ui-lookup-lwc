@@ -25,15 +25,17 @@ export const createLookupElement = (props = {}) => {
 /**
  * Simulates search term input
  * @param {Element} lookupEl
- * @param {String} searchTerm
+ * @param {string} searchTerm
  */
-export const inputSearchTerm = (lookupEl, searchTerm) => {
+export const inputSearchTerm = async (lookupEl, searchTerm) => {
     // Sets input search term and force input change
     const searchInput = lookupEl.shadowRoot.querySelector('input');
+    searchInput.focus();
     searchInput.value = searchTerm;
     searchInput.dispatchEvent(new CustomEvent('input'));
     // Disable search throttling
     jest.runAllTimers();
+    await flushPromises();
 };
 
 export const SAMPLE_SEARCH_ITEMS = [

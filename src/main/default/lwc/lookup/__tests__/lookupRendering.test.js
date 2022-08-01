@@ -1,4 +1,10 @@
-const { createLookupElement, flushPromises, SAMPLE_SEARCH_ITEMS, LABEL_NO_RESULTS } = require('./lookupTest.utils');
+const {
+    createLookupElement,
+    flushPromises,
+    inputSearchTerm,
+    SAMPLE_SEARCH_ITEMS,
+    LABEL_NO_RESULTS
+} = require('./lookupTest.utils');
 
 describe('c-lookup rendering', () => {
     afterEach(() => {
@@ -177,7 +183,6 @@ describe('c-lookup rendering', () => {
             { id: 'e2', message: 'Sample error 2' }
         ];
         const lookupEl = createLookupElement({
-            disabled: true,
             errors
         });
 
@@ -186,5 +191,28 @@ describe('c-lookup rendering', () => {
         expect(errorEls.length).toBe(errors.length);
         expect(errorEls[0].textContent).toBe(errors[0].message);
         expect(errorEls[1].textContent).toBe(errors[1].message);
+    });
+
+    it('blurs on error and closes dropdown', async () => {
+        jest.useFakeTimers();
+
+        // Create lookup with search handler
+        const lookupEl = createLookupElement();
+        const searchFn = (event) => {
+            event.target.setSearchResults(SAMPLE_SEARCH_ITEMS);
+        };
+        lookupEl.addEventListener('search', searchFn);
+
+        // Simulate search term input (forces focus on lookup and opens drowdown)
+        await inputSearchTerm(lookupEl, 'sample');
+
+        // Simulate error
+        lookupEl.errors = [{ id: 'e1', message: 'Sample error 1' }];
+        await flushPromises();
+
+        // Check that lookup no longer has focus and that dropdown is closed
+        expect(document.activeElement).not.toBe(lookupEl);
+        const dropdownEl = lookupEl.shadowRoot.querySelector('div[role="combobox"]');
+        expect(dropdownEl.classList).not.toContain('slds-is-open');
     });
 });

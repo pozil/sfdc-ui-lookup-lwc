@@ -22,7 +22,6 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     @api disabled = false;
     @api placeholder = '';
     @api isMultiEntry = false;
-    @api errors = [];
     @api scrollAfterNItems = null;
     @api newRecordOptions = [];
     @api minSearchTermLength = 2;
@@ -32,6 +31,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     loading = false;
 
     // Private properties
+    _errors = [];
     _hasFocus = false;
     _isDirty = false;
     _searchTerm = '';
@@ -52,6 +52,19 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     get selection() {
         return this._curSelection;
+    }
+
+    @api
+    set errors(value) {
+        this._errors = value;
+        // Blur component if errors are passed
+        if (this._errors?.length > 0) {
+            this.blur();
+        }
+    }
+
+    get errors() {
+        return this._errors;
     }
 
     @api
@@ -117,6 +130,11 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this._searchResults.length === 0) {
             this.setSearchResults(this._defaultSearchResults);
         }
+    }
+
+    @api
+    blur() {
+        this.template.querySelector('input')?.blur();
     }
 
     // INTERNAL FUNCTIONS
@@ -333,7 +351,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     get getContainerClass() {
         let css = 'slds-combobox_container ';
-        if (this.errors.length > 0) {
+        if (this._errors.length > 0) {
             css += 'has-custom-error';
         }
         return css;
@@ -357,7 +375,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this._hasFocus && this.hasResults) {
             css += 'slds-has-focus ';
         }
-        if (this.errors.length > 0 || (this._isDirty && this.required && !this.hasSelection())) {
+        if (this._errors.length > 0 || (this._isDirty && this.required && !this.hasSelection())) {
             css += 'has-custom-error ';
         }
         if (!this.isMultiEntry) {

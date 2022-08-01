@@ -67,8 +67,7 @@ describe('c-lookup event handling', () => {
         lookupEl.addEventListener('search', searchFn);
 
         // Simulate search term input
-        inputSearchTerm(lookupEl, SAMPLE_SEARCH);
-        await flushPromises();
+        await inputSearchTerm(lookupEl, SAMPLE_SEARCH);
 
         // Simulate mouse selection
         const searchResultItem = lookupEl.shadowRoot.querySelector('div[data-recordid]');
@@ -90,16 +89,10 @@ describe('c-lookup event handling', () => {
         lookupEl.addEventListener('search', searchFn);
 
         // Set search term and force input change
-        const searchInput = lookupEl.shadowRoot.querySelector('input');
-        searchInput.focus();
-        searchInput.value = SAMPLE_SEARCH;
-        searchInput.dispatchEvent(new CustomEvent('input'));
-
-        // Disable search throttling
-        jest.runAllTimers();
-        await flushPromises();
+        await inputSearchTerm(lookupEl, SAMPLE_SEARCH);
 
         // Simulate keyboard navigation
+        const searchInput = lookupEl.shadowRoot.querySelector('input');
         searchInput.dispatchEvent(new KeyboardEvent('keydown', { keyCode: ARROW_DOWN }));
         searchInput.dispatchEvent(new KeyboardEvent('keydown', { keyCode: ENTER }));
 
@@ -120,8 +113,7 @@ describe('c-lookup event handling', () => {
         lookupEl.addEventListener('search', searchFn);
 
         // Simulate search term input
-        inputSearchTerm(lookupEl, SAMPLE_SEARCH);
-        await flushPromises();
+        await inputSearchTerm(lookupEl, SAMPLE_SEARCH);
 
         // Simulate mouse selection
         const newRecordEl = lookupEl.shadowRoot.querySelector('div[data-sobject]');
@@ -151,8 +143,7 @@ describe('c-lookup event handling', () => {
         lookupEl.addEventListener('search', searchFn);
 
         // Simulate search term input
-        inputSearchTerm(lookupEl, SAMPLE_SEARCH);
-        await flushPromises();
+        await inputSearchTerm(lookupEl, SAMPLE_SEARCH);
 
         // Simulate mouse selection
         const newRecordEl = lookupEl.shadowRoot.querySelector('div[data-sobject]');

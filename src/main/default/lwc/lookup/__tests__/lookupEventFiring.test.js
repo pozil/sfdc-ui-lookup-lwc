@@ -49,7 +49,7 @@ describe('c-lookup event fires', () => {
         inputSearchTerm(lookupEl, SAMPLE_SEARCH_TOO_SHORT_WHITESPACE);
 
         // Check that search event wasn't fired
-        expect(mockSearchFn).not.toBeCalled();
+        expect(mockSearchFn).not.toHaveBeenCalled();
     });
 
     it('does not fire search event when search term is too short with special chars', () => {
@@ -64,7 +64,7 @@ describe('c-lookup event fires', () => {
         inputSearchTerm(lookupEl, SAMPLE_SEARCH_TOO_SHORT_SPECIAL);
 
         // Check that search event wasn't fired
-        expect(mockSearchFn).not.toBeCalled();
+        expect(mockSearchFn).not.toHaveBeenCalled();
     });
 
     it('does not fire search event when search term is under custom minimum length', () => {
@@ -79,7 +79,7 @@ describe('c-lookup event fires', () => {
         inputSearchTerm(lookupEl, SAMPLE_SEARCH_CLEAN);
 
         // Check that search event wasn't fired
-        expect(mockSearchFn).not.toBeCalled();
+        expect(mockSearchFn).not.toHaveBeenCalled();
     });
 
     it('fires search event when search term is above custom minimum length', () => {
@@ -109,7 +109,7 @@ describe('c-lookup event fires', () => {
         inputSearchTerm(lookupEl, '1234*?');
 
         // Check that search event wasn't fired
-        expect(mockSearchFn).not.toBeCalled();
+        expect(mockSearchFn).not.toHaveBeenCalled();
     });
 
     it('fires search event when search term is above custom minimum length with special characters', () => {

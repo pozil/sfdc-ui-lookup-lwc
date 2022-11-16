@@ -17,6 +17,7 @@ export const createLookupElement = (props = {}) => {
     const lookupEl = createElement('c-lookup', {
         is: Lookup
     });
+    lookupEl.label = 'Label'; // Assign a default label to pass a11y tests
     Object.assign(lookupEl, props);
     document.body.appendChild(lookupEl);
     return lookupEl;

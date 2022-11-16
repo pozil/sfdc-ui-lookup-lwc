@@ -335,6 +335,15 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     // STYLE EXPRESSIONS
 
+    get isListboxOpen() {
+        const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= this.minSearchTermLength;
+        return (
+            this._hasFocus &&
+            this.isSelectionAllowed() &&
+            (isSearchTermValid || this.hasResults || this.newRecordOptions?.length > 0)
+        );
+    }
+
     get hasResults() {
         return this._searchResults.length > 0;
     }
@@ -361,12 +370,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     get getDropdownClass() {
         let css = 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click ';
-        const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= this.minSearchTermLength;
-        if (
-            this._hasFocus &&
-            this.isSelectionAllowed() &&
-            (isSearchTermValid || this.hasResults || this.newRecordOptions?.length)
-        ) {
+        if (this.isListboxOpen) {
             css += 'slds-is-open';
         }
         return css;

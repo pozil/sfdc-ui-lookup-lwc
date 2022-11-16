@@ -6,7 +6,13 @@
         </label>
         <div class="slds-form-element__control">
             <div class={getContainerClass}>
-                <div class={getDropdownClass} aria-expanded={hasResults} aria-haspopup="listbox" role="combobox">
+                <div
+                    class={getDropdownClass}
+                    aria-expanded={isListboxOpen}
+                    aria-haspopup="listbox"
+                    aria-owns="listbox"
+                    role="combobox"
+                >
                     <!-- Search input start -->
                     <div class={getComboboxClass} role="none">
                         <template if:false={isMultiEntry}>
@@ -25,6 +31,7 @@
                             class={getInputClass}
                             aria-autocomplete="list"
                             aria-controls="listbox"
+                            aria-activedescendant={_focusedResultIndex}
                             autocomplete="off"
                             role="textbox"
                             id="combobox"
@@ -71,6 +78,7 @@
                     <div
                         id="listbox"
                         role="listbox"
+                        aria-label={label}
                         onmousedown={handleComboboxMouseDown}
                         onmouseup={handleComboboxMouseUp}
                         class={getListboxClass}
@@ -82,11 +90,18 @@
                             </div>
 
                             <!-- Result list start -->
-                            <template for:each={searchResultsLocalState} for:item="item" if:true={hasResults}>
+                            <template
+                                for:each={searchResultsLocalState}
+                                for:item="item"
+                                for:index="index"
+                                if:true={hasResults}
+                            >
                                 <li key={item.result.id} role="presentation" class="slds-listbox__item">
                                     <div
                                         class={item.classes}
                                         role="option"
+                                        id={index}
+                                        aria-label={item.result.title}
                                         onclick={handleResultClick}
                                         data-recordid={item.result.id}
                                     >
@@ -163,11 +178,11 @@
 
             <!-- Multi-selection start -->
             <template if:true={isMultiEntry}>
-                <div id="selection" role="listbox" aria-orientation="horizontal">
+                <div id="selection" role="listbox" aria-label={label} aria-orientation="horizontal">
                     <ul
                         class="slds-listbox slds-listbox_inline slds-var-p-top_xxx-small"
                         role="group"
-                        aria-label="Selected Options:"
+                        aria-label="Selected options"
                     >
                         <template for:each={selection} for:item="item">
                             <li key={item.id} role="presentation">
@@ -188,9 +203,9 @@
 
             <!-- Errors start -->
             <template for:each={_errors} for:item="error">
-                <label key={error.id} role="alert" class="slds-form-element__label slds-var-m-top_xx-small form-error"
-                    >{error.message}</label
-                >
+                <div key={error.id} role="alert" class="slds-form-element__label slds-var-m-top_xx-small form-error">
+                    {error.message}
+                </div>
             </template>
             <!-- Errors end -->
         </div>

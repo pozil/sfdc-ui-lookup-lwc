@@ -21,7 +21,7 @@ jobs:
               uses: volta-cli/action@v4
 
             # Cache node_modules to speed up the process
-            - name: Restore node_modules cache
+            - name: 'Restore node_modules cache'
               id: cache-npm
               uses: actions/cache@v3
               with:
@@ -63,13 +63,14 @@ jobs:
             - name: 'Checkout source code'
               uses: actions/checkout@v3
 
-            # Install Volta to enforce proper node and package manager versions
-            - name: 'Install Volta'
-              uses: volta-cli/action@v4
-
             # Install Salesforce CLI
-            - name: Install Salesforce CLI
-              run: npm install sfdx-cli
+            - name: 'Install Salesforce CLI'
+              run: |
+                  wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
+                  mkdir ~/sfdx
+                  tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
+                  echo "$HOME/sfdx/bin" >> $GITHUB_PATH
+                  ~/sfdx/bin/sfdx version
 
             # Store secret for dev hub
             - name: 'Populate auth file with DEVHUB_SFDX_URL secret'
@@ -84,19 +85,19 @@ jobs:
 
             # Authenticate dev hub
             - name: 'Authenticate Dev Hub'
-              run: 'sfdx force:auth:sfdxurl:store -f ./DEVHUB_SFDX_URL.txt -a devhub -d'
+              run: sfdx force:auth:sfdxurl:store -f ./DEVHUB_SFDX_URL.txt -a devhub -d
 
             # Create scratch org
             - name: 'Create scratch org'
-              run: 'sfdx force:org:create -f config/project-scratch-def.json -a lookup-ci -s -d 1'
+              run: sfdx force:org:create -f config/project-scratch-def.json -a lookup-ci -s -d 1
 
             # Deploy source to scratch org
             - name: 'Push source'
-              run: 'sfdx force:source:push'
+              run: sfdx force:source:push
 
             # Run Apex tests in scratch org
             - name: 'Run Apex tests'
-              run: 'sfdx force:apex:test:run -c -r human -d ./tests/apex -w 20'
+              run: sfdx force:apex:test:run -c -r human -d ./tests/apex -w 20
 
             # Upload Apex code coverage data
             - name: 'Upload code coverage for Apex to Codecov.io'
@@ -107,4 +108,4 @@ jobs:
             # Housekeeping
             - name: 'Delete scratch org'
               if: always()
-              run: 'sfdx force:org:delete -p -u lookup-ci'
+              run: sfdx force:org:delete -p -u lookup-ci

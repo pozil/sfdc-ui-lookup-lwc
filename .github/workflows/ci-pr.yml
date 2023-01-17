@@ -69,7 +69,7 @@ jobs:
 
             # Install Salesforce CLI
             - name: Install Salesforce CLI
-              run: npm install sfdx-cli --global
+              run: npm install sfdx-cli
 
             # Store secret for dev hub
             - name: 'Populate auth file with DEVHUB_SFDX_URL secret'

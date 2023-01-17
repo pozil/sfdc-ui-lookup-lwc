@@ -1,5 +1,5 @@
 @isTest(isParallel=true)
-public class SampleLookupControllerTest {
+public class SampleLookupControllerTests {
     @isTest
     static void search_should_return_Account_and_Opportunity() {
         List<Id> fixedResults = new Id[2];
@@ -12,9 +12,9 @@ public class SampleLookupControllerTest {
 
         List<LookupSearchResult> results = SampleLookupController.search('Acc', selectedIds);
 
-        System.assertEquals(2, results.size());
-        System.assertEquals(account.Id, results.get(0).getId());
-        System.assertEquals(oppty.Id, results.get(1).getId());
+        Assert.areEqual(2, results.size());
+        Assert.areEqual(account.Id, results.get(0).getId());
+        Assert.areEqual(oppty.Id, results.get(1).getId());
     }
 
     @isTest
@@ -30,8 +30,8 @@ public class SampleLookupControllerTest {
 
         List<LookupSearchResult> results = SampleLookupController.search('Acc', selectedIds);
 
-        System.assertEquals(1, results.size());
-        System.assertEquals(account1.Id, results.get(0).getId());
+        Assert.areEqual(1, results.size());
+        Assert.areEqual(account1.Id, results.get(0).getId());
     }
 
     private static Account createAccount(String name) {

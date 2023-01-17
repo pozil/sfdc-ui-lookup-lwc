@@ -10,7 +10,7 @@
                         onchange={handleLookupTypeChange}
                     ></lightning-input>
                 </div>
-                <div class="slds-col" if:true={isMultiEntry}>
+                <div class="slds-col" lwc:if={isMultiEntry}>
                     <lightning-input
                         type="number"
                         label="Max selected items"

@@ -335,6 +335,10 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     // STYLE EXPRESSIONS
 
+    get isSingleEntry() {
+        return !this.isMultiEntry;
+    }
+
     get isListboxOpen() {
         const isSearchTermValid = this._cleanSearchTerm && this._cleanSearchTerm.length >= this.minSearchTermLength;
         return (

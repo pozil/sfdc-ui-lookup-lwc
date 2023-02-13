@@ -44,7 +44,7 @@
         "url": "git+https://github.com/pozil/sfdc-ui-lookup-lwc"
     },
     "volta": {
-        "node": "18.13.0",
-        "npm": "9.3.0"
+        "node": "16.19.0",
+        "npm": "8.19.3"
     }
 }

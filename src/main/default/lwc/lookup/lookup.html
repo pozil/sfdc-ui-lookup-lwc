@@ -1,7 +1,7 @@
 <template>
     <div class={getFormElementClass}>
-        <label if:true={label} class={getLabelClass} for="combobox">
-            <abbr if:true={required} title="required" class="slds-required">*</abbr>
+        <label lwc:if={label} class={getLabelClass} for="combobox">
+            <abbr lwc:if={required} title="required" class="slds-required">*</abbr>
             {label}
         </label>
         <div class="slds-form-element__control">
@@ -15,7 +15,7 @@
                 >
                     <!-- Search input start -->
                     <div class={getComboboxClass} role="none">
-                        <template if:false={isMultiEntry}>
+                        <template lwc:if={isSingleEntry}>
                             <lightning-icon
                                 icon-name={getSelectIconName}
                                 size="small"
@@ -55,7 +55,7 @@
                         ></lightning-icon>
 
                         <!-- Clear selection button icon for single entry lookups -->
-                        <template if:false={isMultiEntry}>
+                        <template lwc:if={isSingleEntry}>
                             <button
                                 title="Remove selected option"
                                 type="button"
@@ -85,7 +85,7 @@
                     >
                         <ul class="slds-listbox slds-listbox_vertical" role="presentation">
                             <!-- Spinner to display when waiting for results of search -->
-                            <div if:true={loading}>
+                            <div lwc:if={loading}>
                                 <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
                             </div>
 
@@ -94,7 +94,7 @@
                                 for:each={searchResultsLocalState}
                                 for:item="item"
                                 for:index="index"
-                                if:true={hasResults}
+                                lwc:if={hasResults}
                             >
                                 <li key={item.result.id} role="presentation" class="slds-listbox__item">
                                     <div
@@ -121,7 +121,7 @@
                                                 </lightning-formatted-rich-text>
                                             </span>
                                             <span
-                                                if:true={item.result.subtitleFormatted}
+                                                lwc:if={item.result.subtitleFormatted}
                                                 class="slds-listbox__option-meta slds-listbox__option-meta_entity"
                                             >
                                                 <lightning-formatted-rich-text
@@ -137,11 +137,11 @@
                             <!-- Result list end -->
 
                             <!-- No results start -->
-                            <template if:false={hasResults}>
+                            <template lwc:else>
                                 <li role="presentation">
                                     <span class="slds-media slds-listbox__option_entity" role="option">
-                                        <span if:false={loading} class="slds-media__body">No results.</span>
-                                        <span if:true={loading} class="slds-media__body">Loading...</span>
+                                        <span lwc:if={loading} class="slds-media__body">Loading...</span>
+                                        <span lwc:else class="slds-media__body">No results.</span>
                                     </span>
                                 </li>
                             </template>
@@ -177,7 +177,7 @@
             </div>
 
             <!-- Multi-selection start -->
-            <template if:true={isMultiEntry}>
+            <template lwc:if={isMultiEntry}>
                 <div id="selection" role="listbox" aria-label={label} aria-orientation="horizontal">
                     <ul
                         class="slds-listbox slds-listbox_inline slds-var-p-top_xxx-small"

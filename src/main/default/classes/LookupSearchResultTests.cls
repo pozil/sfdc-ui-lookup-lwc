@@ -7,7 +7,7 @@ public class LookupSearchResultTests {
 
         Integer compareResult = r1.compareTo(r2);
 
-        System.assertEquals(0, compareResult);
+        Assert.areEqual(0, compareResult);
     }
 
     @isTest
@@ -17,7 +17,7 @@ public class LookupSearchResultTests {
 
         Integer compareResult = r1.compareTo(r2);
 
-        System.assertEquals(1, compareResult);
+        Assert.areEqual(1, compareResult);
     }
 
     @isTest
@@ -27,7 +27,7 @@ public class LookupSearchResultTests {
 
         Integer compareResult = r1.compareTo(r2);
 
-        System.assertEquals(-1, compareResult);
+        Assert.areEqual(-1, compareResult);
     }
 
     @isTest
@@ -37,7 +37,7 @@ public class LookupSearchResultTests {
 
         Integer compareResult = r1.compareTo(r2);
 
-        System.assertEquals(-1, compareResult);
+        Assert.areEqual(-1, compareResult);
     }
 
     @isTest
@@ -45,11 +45,11 @@ public class LookupSearchResultTests {
         // For the sake of code coverage
         LookupSearchResult r = new LookupSearchResult('0010R00000yvEyRQAU', 'type', 'icon', 'title', 'subtitle');
 
-        System.assertEquals('0010R00000yvEyRQAU', r.getId());
-        System.assertEquals('type', r.getSObjectType());
-        System.assertEquals('icon', r.getIcon());
-        System.assertEquals('title', r.getTitle());
-        System.assertEquals('subtitle', r.getSubtitle());
+        Assert.areEqual('0010R00000yvEyRQAU', r.getId());
+        Assert.areEqual('type', r.getSObjectType());
+        Assert.areEqual('icon', r.getIcon());
+        Assert.areEqual('title', r.getTitle());
+        Assert.areEqual('subtitle', r.getSubtitle());
     }
 
     private static LookupSearchResult getSearchResult(String title) {

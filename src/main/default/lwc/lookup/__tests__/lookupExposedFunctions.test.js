@@ -83,4 +83,23 @@ describe('c-lookup exposed functions', () => {
         const dropdownEl = lookupEl.shadowRoot.querySelector('div[role="combobox"]');
         expect(dropdownEl.classList).not.toContain('slds-is-open');
     });
+
+    it('reports valid by default', async () => {
+        // Create lookup
+        const lookupEl = createLookupElement();
+
+        // Verify validity
+        const isValid = lookupEl.validity;
+        expect(isValid).toBeTruthy();
+    });
+
+    it('reports non valid when there are errors', async () => {
+        // Create lookup
+        const lookupEl = createLookupElement();
+        lookupEl.errors = [{ id: 'e1', message: 'Some error' }];
+
+        // Verify validity
+        const isValid = lookupEl.validity;
+        expect(isValid).toBeFalsy();
+    });
 });

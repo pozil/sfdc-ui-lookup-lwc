@@ -57,8 +57,8 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     @api
-    set errors(value) {
-        this._errors = value;
+    set errors(errors) {
+        this._errors = errors;
         // Blur component if errors are passed
         if (this._errors?.length > 0) {
             this.blur();
@@ -67,6 +67,11 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     get errors() {
         return this._errors;
+    }
+
+    @api
+    get validity() {
+        return !this._errors || this._errors.length === 0;
     }
 
     @api

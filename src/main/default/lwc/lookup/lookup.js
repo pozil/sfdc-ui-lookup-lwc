@@ -71,8 +71,14 @@ export default class Lookup extends NavigationMixin(LightningElement) {
 
     @api
     get validity() {
-        return !this._errors || this._errors.length === 0;
+        return {valid:!this._errors || this._errors.length === 0};
     }
+    
+    @api
+    get value() {
+        return this.getSelection();
+    }
+    
 
     @api
     setSearchResults(results) {

@@ -89,8 +89,7 @@ describe('c-lookup exposed functions', () => {
         const lookupEl = createLookupElement();
 
         // Verify validity
-        const isValid = lookupEl.validity;
-        expect(isValid).toBeTruthy();
+        expect(lookupEl.validity).toEqual({ valid: true });
     });
 
     it('reports non valid when there are errors', async () => {
@@ -99,7 +98,6 @@ describe('c-lookup exposed functions', () => {
         lookupEl.errors = [{ id: 'e1', message: 'Some error' }];
 
         // Verify validity
-        const isValid = lookupEl.validity;
-        expect(isValid).toBeFalsy();
+        expect(lookupEl.validity).toEqual({ valid: false });
     });
 });

@@ -11,7 +11,7 @@
         "test:coverage": "sfdx-lwc-jest --coverage --skipApiVersionCheck",
         "prettier": "prettier --write '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
         "prettier:verify": "prettier --check '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
-        "postinstall": "husky install",
+        "prepare": "husky install",
         "precommit": "lint-staged"
     },
     "lint-staged": {

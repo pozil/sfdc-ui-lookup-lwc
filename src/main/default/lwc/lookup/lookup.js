@@ -145,6 +145,11 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     }
 
     @api
+    focus() {
+        this.template.querySelector('input')?.focus();
+    }
+
+    @api
     blur() {
         this.template.querySelector('input')?.blur();
     }

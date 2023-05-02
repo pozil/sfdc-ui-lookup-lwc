@@ -107,6 +107,10 @@ export default class SampleLookupContainer extends LightningElement {
         this.errors = [];
     }
 
+    handleFocus() {
+        this.template.querySelector('c-lookup').focus();
+    }
+
     checkForErrors() {
         this.errors = [];
         const selection = this.template.querySelector('c-lookup').getSelection();

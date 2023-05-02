@@ -277,6 +277,7 @@ Sometimes, you may want to pass extra data from the lookup component to Apex. To
 
 | Function                     | Description                                                                                                                                    |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `focus()`                    | Places focus on the component an opens the search dropdown (unless this is a single selection lookup with a selection).                        |
 | `blur()`                     | Removes focus from the component and closes the search results list.                                                                           |
 | `getSelection()`             | Gets the current lookup selection as an array of `LookupSearchResult`.                                                                         |
 | `setDefaultResults(results)` | Allows to set optional default items returned when search has no result (ex: recent items).<br/>`results` is an array of `LookupSearchResult`. |

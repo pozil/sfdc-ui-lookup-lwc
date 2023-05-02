@@ -61,6 +61,15 @@ describe('c-lookup exposed functions', () => {
         expect(listItemEls.length).toBe(SAMPLE_SEARCH_ITEMS.length);
     });
 
+    it('focuses', async () => {
+        // Create lookup
+        const lookupEl = createLookupElement();
+        lookupEl.focus();
+
+        // Verify focus
+        expect(document.activeElement).toEqual(lookupEl);
+    });
+
     it('blurs removes focus and closes dropdown', async () => {
         jest.useFakeTimers();
 

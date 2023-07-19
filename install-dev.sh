@@ -10,19 +10,19 @@ echo "Installing org with alias: $ORG_ALIAS"
 echo ""
 
 echo "Cleaning previous scratch org..."
-sfdx force:org:delete -p -u $ORG_ALIAS &> /dev/null
+sf org delete scratch -p -o $ORG_ALIAS &> /dev/null
 echo ""
 
 echo "Creating scratch org..." && \
-sfdx force:org:create -s -f config/project-scratch-def.json -d 30 -a $ORG_ALIAS && \
+sf org create scratch -f config/project-scratch-def.json -a $ORG_ALIAS -d -y 30 && \
 echo "" && \
 
 echo "Pushing source..." && \
-sfdx force:source:push -u $ORG_ALIAS && \
+sf project deploy start && \
 echo "" && \
 
 echo "Opening sample app..." && \
-sfdx force:org:open -p /c/SampleLookupApp.app -u $ORG_ALIAS
+sf org open -p /c/SampleLookupApp.app
 EXIT_CODE="$?"
 
 # Check exit code

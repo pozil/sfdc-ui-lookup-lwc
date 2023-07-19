@@ -9,16 +9,16 @@ echo Installing org with alias: %ORG_ALIAS%
 
 rem Install script
 echo Cleaning previous scratch org...
-cmd.exe /c sfdx force:org:delete -p -u %ORG_ALIAS% 2>NUL
+cmd.exe /c sf org delete scratch -p -o %ORG_ALIAS% 2>NUL
 @echo:
 
 echo Creating scratch org...
-cmd.exe /c sfdx force:org:create -s -f config/project-scratch-def.json -a %ORG_ALIAS% -d 30
+cmd.exe /c sf org create scratch -f config/project-scratch-def.json -a %ORG_ALIAS% -d -y 30
 call :checkForError
 @echo:
 
 echo Pushing source...
-cmd.exe /c sfdx force:source:push -f -u %ORG_ALIAS%
+cmd.exe /c sf project deploy start -f
 call :checkForError
 @echo:
 
@@ -27,7 +27,7 @@ rem Check exit code
 if ["%errorlevel%"]==["0"] (
   echo Installation completed.
   @echo:
-  cmd.exe /c sfdx force:org:open -p /c/SampleLookupApp.app -u %ORG_ALIAS%
+  cmd.exe /c sf org open -p /c/SampleLookupApp.app
 )
 
 :: ======== FN ======

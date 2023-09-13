@@ -1,7 +1,7 @@
 {
     "name": "sfdc-ui-lookup-lwc",
     "private": true,
-    "version": "2.22.0",
+    "version": "2.23.0",
     "description": "Salesforce Lookup Component (Lightning Web Components version)",
     "scripts": {
         "lint": "eslint **/lwc/**/*.js",
@@ -26,17 +26,17 @@
     "author": "Philippe Ozil",
     "devDependencies": {
         "@lwc/eslint-plugin-lwc": "^1.6.3",
-        "@prettier/plugin-xml": "^3.1.1",
-        "@sa11y/jest": "^5.2.0",
+        "@prettier/plugin-xml": "^3.2.1",
+        "@sa11y/jest": "^5.3.0",
         "@salesforce/eslint-config-lwc": "^3.5.2",
         "@salesforce/eslint-plugin-lightning": "^1.0.0",
         "@salesforce/sfdx-lwc-jest": "^1.4.1",
-        "eslint": "^8.45.0",
-        "eslint-plugin-import": "^2.27.5",
+        "eslint": "^8.49.0",
+        "eslint-plugin-import": "^2.28.1",
         "eslint-plugin-jest": "^27.2.3",
         "husky": "^8.0.3",
-        "lint-staged": "^13.2.3",
-        "prettier": "^3.0.0",
+        "lint-staged": "^14.0.1",
+        "prettier": "^3.0.3",
         "prettier-plugin-apex": "^2.0.1"
     },
     "repository": {

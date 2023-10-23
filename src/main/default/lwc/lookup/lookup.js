@@ -1,7 +1,7 @@
 import { LightningElement, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 
-const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, peform search
+const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, perform search
 
 const KEY_ARROW_UP = 38;
 const KEY_ARROW_DOWN = 40;
@@ -180,7 +180,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         }
         // eslint-disable-next-line @lwc/lwc/no-async-operation
         this._searchThrottlingTimeout = setTimeout(() => {
-            // Send search event if search term is long enougth
+            // Send search event if search term is long enough
             if (this._cleanSearchTerm.length >= this.minSearchTermLength) {
                 // Display spinner until results are returned
                 this.loading = true;

@@ -42,7 +42,7 @@ public with sharing class SampleLookupController {
             );
         }
 
-        // Optionnaly sort all results on title
+        // Optionally sort all results on title
         results.sort();
 
         return results;

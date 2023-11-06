@@ -16,7 +16,7 @@ export default class SampleLookupContainer extends LightningElement {
             id: 'na',
             sObjectType: 'na',
             icon: 'standard:lightning_component',
-            title: 'Inital selection',
+            title: 'Initial selection',
             subtitle: 'Not a valid record'
         }
     ];
@@ -28,7 +28,7 @@ export default class SampleLookupContainer extends LightningElement {
     ];
 
     /**
-     * Loads recently viewed records and set them as default lookpup search results (optional)
+     * Loads recently viewed records and set them as default lookup search results (optional)
      */
     @wire(getRecentlyViewed)
     getRecentlyViewed({ data }) {
@@ -55,8 +55,8 @@ export default class SampleLookupContainer extends LightningElement {
 
     /**
      * Handles the lookup search event.
-     * Calls the server to perform the search and returns the resuls to the lookup.
-     * @param {event} event `search` event emmitted by the lookup
+     * Calls the server to perform the search and returns the results to the lookup.
+     * @param {event} event `search` event emitted by the lookup
      */
     handleLookupSearch(event) {
         const lookupElement = event.target;
@@ -66,7 +66,7 @@ export default class SampleLookupContainer extends LightningElement {
                 lookupElement.setSearchResults(results);
             })
             .catch((error) => {
-                this.notifyUser('Lookup Error', 'An error occured while searching with the lookup field.', 'error');
+                this.notifyUser('Lookup Error', 'An error occurred while searching with the lookup field.', 'error');
                 // eslint-disable-next-line no-console
                 console.error('Lookup error', JSON.stringify(error));
                 this.errors = [error];
@@ -75,7 +75,7 @@ export default class SampleLookupContainer extends LightningElement {
 
     /**
      * Handles the lookup selection change
-     * @param {event} event `selectionchange` event emmitted by the lookup.
+     * @param {event} event `selectionchange` event emitted by the lookup.
      * The event contains the list of selected ids.
      */
     // eslint-disable-next-line no-unused-vars

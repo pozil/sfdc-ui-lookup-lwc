@@ -122,15 +122,15 @@ Follow these steps to use the lookup component:
     The `search` event handler calls the Apex `search` method and passes the results back to the lookup using the `setSearchResults(results)` function:
 
     ```js
-    handleSearch(event) {
+    async handleSearch(event) {
         const lookupElement = event.target;
-        apexSearch(event.detail)
-            .then(results => {
-                lookupElement.setSearchResults(results);
-            })
-            .catch(error => {
+        try {
+            const results = await apexSearch(event.detail);
+            lookupElement.setSearchResults(results);
+        }
+        catch (error) {
                 // TODO: handle error
-            });
+        }
     }
     ```
 

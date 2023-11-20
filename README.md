@@ -2,9 +2,31 @@
 
 [![Github Workflow](https://github.com/pozil/sfdc-ui-lookup-lwc/workflows/CI/badge.svg?branch=master)](https://github.com/pozil/sfdc-ui-lookup-lwc/actions) [![codecov](https://codecov.io/gh/pozil/sfdc-ui-lookup-lwc/branch/master/graph/badge.svg)](https://codecov.io/gh/pozil/sfdc-ui-lookup-lwc) ![a11y friendly](https://img.shields.io/badge/a11y-friendly-green)
 
+> [!IMPORTANT]
+> The Winter '24 release introduces a new Lightning base component that is similar to this lookup component: [`lightning-record-picker`](https://developer.salesforce.com/docs/component-library/bundle/lightning-record-picker/documentation) ([release announcement](https://developer.salesforce.com/blogs/2023/10/introducing-the-lightning-record-picker-component)).
+> Here is a table to help you understand the key differences (non-exhaustive) between the two components:
+
+|                     | This Lookup component                                                                                                                                    | `lightning-record-picker`                                                                                                    |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Support**         | Custom component built as OSS. No official support.                                                                                                      | Base Lightning component with official Salesforce support.                                                                   |
+| **Mobile Support**  | None.                                                                                                                                                    | Built-in.                                                                                                                    |
+| **Data Source**     | You control the implementation (GraphQL or Apex) and you can work with any kind of data. It can list records or data that lives outside of the Platform. | You don't have to implement the data source. The component only selects Salesforce records with some filtering capabilities. |
+| **Cache**           | You have to take care of caching as part of the implementation and you can use the Lightning Data Service.                                               | Built-in with Lightning Data Service caching and partial support for offline mode.                                           |
+| **Permissions**     | Automatically enforced if using GraphQL. Can be enforced or bypassed if using Apex (use this with caution).                                              | Automatically enforced.                                                                                                      |
+| **Multi Object**    | Built-in. You can select records from multiple objects/sources.                                                                                          | Not supported but on the roadmap<sup>\*</sup>.                                                                               |
+| **Multi Selection** | Built-in.                                                                                                                                                | Not supported but on the roadmap<sup>\*</sup>.                                                                               |
+| **Default Results** | Customizable with the data of your choice: recently viewed records or other.                                                                             | Not customizable but recently viewed records are on the roadmap<sup>\*</sup>.                                                |
+| **Custom Actions**  | Ability to create new records from the lookup.                                                                                                           | Not supported but on the roadmap<sup>\*</sup>.                                                                               |
+
+_<sup>\*</sup> Forward-Looking Statements. No estimated date of delivery or guarantees._
+
+---
+
 <p align="center">
     <img src="screenshots/lookup-animation.gif" alt="Lookup animation"/>
 </p>
+
+</details>
 
 <img src="screenshots/dropdown-open.png" alt="Lookup with dropdown open" width="350" align="right"/>
 

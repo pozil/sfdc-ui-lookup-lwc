@@ -245,7 +245,8 @@ connectedCallback() {
 }
 ```
 
-**Tip:** consider working with cookies to store information in a temporary state.
+> [!TIP]
+> Consider working with cookies to store information in a temporary state with an expiry date.
 
 ### Passing custom data to JavaScript and Apex (optional)
 

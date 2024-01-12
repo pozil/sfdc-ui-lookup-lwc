@@ -166,7 +166,7 @@ The lookup can return default search results with the `setDefaultResults(results
 
 Here's how you can retrieve recent records and set them as default search results:
 
-1. Implement an Apex endpoint that returns the recent records:
+1.  Implement an Apex endpoint that returns the recent records:
 
     ```apex
     @AuraEnabled(cacheable=true scope='global')
@@ -175,13 +175,13 @@ Here's how you can retrieve recent records and set them as default search result
 
     See the [full code from the sample app](/src-sample/main/default/classes/SampleLookupController.cls#L59)
 
-1. In your parent component, create a property that holds the default results:
+1.  In your parent component, create a property that holds the default results:
 
     ```js
     recentlyViewed = [];
     ```
 
-1. Write a utility function that sets your default search results:
+1.  Write a utility function that sets your default search results:
 
     ```js
     initLookupDefaultResults() {
@@ -193,7 +193,7 @@ Here's how you can retrieve recent records and set them as default search result
     }
     ```
 
-1. Retrieve the recent records by calling your endpoint:
+1.  Retrieve the recent records by calling your endpoint:
 
     ```js
     @wire(getRecentlyViewed)
@@ -205,15 +205,15 @@ Here's how you can retrieve recent records and set them as default search result
     }
     ```
 
-1. Initialize the lookup default results when the parent component loads:
+1.  Initialize the lookup default results when the parent component loads:
 
-    ```js
-    connectedCallback() {
-        this.initLookupDefaultResults();
-    }
-    ```
-> [!NOTE]
-> `initLookupDefaultResults()` is called in two places because the wire could load before the lookup is rendered.
+        ```js
+        connectedCallback() {
+            this.initLookupDefaultResults();
+        }
+        ```
+
+    > [!NOTE] > `initLookupDefaultResults()` is called in two places because the wire could load before the lookup is rendered.
 
 ### Saving form state when creating new records (optional)
 

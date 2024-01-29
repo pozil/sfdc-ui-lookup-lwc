@@ -414,7 +414,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this.isMultiEntry) {
             css += 'slds-input-has-icon_right';
         } else {
-            css += (this.hasSelection() && this._curSelection[0].icon) ? "slds-input-has-icon_left-right" : "slds-input-has-icon_right";
+            css += (this.hasSelection() && this._curSelection[0].icon) ? 'slds-input-has-icon_left-right' : 'slds-input-has-icon_right';
         }
         return css;
     }

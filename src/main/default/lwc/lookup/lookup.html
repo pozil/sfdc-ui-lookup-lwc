@@ -17,6 +17,7 @@
                     <div class={getComboboxClass} role="none">
                         <template lwc:if={isSingleEntry}>
                             <lightning-icon
+                                lwc:if={getSelectIconName}
                                 icon-name={getSelectIconName}
                                 size="small"
                                 alternative-text="Selected item icon"
@@ -106,7 +107,7 @@
                                         onclick={handleResultClick}
                                         data-recordid={item.result.id}
                                     >
-                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                        <span class="slds-media__figure slds-listbox__option-icon" lwc:if={item.result.icon}>
                                             <lightning-icon
                                                 icon-name={item.result.icon}
                                                 size="small"
@@ -193,7 +194,7 @@
                                     onremove={handleRemoveSelectedItem}
                                     name={item.id}
                                 >
-                                    <lightning-icon icon-name={item.icon}></lightning-icon>
+                                    <lightning-icon icon-name={item.icon} lwc:if={item.icon}></lightning-icon>
                                 </lightning-pill>
                             </li>
                         </template>

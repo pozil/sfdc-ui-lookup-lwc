@@ -104,10 +104,6 @@ export default class Lookup extends NavigationMixin(LightningElement) {
                 result.titleFormatted = result.title;
                 result.subtitleFormatted = result.subtitle;
             }
-            // Add icon if missing
-            if (typeof result.icon === 'undefined') {
-                result.icon = 'standard:default';
-            }
             return result;
         });
         // Add local state and dynamic class to search results
@@ -414,7 +410,10 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this.isMultiEntry) {
             css += 'slds-input-has-icon_right';
         } else {
-            css += (this.hasSelection() && this._curSelection[0].icon) ? 'slds-input-has-icon_left-right' : 'slds-input-has-icon_right';
+            css +=
+                this.hasSelection() && this._curSelection[0].icon
+                    ? 'slds-input-has-icon_left-right'
+                    : 'slds-input-has-icon_right';
         }
         return css;
     }

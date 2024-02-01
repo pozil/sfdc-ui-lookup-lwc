@@ -28,6 +28,11 @@
     height: 32px !important;
 }
 
+/** Fix for some minor SLDS glitch on item icon top margin */
+.slds-media__figure.slds-listbox__option-icon {
+    margin-top: 0;
+}
+
 .form-error {
     color: rgb(194, 57, 52);
     display: block;

@@ -15,7 +15,7 @@ public virtual class LookupSearchResult implements Comparable {
     /**
      * @param id the lookup entry identifier (generally a record ID)
      * @param sObjectType Optional - The sObject type of the selected record. This value is not used for lookup rendering. It's passed back to the selection handler in case you search on multiple object types.
-     * @param icon Optional - A qualified SLDS icon name taken from https://www.lightningdesignsystem.com/icons. It defaults to standard:default.
+     * @param icon Optional - A qualified SLDS icon name taken from https://www.lightningdesignsystem.com/icons. No icon is displayed by default.
      * @param title Required - The label of the lookup entry
      * @param subtitle Optional - A subtitle that is displayed under the lookup entry label
      */

@@ -107,7 +107,10 @@
                                         onclick={handleResultClick}
                                         data-recordid={item.result.id}
                                     >
-                                        <span class="slds-media__figure slds-listbox__option-icon" lwc:if={item.result.icon}>
+                                        <span
+                                            class="slds-media__figure slds-listbox__option-icon"
+                                            lwc:if={item.result.icon}
+                                        >
                                             <lightning-icon
                                                 icon-name={item.result.icon}
                                                 size="small"

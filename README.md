@@ -213,7 +213,8 @@ Here's how you can retrieve recent records and set them as default search result
     }
     ```
 
-    > [!NOTE] > `initLookupDefaultResults()` is called in two places because the wire could load before the lookup is rendered.
+> [!NOTE]
+> `initLookupDefaultResults()` is called in two places because the wire could load before the lookup is rendered.
 
 ### Saving form state when creating new records (optional)
 

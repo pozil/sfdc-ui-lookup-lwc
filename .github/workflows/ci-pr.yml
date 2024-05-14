@@ -14,7 +14,7 @@ jobs:
         steps:
             # Checkout the code in the pull request
             - name: 'Checkout source code'
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             # Install Volta to enforce proper node and package manager versions
             - name: 'Install Volta'
@@ -23,7 +23,7 @@ jobs:
             # Cache node_modules to speed up the process
             - name: 'Restore node_modules cache'
               id: cache-npm
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: node_modules
                   key: npm-${{ hashFiles('**/package-lock.json') }}
@@ -48,10 +48,11 @@ jobs:
             - name: 'LWC unit tests'
               run: npm run test:coverage
 
-            # Upload LWC code coverage data
+            # Upload code coverage data
             - name: 'Upload code coverage for LWC to Codecov.io'
-              uses: codecov/codecov-action@v3
+              uses: codecov/codecov-action@v4
               with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
                   flags: LWC
 
     scratch-org-tests:
@@ -61,7 +62,7 @@ jobs:
         steps:
             # Checkout the code in the pull request
             - name: 'Checkout source code'
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             # Install Salesforce CLI
             - name: 'Install Salesforce CLI'
@@ -100,8 +101,9 @@ jobs:
 
             # Upload Apex code coverage data
             - name: 'Upload code coverage for Apex to Codecov.io'
-              uses: codecov/codecov-action@v3
+              uses: codecov/codecov-action@v4
               with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
                   flags: Apex
 
             # Housekeeping

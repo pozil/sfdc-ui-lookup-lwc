@@ -11,7 +11,7 @@
         "test:coverage": "sfdx-lwc-jest --coverage --skipApiVersionCheck",
         "prettier": "prettier --write '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
         "prettier:verify": "prettier --check '**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,yaml,yml}'",
-        "prepare": "husky install",
+        "prepare": "husky || true",
         "precommit": "lint-staged"
     },
     "lint-staged": {
@@ -25,25 +25,25 @@
     },
     "author": "Philippe Ozil",
     "devDependencies": {
-        "@lwc/eslint-plugin-lwc": "^1.7.2",
-        "@prettier/plugin-xml": "^3.2.2",
-        "@sa11y/jest": "^6.3.1",
-        "@salesforce/eslint-config-lwc": "^3.5.2",
+        "@lwc/eslint-plugin-lwc": "^1.8.1",
+        "@prettier/plugin-xml": "^3.4.1",
+        "@sa11y/jest": "^6.7.0",
+        "@salesforce/eslint-config-lwc": "^3.5.3",
         "@salesforce/eslint-plugin-lightning": "^1.0.0",
-        "@salesforce/sfdx-lwc-jest": "^3.1.0",
-        "eslint": "^8.56.0",
+        "@salesforce/sfdx-lwc-jest": "^5.0.0",
+        "eslint": "^8.57.0",
         "eslint-plugin-import": "^2.29.1",
-        "eslint-plugin-jest": "^27.6.3",
-        "husky": "^9.0.9",
-        "lint-staged": "^15.2.1",
-        "prettier": "^3.2.4",
-        "prettier-plugin-apex": "^2.0.1"
+        "eslint-plugin-jest": "^28.5.0",
+        "husky": "^9.0.11",
+        "lint-staged": "^15.2.2",
+        "prettier": "^3.2.5",
+        "prettier-plugin-apex": "^2.1.4"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/pozil/sfdc-ui-lookup-lwc"
     },
     "volta": {
-        "node": "18.17.0"
+        "node": "20.13.1"
     }
 }

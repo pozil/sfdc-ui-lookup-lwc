@@ -100,7 +100,8 @@ describe('c-lookup event handling', () => {
         // Check selection
         expect(lookupEl.selection.length).toBe(1);
         expect(lookupEl.selection[0].id).toBe(SAMPLE_SEARCH_ITEMS[0].id);
-
+        
+        // Check if the scroll focus is functional
         const focusedElement = lookupEl.shadowRoot.querySelector(`[data-recordid="${SAMPLE_SEARCH_ITEMS[0].id}"]`);
         expect(focusedElement.scrollIntoView).toHaveBeenCalled();
     });

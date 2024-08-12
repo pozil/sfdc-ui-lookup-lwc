@@ -79,6 +79,7 @@ describe('c-lookup event handling', () => {
     });
 
     it('can select item with keyboard', async () => {
+        Element.prototype.scrollIntoView = jest.fn();
         jest.useFakeTimers();
 
         // Create lookup with search handler
@@ -99,6 +100,10 @@ describe('c-lookup event handling', () => {
         // Check selection
         expect(lookupEl.selection.length).toBe(1);
         expect(lookupEl.selection[0].id).toBe(SAMPLE_SEARCH_ITEMS[0].id);
+
+        // Check if the scroll focus is functional
+        const focusedElement = lookupEl.shadowRoot.querySelector(`[data-recordid="${SAMPLE_SEARCH_ITEMS[0].id}"]`);
+        expect(focusedElement.scrollIntoView).toHaveBeenCalled();
     });
 
     it('can create new record without pre-navigate callback', async () => {

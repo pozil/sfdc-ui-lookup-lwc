@@ -260,9 +260,11 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         }
 
         if (event.keyCode === KEY_ARROW_DOWN || event.keyCode === KEY_ARROW_UP) {
-            const focusedElement = this.template.querySelector(`[data-recordid="${this._searchResults[this._focusedResultIndex].id}"]`);
+            const focusedElement = this.template.querySelector(
+                `[data-recordid="${this._searchResults[this._focusedResultIndex].id}"]`
+            );
             if (focusedElement) {
-                focusedElement.scrollIntoView({ block: 'nearest', inline:'nearest' })
+                focusedElement.scrollIntoView({ block: 'nearest', inline: 'nearest' });
             }
         }
     }

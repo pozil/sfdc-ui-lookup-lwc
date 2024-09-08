@@ -1,7 +1,7 @@
 {
     "name": "sfdc-ui-lookup-lwc",
     "private": true,
-    "version": "2.24.1",
+    "version": "2.25.0",
     "description": "Salesforce Lookup Component (Lightning Web Components version)",
     "scripts": {
         "lint": "eslint **/lwc/**/*.js",

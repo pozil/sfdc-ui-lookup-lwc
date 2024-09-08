@@ -2,8 +2,9 @@ const { createLookupElement, inputSearchTerm, flushPromises, SAMPLE_SEARCH_ITEMS
 import { getNavigateCalledWith } from 'lightning/navigation';
 
 const SAMPLE_SEARCH = 'sample';
-const ARROW_DOWN = 40;
-const ENTER = 13;
+const KEY_ESCAPE = 27;
+const KEY_ARROW_DOWN = 40;
+const KEY_ENTER = 13;
 
 describe('c-lookup event handling', () => {
     afterEach(() => {
@@ -94,8 +95,8 @@ describe('c-lookup event handling', () => {
 
         // Simulate keyboard navigation
         const searchInput = lookupEl.shadowRoot.querySelector('input');
-        searchInput.dispatchEvent(new KeyboardEvent('keydown', { keyCode: ARROW_DOWN }));
-        searchInput.dispatchEvent(new KeyboardEvent('keydown', { keyCode: ENTER }));
+        searchInput.dispatchEvent(new KeyboardEvent('keydown', { keyCode: KEY_ARROW_DOWN }));
+        searchInput.dispatchEvent(new KeyboardEvent('keydown', { keyCode: KEY_ENTER }));
 
         // Check selection
         expect(lookupEl.selection.length).toBe(1);
@@ -104,6 +105,29 @@ describe('c-lookup event handling', () => {
         // Check if the scroll focus is functional
         const focusedElement = lookupEl.shadowRoot.querySelector(`[data-recordid="${SAMPLE_SEARCH_ITEMS[0].id}"]`);
         expect(focusedElement.scrollIntoView).toHaveBeenCalled();
+    });
+
+    it('can clearn search results with keyboard', async () => {
+        jest.useFakeTimers();
+
+        // Create lookup with search handler
+        const lookupEl = createLookupElement();
+        const searchFn = (event) => {
+            event.target.setSearchResults(SAMPLE_SEARCH_ITEMS);
+        };
+        lookupEl.addEventListener('search', searchFn);
+
+        // Set search term and force input change
+        await inputSearchTerm(lookupEl, SAMPLE_SEARCH);
+
+        // Simulate keyboard 'escape' key press
+        const searchInput = lookupEl.shadowRoot.querySelector('input');
+        searchInput.dispatchEvent(new KeyboardEvent('keydown', { keyCode: KEY_ESCAPE }));
+        await flushPromises();
+
+        // Check that there are no search results displayed
+        const seachResultElements = lookupEl.shadowRoot.querySelectorAll(`[data-recordid]`);
+        expect(seachResultElements.length).toBe(0);
     });
 
     it('can create new record without pre-navigate callback', async () => {

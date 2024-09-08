@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 
 const SEARCH_DELAY = 300; // Wait 300 ms after user stops typing then, perform search
 
+const KEY_ESCAPE = 27;
 const KEY_ARROW_UP = 38;
 const KEY_ARROW_DOWN = 40;
 const KEY_ENTER = 13;
@@ -237,7 +238,20 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this._focusedResultIndex === null) {
             this._focusedResultIndex = -1;
         }
-        if (event.keyCode === KEY_ARROW_DOWN) {
+        if (event.keyCode === KEY_ESCAPE) {
+            // Reset search
+            this._cleanSearchTerm = '';
+            this._searchTerm = '';
+            this.setSearchResults([]);
+            // Indicate that component was interacted with
+            this._isDirty = true;
+            // Blur input after single select lookup selection
+            if (!this.isMultiEntry && this.hasSelection()) {
+                this._hasFocus = false;
+            }
+            // Notify parent components that selection was cleared
+            this.dispatchEvent(new CustomEvent('selectionchange', { detail: null }));
+        } else if (event.keyCode === KEY_ARROW_DOWN) {
             // If we hit 'down', select the next item, or cycle over.
             this._focusedResultIndex++;
             if (this._focusedResultIndex >= this._searchResults.length) {

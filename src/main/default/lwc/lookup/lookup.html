@@ -5,7 +5,7 @@
             {label}
         </label>
         <div class="slds-form-element__control">
-            <div class={getContainerClass}>
+            <div class="slds-combobox_container">
                 <div
                     class={getDropdownClass}
                     aria-expanded={isListboxOpen}
@@ -108,7 +108,7 @@
                                         data-recordid={item.result.id}
                                     >
                                         <span
-                                            class="slds-media__figure slds-listbox__option-icon"
+                                            class="slds-media__figure slds-listbox__option-icon slds-m-top_none"
                                             lwc:if={item.result.icon}
                                         >
                                             <lightning-icon
@@ -118,7 +118,7 @@
                                             ></lightning-icon>
                                         </span>
                                         <span class="slds-media__body">
-                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity">
+                                            <span class="slds-listbox__option-text_entity">
                                                 <lightning-formatted-rich-text
                                                     value={item.result.titleFormatted}
                                                     disable-linkify
@@ -127,7 +127,7 @@
                                             </span>
                                             <span
                                                 lwc:if={item.result.subtitleFormatted}
-                                                class="slds-listbox__option-meta slds-listbox__option-meta_entity"
+                                                class="slds-listbox__option-meta"
                                             >
                                                 <lightning-formatted-rich-text
                                                     value={item.result.subtitleFormatted}
@@ -161,7 +161,7 @@
                                         data-sobject={newRecord.value}
                                         role="option"
                                     >
-                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                        <span class="slds-media__figure slds-listbox__option-icon slds-m-top_none">
                                             <lightning-icon
                                                 icon-name="utility:add"
                                                 size="small"
@@ -169,7 +169,7 @@
                                             ></lightning-icon>
                                         </span>
                                         <span class="slds-media__body">
-                                            <span class="slds-listbox__option-text">{newRecord.label}</span>
+                                            <span class="slds-listbox__option-text_entity">{newRecord.label}</span>
                                         </span>
                                     </div>
                                 </li>
@@ -185,6 +185,7 @@
             <template lwc:if={isMultiEntry}>
                 <div id="selection" role="listbox" aria-label={label} aria-orientation="horizontal">
                     <ul
+                        lwc:if={hasSelection}
                         class="slds-listbox slds-listbox_inline slds-var-p-top_xxx-small"
                         role="group"
                         aria-label="Selected options"
@@ -208,7 +209,7 @@
 
             <!-- Errors start -->
             <template for:each={_errors} for:item="error">
-                <div key={error.id} role="alert" class="slds-form-element__label slds-var-m-top_xx-small form-error">
+                <div key={error.id} role="alert" class="slds-form-element__help slds-var-m-top_xx-small">
                     {error.message}
                 </div>
             </template>

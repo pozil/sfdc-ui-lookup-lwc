@@ -199,11 +199,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this.isMultiEntry) {
             return true;
         }
-        return !this.hasSelection();
-    }
-
-    hasSelection() {
-        return this._curSelection.length > 0;
+        return !this.hasSelection;
     }
 
     processSelectionUpdate(isUserInteraction) {
@@ -214,7 +210,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         // Indicate that component was interacted with
         this._isDirty = isUserInteraction;
         // Blur input after single select lookup selection
-        if (!this.isMultiEntry && this.hasSelection()) {
+        if (!this.isMultiEntry && this.hasSelection) {
             this._hasFocus = false;
         }
         // If selection was changed by user, notify parent components
@@ -246,7 +242,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
             // Indicate that component was interacted with
             this._isDirty = true;
             // Blur input after single select lookup selection
-            if (!this.isMultiEntry && this.hasSelection()) {
+            if (!this.isMultiEntry && this.hasSelection) {
                 this._hasFocus = false;
             }
             // Notify parent components that selection was cleared
@@ -382,28 +378,29 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         );
     }
 
+    get hasSelection() {
+        return this._curSelection.length > 0;
+    }
+
     get hasResults() {
         return this._searchResults.length > 0;
     }
 
     get getFormElementClass() {
-        return this.variant === VARIANT_LABEL_INLINE
-            ? 'slds-form-element slds-form-element_horizontal'
-            : 'slds-form-element';
+        let css = 'slds-form-element';
+        if (this.variant === VARIANT_LABEL_INLINE) {
+            css += ' slds-form-element_horizontal';
+        }
+        if (this._errors.length > 0 || (this._isDirty && this.required && !this.hasSelection)) {
+            css += ' slds-has-error';
+        }
+        return css;
     }
 
     get getLabelClass() {
         return this.variant === VARIANT_LABEL_HIDDEN
             ? 'slds-form-element__label slds-assistive-text'
             : 'slds-form-element__label';
-    }
-
-    get getContainerClass() {
-        let css = 'slds-combobox_container ';
-        if (this._errors.length > 0) {
-            css += 'has-custom-error';
-        }
-        return css;
     }
 
     get getDropdownClass() {
@@ -419,11 +416,8 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this._hasFocus && this.hasResults) {
             css += 'slds-has-focus ';
         }
-        if (this._errors.length > 0 || (this._isDirty && this.required && !this.hasSelection())) {
-            css += 'has-custom-error ';
-        }
         if (!this.isMultiEntry) {
-            css += 'slds-combobox__input-value ' + (this.hasSelection() ? 'has-custom-border' : '');
+            css += 'slds-combobox__input-value ' + (this.hasSelection ? 'has-custom-border' : '');
         }
         return css;
     }
@@ -434,7 +428,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
             css += 'slds-input-has-icon_right';
         } else {
             css +=
-                this.hasSelection() && this._curSelection[0].icon
+                this.hasSelection && this._curSelection[0].icon
                     ? 'slds-input-has-icon_left-right'
                     : 'slds-input-has-icon_right';
         }
@@ -444,7 +438,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     get getSearchIconClass() {
         let css = 'slds-input__icon slds-input__icon_right ';
         if (!this.isMultiEntry) {
-            css += this.hasSelection() ? 'slds-hide' : '';
+            css += this.hasSelection ? 'slds-hide' : '';
         }
         return css;
     }
@@ -452,30 +446,30 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     get getClearSelectionButtonClass() {
         return (
             'slds-button slds-button_icon slds-input__icon slds-input__icon_right ' +
-            (this.hasSelection() ? '' : 'slds-hide')
+            (this.hasSelection ? '' : 'slds-hide')
         );
     }
 
     get getSelectIconName() {
-        return this.hasSelection() ? this._curSelection[0].icon : 'standard:default';
+        return this.hasSelection ? this._curSelection[0].icon : 'standard:default';
     }
 
     get getSelectIconClass() {
-        return 'slds-combobox__input-entity-icon ' + (this.hasSelection() ? '' : 'slds-hide');
+        return 'slds-combobox__input-entity-icon ' + (this.hasSelection ? '' : 'slds-hide');
     }
 
     get getInputValue() {
         if (this.isMultiEntry) {
             return this._searchTerm;
         }
-        return this.hasSelection() ? this._curSelection[0].title : this._searchTerm;
+        return this.hasSelection ? this._curSelection[0].title : this._searchTerm;
     }
 
     get getInputTitle() {
         if (this.isMultiEntry) {
             return '';
         }
-        return this.hasSelection() ? this._curSelection[0].title : '';
+        return this.hasSelection ? this._curSelection[0].title : '';
     }
 
     get getListboxClass() {
@@ -490,6 +484,6 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         if (this.isMultiEntry) {
             return false;
         }
-        return this.hasSelection();
+        return this.hasSelection;
     }
 }

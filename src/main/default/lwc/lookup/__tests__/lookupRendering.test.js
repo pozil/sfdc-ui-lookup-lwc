@@ -118,7 +118,7 @@ describe('c-lookup rendering', () => {
         expect(clearSelButton.length).toBe(0);
         // Verify result list is rendered
         const selList = lookupEl.shadowRoot.querySelectorAll('ul.slds-listbox_inline');
-        expect(selList.length).toBe(1);
+        expect(selList.length).toBe(0);
 
         await expect(lookupEl).toBeAccessible();
     });
@@ -217,7 +217,7 @@ describe('c-lookup rendering', () => {
         });
 
         // Verify errors
-        const errorEls = lookupEl.shadowRoot.querySelectorAll('div.form-error');
+        const errorEls = lookupEl.shadowRoot.querySelectorAll('div.slds-form-element__help');
         expect(errorEls.length).toBe(errors.length);
         expect(errorEls[0].textContent).toBe(errors[0].message);
         expect(errorEls[1].textContent).toBe(errors[1].message);

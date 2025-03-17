@@ -51,14 +51,14 @@ It does not rely on third party libraries and you have full control over its dat
 
 The lookup component provides the following features:
 
--   customizable data source that can return mixed sObject types
--   single or multiple selection mode
--   client-side caching & request throttling
--   great test coverage
--   full accessibility (a11y) compliance
--   keyboard navigation
--   search term highlighting
--   ability to create new records
+- customizable data source that can return mixed sObject types
+- single or multiple selection mode
+- client-side caching & request throttling
+- great test coverage
+- full accessibility (a11y) compliance
+- keyboard navigation
+- search term highlighting
+- ability to create new records
 
 <p align="center">
     <img src="screenshots/selection-types.png" alt="Multiple or single entry lookup"/>

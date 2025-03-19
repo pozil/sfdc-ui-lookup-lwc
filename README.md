@@ -1,5 +1,7 @@
 # Salesforce Lookup Component
 
+Now compatible with [SLDS 2](https://www.lightningdesignsystem.com/)!
+
 [![Github Workflow](https://github.com/pozil/sfdc-ui-lookup-lwc/workflows/CI/badge.svg?branch=master)](https://github.com/pozil/sfdc-ui-lookup-lwc/actions) [![codecov](https://codecov.io/gh/pozil/sfdc-ui-lookup-lwc/branch/master/graph/badge.svg)](https://codecov.io/gh/pozil/sfdc-ui-lookup-lwc) ![a11y friendly](https://img.shields.io/badge/a11y-friendly-green)
 
 > [!IMPORTANT]

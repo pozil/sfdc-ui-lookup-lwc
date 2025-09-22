@@ -1,10 +1,10 @@
-const {
+import {
     createLookupElement,
     flushPromises,
     inputSearchTerm,
     SAMPLE_SEARCH_ITEMS,
     LABEL_NO_RESULTS
-} = require('./lookupTest.utils');
+} from './lookupTest.utils';
 
 describe('c-lookup rendering', () => {
     afterEach(() => {

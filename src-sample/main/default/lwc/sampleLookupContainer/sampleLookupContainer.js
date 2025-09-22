@@ -66,7 +66,6 @@ export default class SampleLookupContainer extends LightningElement {
             lookupElement.setSearchResults(results);
         } catch (error) {
             this.notifyUser('Lookup Error', 'An error occurred while searching with the lookup field.', 'error');
-            // eslint-disable-next-line no-console
             console.error('Lookup error', JSON.stringify(error));
             this.errors = [error];
         }

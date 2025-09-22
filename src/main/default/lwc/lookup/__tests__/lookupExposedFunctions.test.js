@@ -1,4 +1,4 @@
-const { createLookupElement, inputSearchTerm, flushPromises, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
+import { createLookupElement, inputSearchTerm, flushPromises, SAMPLE_SEARCH_ITEMS } from './lookupTest.utils';
 
 describe('c-lookup exposed functions', () => {
     afterEach(() => {

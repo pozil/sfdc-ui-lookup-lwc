@@ -1,4 +1,4 @@
-const { createLookupElement, inputSearchTerm, SAMPLE_SEARCH_ITEMS } = require('./lookupTest.utils');
+import { createLookupElement, inputSearchTerm, SAMPLE_SEARCH_ITEMS } from './lookupTest.utils';
 
 const SAMPLE_SEARCH_TOO_SHORT_WHITESPACE = 'A ';
 const SAMPLE_SEARCH_TOO_SHORT_SPECIAL = 'a*';

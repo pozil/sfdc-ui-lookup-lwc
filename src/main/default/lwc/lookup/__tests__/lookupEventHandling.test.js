@@ -79,6 +79,70 @@ describe('c-lookup event handling', () => {
         expect(lookupEl.selection[0].id).toBe(SAMPLE_SEARCH_ITEMS[0].id);
     });
 
+    it('keeps search term and remaining results after selection when keepSearchOnSelection is set', async () => {
+        jest.useFakeTimers();
+
+        const lookupEl = createLookupElement({ isMultiEntry: true, keepSearchOnSelection: true });
+        const thirdItem = { ...SAMPLE_SEARCH_ITEMS[0], id: 'id3', title: 'Sample item 3' };
+        const searchFn = jest.fn((event) => {
+            event.target.setSearchResults([...SAMPLE_SEARCH_ITEMS, thirdItem]);
+        });
+        lookupEl.addEventListener('search', searchFn);
+
+        // Simulate search term input
+        await inputSearchTerm(lookupEl, SAMPLE_SEARCH);
+
+        // Simulate selection of two items
+        lookupEl.shadowRoot.querySelector('div[data-recordid]').click();
+        await flushPromises();
+        lookupEl.shadowRoot.querySelector('div[data-recordid]').click();
+        await flushPromises();
+
+        // Check selection
+        expect(lookupEl.selection.map((item) => item.id)).toEqual([
+            SAMPLE_SEARCH_ITEMS[0].id,
+            SAMPLE_SEARCH_ITEMS[1].id
+        ]);
+        expect(searchFn).toHaveBeenCalledTimes(1);
+        expect(lookupEl.shadowRoot.querySelector('input').value).toBe(SAMPLE_SEARCH);
+        const remainingIds = Array.from(lookupEl.shadowRoot.querySelectorAll('div[data-recordid]')).map(
+            (el) => el.dataset.recordid
+        );
+        expect(remainingIds).toEqual([thirdItem.id]);
+    });
+
+    it('clears search term after selection by default when multi entry', async () => {
+        jest.useFakeTimers();
+
+        const lookupEl = createLookupElement({ isMultiEntry: true });
+        lookupEl.addEventListener('search', (event) => {
+            event.target.setSearchResults(SAMPLE_SEARCH_ITEMS);
+        });
+
+        await inputSearchTerm(lookupEl, SAMPLE_SEARCH);
+        lookupEl.shadowRoot.querySelector('div[data-recordid]').click();
+        await flushPromises();
+
+        expect(lookupEl.selection.length).toBe(1);
+        expect(lookupEl.shadowRoot.querySelector('input').value).toBe('');
+    });
+
+    it('ignores keepSearchOnSelection when single entry', async () => {
+        jest.useFakeTimers();
+
+        const lookupEl = createLookupElement({ isMultiEntry: false, keepSearchOnSelection: true });
+        lookupEl.addEventListener('search', (event) => {
+            event.target.setSearchResults(SAMPLE_SEARCH_ITEMS);
+        });
+
+        await inputSearchTerm(lookupEl, SAMPLE_SEARCH);
+        lookupEl.shadowRoot.querySelector('div[data-recordid]').click();
+        await flushPromises();
+
+        expect(lookupEl.selection.length).toBe(1);
+        expect(lookupEl.shadowRoot.querySelector('input').value).toBe(SAMPLE_SEARCH_ITEMS[0].title);
+    });
+
     it('can select item with keyboard', async () => {
         Element.prototype.scrollIntoView = jest.fn();
         jest.useFakeTimers();

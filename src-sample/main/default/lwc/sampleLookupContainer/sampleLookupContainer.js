@@ -11,6 +11,7 @@ export default class SampleLookupContainer extends LightningElement {
 
     isMultiEntry = false;
     maxSelectionSize = 2;
+    keepSearchOnSelection = false;
     initialSelection = [
         {
             id: 'na',
@@ -91,6 +92,10 @@ export default class SampleLookupContainer extends LightningElement {
 
     handleMaxSelectionSizeChange(event) {
         this.maxSelectionSize = event.target.value;
+    }
+
+    handleKeepSearchOnSelectionChange(event) {
+        this.keepSearchOnSelection = event.target.checked;
     }
 
     handleSubmit() {

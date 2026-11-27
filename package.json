@@ -27,19 +27,19 @@
     },
     "author": "Philippe Ozil",
     "devDependencies": {
-        "@lwc/eslint-plugin-lwc": "^3.2.0",
+        "@lwc/eslint-plugin-lwc": "^3.5.0",
         "@prettier/plugin-xml": "^3.4.2",
-        "@sa11y/jest": "^7.4.0",
-        "@salesforce/eslint-config-lwc": "^4.0.0",
+        "@sa11y/jest": "^8.4.0",
+        "@salesforce/eslint-config-lwc": "^4.1.2",
         "@salesforce/eslint-plugin-lightning": "^2.0.0",
-        "@salesforce/sfdx-lwc-jest": "^7.1.0",
-        "eslint": "^9.36.0",
+        "@salesforce/sfdx-lwc-jest": "^7.9.0",
+        "eslint": "^9.39.5",
         "eslint-plugin-import": "^2.32.0",
-        "eslint-plugin-jest": "^29.0.1",
+        "eslint-plugin-jest": "^29.17.1",
         "husky": "^9.1.7",
-        "lint-staged": "^16.2.0",
-        "prettier": "^3.6.2",
-        "prettier-plugin-apex": "^2.2.6"
+        "lint-staged": "^17.6.2",
+        "prettier": "^3.10.1",
+        "prettier-plugin-apex": "^2.4.0"
     },
     "repository": {
         "type": "git",

@@ -16,9 +16,11 @@ jobs:
             - name: 'Checkout source code'
               uses: actions/checkout@v7.0.0
 
-            # Install Volta to enforce proper node and package manager versions
-            - name: 'Install Volta'
-              uses: volta-cli/action@v5.0.0
+            # Set up Node.js
+            - name: 'Set up Node.js'
+              uses: actions/setup-node@v7.0.0
+              with:
+                  node-version: 22
 
             # Cache node_modules to speed up the process
             - name: 'Restore node_modules cache'
@@ -34,7 +36,7 @@ jobs:
             # Install npm dependencies for Prettier and Jest
             - name: 'Install npm dependencies'
               if: steps.cache-npm.outputs.cache-hit != 'true'
-              run: npm ci
+              run: HUSKY=0 npm ci
 
             # Prettier formatting
             - name: 'Code formatting'

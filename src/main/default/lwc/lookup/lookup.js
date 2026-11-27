@@ -26,6 +26,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
     @api scrollAfterNItems = null;
     @api newRecordOptions = [];
     @api minSearchTermLength = 2;
+    @api keepSearchOnSelection = false;
 
     // Template properties
     searchResultsLocalState = [];
@@ -202,11 +203,15 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         return !this.hasSelection;
     }
 
-    processSelectionUpdate(isUserInteraction) {
-        // Reset search
-        this._cleanSearchTerm = '';
-        this._searchTerm = '';
-        this.setSearchResults([...this._defaultSearchResults]);
+    processSelectionUpdate(isUserInteraction, keepSearch = false) {
+        if (keepSearch) {
+            this.setSearchResults([...this._searchResults]);
+        } else {
+            // Reset search
+            this._cleanSearchTerm = '';
+            this._searchTerm = '';
+            this.setSearchResults([...this._defaultSearchResults]);
+        }
         // Indicate that component was interacted with
         this._isDirty = isUserInteraction;
         // Blur input after single select lookup selection
@@ -292,7 +297,7 @@ export default class Lookup extends NavigationMixin(LightningElement) {
         this._curSelection = newSelection;
 
         // Process selection update
-        this.processSelectionUpdate(true);
+        this.processSelectionUpdate(true, this.isMultiEntry && this.keepSearchOnSelection);
     }
 
     handleComboboxMouseDown(event) {
